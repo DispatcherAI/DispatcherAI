@@ -11,6 +11,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@clerk/nextjs": "^5.3.0",
     "@hookform/resolvers": "^3.3.4",
     "@maptiler/leaflet-maptilersdk": "^2.0.0",
     "@prisma/client": "^5.18.0",

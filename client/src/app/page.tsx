@@ -2,18 +2,26 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+    SignInButton,
+    SignOutButton,
+    useAuth,
+    UserButton,
+} from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 import FadeIn from "react-fade-in";
 
+const styles = {
+    container: "max-w-4xl mx-auto px-4 py-8",
+    heading:
+        "text-3xl md:text-4xl font-semibold font-helvetica-neue text-white mb-4",
+    subheading: "text-lg md:text-xl font-inter text-gray-300",
+    span: "text-[#69D2FF]",
+    tealsubheading: "text-[#69D2FF] text-md font-semibold",
+};
+
 export default function Home() {
-    const styles = {
-        container: "max-w-4xl mx-auto px-4 py-8",
-        heading:
-            "text-3xl md:text-4xl font-semibold font-helvetica-neue text-white mb-4",
-        subheading: "text-lg md:text-xl font-inter text-gray-300",
-        span: "text-[#69D2FF]",
-        tealsubheading: "text-[#69D2FF] text-md font-semibold",
-    };
+    const { isSignedIn } = useAuth();
 
     return (
         <div>
@@ -35,20 +43,27 @@ export default function Home() {
                         About us
                     </a>
                 </div>
-                <div>
-                    <Button variant="outline" className="mr-2">
-                        Log in
-                    </Button>
-                    <Button
-                        style={{
-                            backgroundColor: "#0075FF",
-                            padding: "12px",
-                        }}
-                    >
-                        Try now
-                    </Button>
+
+                <div className="flex gap-2">
+                    {isSignedIn ? (
+                        <>
+                            <UserButton />
+                            <SignOutButton>
+                                <Button variant="outline">Log out</Button>
+                            </SignOutButton>
+                        </>
+                    ) : (
+                        <SignInButton>
+                            <Button variant="outline">Log in</Button>
+                        </SignInButton>
+                    )}
+
+                    <Link href={"/live"}>
+                        <Button className="bg-blue-600 p-3">Try now</Button>
+                    </Link>
                 </div>
             </nav>
+
             {/* hero */}
             <div className="flex min-h-screen flex-col bg-white">
                 <main
