@@ -13,6 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@maptiler/leaflet-maptilersdk": "^2.0.0",
+    "@prisma/client": "^5.18.0",
     "@radix-ui/react-progress": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
@@ -50,6 +51,7 @@
     "postcss": "^8.4.31",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.5.14",
+    "prisma": "^5.18.0",
     "tailwindcss": "^3.3.5",
     "tailwindcss-bg-patterns": "^0.3.0",
     "typescript": "^5.1.6"
