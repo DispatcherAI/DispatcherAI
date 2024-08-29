@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
+import { CustomSettingsDrawer } from "./CustomSettingsDrawer";
+
 const Header = ({ connected }: { connected: boolean }) => {
     const [time, setTime] = useState("");
 
@@ -26,15 +28,19 @@ const Header = ({ connected }: { connected: boolean }) => {
     return (
         <div className="flex h-[50px] w-full items-center border-b-2 border-[#C2C2C2] bg-white px-5">
             <div className="flex-between w-full text-sm font-bold uppercase text-gray-800">
-                <div className="pl-1" /* handles the offset width */>
-                    <div
-                        className={cn(
-                            "h-3 w-3 rounded-full",
-                            connected
-                                ? "bg-green-500 ring-2 ring-green-500 ring-offset-2"
-                                : "bg-red-500 ring-2 ring-red-500 ring-offset-2",
-                        )}
-                    />
+                <div className="flex-center space-x-3">
+                    <div className="pl-1" /* handles the offset width */>
+                        <div
+                            className={cn(
+                                "h-3 w-3 rounded-full",
+                                connected
+                                    ? "bg-green-500 ring-2 ring-green-500 ring-offset-2"
+                                    : "bg-red-500 ring-2 ring-red-500 ring-offset-2",
+                            )}
+                        />
+                    </div>
+
+                    <CustomSettingsDrawer />
                 </div>
 
                 <div className="flex-center space-x-4 font-normal">

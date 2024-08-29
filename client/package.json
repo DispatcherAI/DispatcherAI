@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@maptiler/leaflet-maptilersdk": "^2.0.0",
     "@prisma/client": "^5.18.0",
+    "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-progress": "^1.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
@@ -35,6 +36,7 @@
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {

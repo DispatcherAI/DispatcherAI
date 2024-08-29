@@ -195,9 +195,11 @@ const Page = () => {
                     center={center}
                     pins={Object.entries(data)
                         .filter(
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
                             ([_, call]) =>
                                 call.location_coords && call.location_name,
                         )
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         .map(([_, call]) => {
                             return {
                                 coordinates: [
