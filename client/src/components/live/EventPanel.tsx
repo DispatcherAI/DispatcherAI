@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Call } from "@/app/live/page";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,12 +27,10 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
 
             <div className="mb-4 flex items-center space-x-4 px-2">
                 <Input
-                    className="w-[85%]"
                     placeholder="Filter calls..."
                     startIcon={Search}
                     onChange={handleChange}
                 />
-                {/* <span className="pr-8 text-gray-500">Filter</span> */}
             </div>
 
             <div className="mb-4 flex justify-between px-3">
