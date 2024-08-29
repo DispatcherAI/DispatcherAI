@@ -58,7 +58,7 @@ export default function Home() {
                         </SignInButton>
                     )}
 
-                    <Link href={"/live"}>
+                    <Link href="/live" prefetch={false}>
                         <Button className="bg-blue-600 p-3">Try now</Button>
                     </Link>
                 </div>
@@ -86,7 +86,7 @@ export default function Home() {
                                 Human-in-the-loop emergency response system
                             </p>
                             <div className="space-x-4">
-                                <Link href="/live">
+                                <Link href="/live" prefetch={false}>
                                     <Button
                                         variant="outline"
                                         style={{
@@ -97,7 +97,7 @@ export default function Home() {
                                         Try demo
                                     </Button>
                                 </Link>
-                                <Link href="/live">
+                                <Link href="/live" prefetch={false}>
                                     <Button
                                         style={{
                                             backgroundColor: "#0075FF",
@@ -217,7 +217,7 @@ export default function Home() {
                         justifyContent: "center",
                     }}
                 >
-                    <Link href="/live">
+                    <Link href="/live" prefetch={false}>
                         <Button
                             variant="outline"
                             style={{
@@ -228,7 +228,7 @@ export default function Home() {
                             Try demo
                         </Button>
                     </Link>
-                    <Link href="/live">
+                    <Link href="/live" prefetch={false}>
                         <Button
                             style={{
                                 backgroundColor: "#0075FF",

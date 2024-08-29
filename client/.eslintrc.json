@@ -8,7 +8,6 @@
         // "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     "parserOptions": {
-        "project": ["./tsconfig.json"],
         "sourceType": "module"
     },
     "ignorePatterns": [
