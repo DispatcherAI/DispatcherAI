@@ -34,6 +34,7 @@ model User {
   clerkUserId String?  @unique // enforce uniqueness
   userModel   String?
   userPrompt  String?
+  calls      Call[] // one-to-many relation
 }
 
 model Call {
@@ -44,5 +45,7 @@ model Call {
     duration   Int?
     severity   severityType
     status     statusType
+    userId     String? // foreign key referencing the user
+    user       User?     @relation(fields: [userId], references: [id]) // many-to-one relation
 }
 
