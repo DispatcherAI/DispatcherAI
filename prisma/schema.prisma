@@ -42,11 +42,11 @@ model Call {
     id         String   @id @default(cuid()) // primary key
     type       callType
     createdAt  DateTime @default(now())
-    endedAt    DateTime?
-    duration   Int?
+    endedAt    String?
+    duration   Int? // duration in seconds
     severity   severityType
     status     statusType
-    waitTime   Int?
+    waitTime   Int? // wait time in seconds
     userId     String? // foreign key referencing the user
     user       User?     @relation(fields: [userId], references: [id]) // many-to-one relation
 }
