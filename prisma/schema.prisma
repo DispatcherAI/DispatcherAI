@@ -45,6 +45,7 @@ model Call {
     duration   Int?
     severity   severityType
     status     statusType
+    waitTime   Int?
     userId     String? // foreign key referencing the user
     user       User?     @relation(fields: [userId], references: [id]) // many-to-one relation
 }
