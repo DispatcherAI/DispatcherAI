@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     typescript: {
-        // !! WARN !!
-        // Dangerously allow production builds to successfully complete even if
-        // your project has type errors.
-        // !! WARN !!
         ignoreBuildErrors: true,
     },
     eslint: {
@@ -13,9 +9,10 @@ const nextConfig = {
 };
 
 module.exports = {
+    ...nextConfig,
     parserOptions: {
-        project: "tsconfig.json",
-        tsconfigRootDir: __dirname,
+        project: "./tsconfig.json",  
+        tsconfigRootDir: __dirname,  
         sourceType: "module",
     },
 };
