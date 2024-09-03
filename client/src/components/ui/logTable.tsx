@@ -33,7 +33,7 @@ const logTable = () => {
     if (loading) return <div>"Loading..."</div>;
     if (error) return <div>{error}</div>;
     return (
-        <Table>
+        <Table className = "outline outline-1 p-2 m-2 w-full ">
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[100px]">ID</TableHead>
@@ -46,7 +46,7 @@ const logTable = () => {
             </TableHeader>
             <TableBody>
                 {calls.map(call  => (
-                    <TableRow key = {call.id}>
+                    <TableRow key = {call.id} className="dark:bg-[color:var(--card)]">
                       <TableCell>{call.id}</TableCell>
                       <TableCell>{call.type}</TableCell>
                       <TableCell>{call.createdAt}</TableCell>
