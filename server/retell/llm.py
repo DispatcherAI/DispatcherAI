@@ -65,7 +65,7 @@ class LlmClient:
     async def draft_response(self, request: ResponseRequiredRequest):
         prompt = self.prepare_prompt(request)
         stream = await self.client.chat.completions.create(
-            model="gpt-4o",  # Or use a 3.5 model for speed
+            model="gpt-4o-mini",  # Or use a 3.5 model for speed
             messages=prompt,
             stream=True,
         )

@@ -7,7 +7,6 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from concurrent.futures import TimeoutError as ConnectionTimeoutError
 from twilio.twiml.voice_response import VoiceResponse
 from retell import Retell
-from retell.resources.call import RegisterCallResponse
 from .custom_types import (
     ConfigResponse,
     ResponseRequiredRequest,
@@ -68,7 +67,6 @@ async def handle_webhook(request: Request):
             status_code=500, content={"message": "Internal Server Error"}
         )
 
-
 # Twilio voice webhook. This will be called whenever there is an incoming or outgoing call.
 # Register call with Retell at this stage and pass in returned call_id to Retell.
 @router.post("/twilio-voice-webhook/{agent_id_path}")
@@ -82,7 +80,7 @@ async def handle_twilio_voice_webhook(request: Request, agent_id_path: str):
         elif "AnsweredBy" in post_data:
             return PlainTextResponse("")
 
-        call_response: RegisterCallResponse = retell.call.register(
+        call_response = retell.call.register(
             agent_id=agent_id_path,
             audio_websocket_protocol="twilio",
             audio_encoding="mulaw",
@@ -165,7 +163,8 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
             # Not all of them need to be handled, only response_required and reminder_required.
             if request_json["interaction_type"] == "call_details":
                 print(json.dumps(request_json, indent=2))
-                twilio_sid = request_json["call"]["metadata"]["twilio_call_sid"]
+                from_number = request_json["call"]["from_number"]
+                print(from_number)
                 return
             if request_json["interaction_type"] == "ping_pong":
                 await websocket.send_json(
