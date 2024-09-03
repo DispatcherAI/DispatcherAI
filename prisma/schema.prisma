@@ -29,11 +29,12 @@ enum statusType {
 //* define tables
 model User {
   id          String   @id @default(cuid()) // primary key
+  name        String?
+  email       String?  @unique
+  phone       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   clerkUserId String?  @unique // enforce uniqueness
-  userModel   String?
-  userPrompt  String?
   calls      Call[] // one-to-many relation
 }
 
