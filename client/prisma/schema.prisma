@@ -16,6 +16,9 @@ model User {
   name        String?
   phone       String?
   Call        Call[]
+  // user specified AI model and prompt to use
+  userModel  String?
+  userPrompt String?
 }
 
 model Call {
