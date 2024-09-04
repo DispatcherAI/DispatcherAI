@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,8 +12,41 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   clerkUserId String?  @unique
+  email       String?  @unique
+  name        String?
+  phone       String?
+  Call        Call[]
+}
 
-  // user specified AI model and prompt to use
-  userModel  String?
-  userPrompt String?
+model Call {
+  id        String       @id @default(cuid())
+  type      callType
+  createdAt DateTime     @default(now())
+  endedAt   DateTime?
+  duration  Int?
+  severity  severityType
+  status    statusType
+  userId    String?
+  waitTime  Int?
+  User      User?        @relation(fields: [userId], references: [id])
+}
+
+enum callType {
+  Fire
+  Medical
+  Flood
+  Robbery
+  Critical
+}
+
+enum severityType {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum statusType {
+  Active
+  Resolved
 }

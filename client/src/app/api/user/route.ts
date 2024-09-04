@@ -64,3 +64,27 @@ export async function POST(request: NextRequest) {
         );
     }
 }
+
+export async function DELETE(request: NextRequest) {
+    try {
+        const { clerkUserId } = await request.json();
+        
+        if (!clerkUserId) {
+            return NextResponse.json({
+                error: "clerkUserId is required."},
+                {status: 400},
+            );
+        }
+
+        const deletedUser = await db.user.delete({
+            where: { clerkUserId },
+        });
+        
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        return NextResponse.json(
+            { error: "Failed to delete user." },
+            { status: 500 },
+        );
+    }
+}
