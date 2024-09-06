@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  clerkUserId String?  @unique
-  email       String?  @unique
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  clerkUserId String?    @unique
+  email       String?    @unique
   name        String?
   phone       String?
-  Call        Call[]
-  // user specified AI model and prompt to use
-  userModel  String?
-  userPrompt String?
+  userModel   String?
+  userPrompt  String?
+  callId      String?
+  calls       UserCall[]
 }
 
 model Call {
@@ -31,7 +31,26 @@ model Call {
   status    statusType
   userId    String?
   waitTime  Int?
-  User      User?        @relation(fields: [userId], references: [id])
+  messages  Message[]
+  users     UserCall[]
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  role      messageRole
+  content   String
+  callId    String
+  call      Call        @relation(fields: [callId], references: [id])
+}
+
+model UserCall {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  userId    String
+  callId    String
+  call      Call     @relation(fields: [callId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 enum callType {
@@ -52,4 +71,9 @@ enum severityType {
 enum statusType {
   Active
   Resolved
+}
+
+enum messageRole {
+  DISPATCHER
+  CALLER
 }

@@ -36,7 +36,7 @@ async function main() {
         endedAt: "2021-10-10T10:00:00Z", // placeholder date and time
         duration: 60, // placeholder for duration
         waitTime: 10, // placeholder for wait time
-        User: {
+        users: {
           connect: { id: newUser.id }, // connect the call to the new user
         },
       },
@@ -48,13 +48,13 @@ async function main() {
      */
     console.log("Retrieving all users...");
     const findUser = await db.user.findMany({
-      include: { Call: true }, // include calls related to the user in the query response
+      include: { calls: true }, // include calls related to the user in the query response
     });
     console.log("Users:", findUser);
 
     console.log("Retrieving all calls...");
     const findCalls = await db.call.findMany({
-      include: { User: true }, // include user related to the call in the query response
+      include: { users: true }, // include user related to the call in the query response
     });
     console.log("Calls:", findCalls);
   } catch (error) {
