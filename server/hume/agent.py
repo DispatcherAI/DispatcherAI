@@ -12,7 +12,6 @@ import uuid
 from datetime import datetime
 from server.db import update_call, get_call, get_all_calls
 from server.socket_manager import manager
-from server.geocoding import geocode, street_view
 from server.prompts import SYSTEM_PROMPT
 
 router = APIRouter(prefix="/hume")

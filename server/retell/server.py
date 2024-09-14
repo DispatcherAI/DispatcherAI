@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, PlainTextResponse
 from concurrent.futures import TimeoutError as ConnectionTimeoutError
 from twilio.twiml.voice_response import VoiceResponse
-from retell import Retell
+import retell
 from .custom_types import (
     ConfigResponse,
     ResponseRequiredRequest,
@@ -18,14 +18,14 @@ from datetime import datetime
 from server.db import update_call, get_call, get_all_calls
 from server.socket_manager import manager
 from server.evals import eval, hume_eval
-from server.geocoding import geocode, street_view
+# from server.geocoding import geocode, street_view
 
 print(os.path.join(os.path.dirname(__file__), ".env"))
 load_dotenv(override=True, dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
-retell = Retell(api_key=os.environ["RETELL_API_KEY"])
+# retell = retell(api_key=os.environ["RETELL_API_KEY"])
 
 # Custom Twilio if you want to use your own Twilio API Key
-twilio_client = TwilioClient()
+# twilio_client = TwilioClient()
 
 router = APIRouter(
     prefix="/retell",

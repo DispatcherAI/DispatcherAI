@@ -1,27 +1,19 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from dotenv import load_dotenv
-
 load_dotenv()  # take environment variables from .env.
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
-import uvicorn
-from server.socket_manager import manager
-from server.retell.server import router as retell_router
-from server.hume.agent import router as hume_router
-from server.db import get_call
-from server.retell.twilio_server import TwilioClient
 
-# Import the necessary function from the db module
-from server.db import get_all_calls
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from socket_manager import manager
+from server.redis_client import get_redis_client
 
 app = FastAPI()
-client = TwilioClient()
-
-app.include_router(retell_router)
-app.include_router(hume_router)
 
 origins = ["*"]
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,55 +23,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket, client_id: Optional[str] = None):
-    if client_id is None:
-        client_id = websocket.query_params.get("client_id")
-
-    if client_id is None:
-        await websocket.close(code=4001)
-        return
-    # save this client into server memory
-    await manager.connect(websocket, client_id)
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
     try:
+        redis_client = await get_redis_client()
+        await websocket.send_text("Connected to Redis")
+        
         while True:
-            data = await websocket.receive_json()
-            event = data["event"]
-            print(event)
-            if event == "get_db":
-                # Retrieve all calls from the database
-                all_calls = get_all_calls()
-                message = {
-                    "event": "db_response",
-                    "data": all_calls,
-                }
-                # Send the calls data back to the client
-                await manager.send_personal_message(
-                    message,
-                    websocket,
-                )
-            if event == "transfer":
-                print("Transferring call...", data)
-                id = data["id"]
-                call = get_call(id)
-                if call["mode"] == "retell":
-                    client.transfer_call(call["id"], "+14085858267")
-
+            data = await websocket.receive_text()
+            await redis_client.set("test_key", data)
+            value = await redis_client.get("test_key")
+            await websocket.send_text(f"Received and stored in Redis: {value}")
     except WebSocketDisconnect:
-        print("Disconnecting...", client_id)
-        await manager.disconnect(client_id)
+        await manager.disconnect(websocket)
     except Exception as e:
-        print("Error:", str(e))
-        await manager.disconnect(client_id)
-
+        print(f"Error: {str(e)}")
+        await manager.disconnect(websocket)
 
 if __name__ == "__main__":
-    # uvicorn main:app --reload
-    # ws://localhost:8000/ws?client_id=123
     uvicorn.run(app, host="127.0.0.1", port=8000)

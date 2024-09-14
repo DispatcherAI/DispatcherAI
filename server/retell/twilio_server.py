@@ -1,13 +1,16 @@
-from twilio.rest import Client
-
 import os
-
+from twilio.rest import Client
 
 class TwilioClient:
     def __init__(self):
-        self.client = Client(
-            os.environ["TWILIO_ACCOUNT_ID"], os.environ["TWILIO_AUTH_TOKEN"]
-        )
+        self.client = None
+        self.account_id = os.getenv("TWILIO_ACCOUNT_ID")
+        self.auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+        
+        if self.account_id and self.auth_token:
+            self.client = Client(self.account_id, self.auth_token)
+        else:
+            print("Twilio credentials not found. Twilio functionality will be disabled.")
 
     # Create a new phone number and route it to use this server
     def create_phone_number(self, area_code, agent_id):

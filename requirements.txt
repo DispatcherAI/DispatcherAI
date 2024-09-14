@@ -21,3 +21,9 @@ setuptools==70.1.0
 twilio==9.2.1
 uvloop==0.19.0
 watchfiles==0.22.0
+openai
+# mistral-ai
+redis
+websockets
+python-dotenv
+googlemaps
