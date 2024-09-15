@@ -46,6 +46,7 @@ export type Call = {
     name: string;
     phone: string;
     recommendation: string;
+    location: string;
     severity?: "CRITICAL" | "MODERATE" | "RESOLVED";
     summary: string;
     time: string; // ISO Date String
@@ -143,7 +144,7 @@ const Page = () => {
                     Object.entries(message.data).forEach(([key, value]) => {
                         formattedData[key] = {
                             id: value.id || key,
-                            title: value.title || 'Untitled',
+                            title: value.title || `${value.type || 'Unknown Severity'} on ${value.location || 'Unknown Location'}`,
                             time: value.time || new Date().toISOString(),
                             severity: value.severity || 'MODERATE',
                             location_name: value.location_name || 'Unknown Location',
