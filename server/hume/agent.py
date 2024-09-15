@@ -3,6 +3,7 @@ import re
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+# from server.geocoding import geocode, street_view
 import inflect
 from fastapi import WebSocket, APIRouter, WebSocketDisconnect
 from server.evals import eval, hume_eval

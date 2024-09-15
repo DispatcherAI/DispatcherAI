@@ -16,6 +16,8 @@ import EmotionCard from "./EmotionCard";
 
 interface TranscriptPanelProps extends CallProps {
     handleTransfer: (id: string) => void;
+    selectedId: string;
+    call: CallProps;
 }
 
 const TranscriptPanel = ({

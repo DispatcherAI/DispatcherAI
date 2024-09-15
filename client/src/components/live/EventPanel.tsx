@@ -63,7 +63,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
             </div>
 
             <div className="h-[calc(100dvh-250px)] space-y-2 overflow-y-scroll pb-3">
-                {data &&
+                {data && // filter and sort data based on search query
                     Object.entries(data)
                         .filter(([_, emergency]) =>
                             emergency.title?.includes(search),
@@ -99,6 +99,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                         size={24}
                                     />
                                 )}
+                                {/* Emergency card details */}
                                 <CardContent className="flex-grow p-0">
                                     <div className="font-semibold">
                                         {emergency.title}

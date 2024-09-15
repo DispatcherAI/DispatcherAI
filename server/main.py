@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -11,6 +12,14 @@ import uvicorn
 from server.socket_manager import manager
 from server.redis_client import get_redis_client
 
+from server.retell.server import router as retell_router
+from server.hume.agent import router as hume_router
+from server.db import get_call
+from server.retell.twilio_server import TwilioClient
+
+# Import the necessary function from the db module
+from server.db import get_all_calls
+
 from redis.asyncio import Redis
 from redis.exceptions import TimeoutError as RedisTimeoutError
 
@@ -18,6 +27,7 @@ class CustomTimeoutError(Exception):
     pass
 
 app = FastAPI()
+client = TwilioClient()
 
 # CORS middleware setup
 app.add_middleware(
@@ -31,14 +41,14 @@ app.add_middleware(
 #? test data
 async def populate_test_data():
     redis_client = await get_redis_client()
-    test_data = {
-        "911 Call": "911 Call",
-        "911 Call 2": "911 Call 2",
-        "911 Call 3": "911 Call 3"
+    sample_data = {
+        "call:1": {"id": "1", "location": "123 Main St", "nature": "Medical Emergency", "status": "Active"},
+        "call:2": {"id": "2", "location": "456 Elm St", "nature": "Fire Alarm", "status": "Pending"},
+        "call:3": {"id": "3", "location": "789 Oak St", "nature": "Traffic Accident", "status": "Resolved"}
     }
-    for key, value in test_data.items():
-        await redis_client.set(key, value)
-    print("Test data populated")
+    for key, value in sample_data.items():
+        await redis_client.hmset(key, value)
+    print("Test emergency data populated")
 
 @app.on_event("startup")
 async def startup_event():
@@ -49,29 +59,49 @@ def read_root():
     return {"Hello": "World"}
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket): # testing websocket connection with redis
-    print("WebSocket connection attempt received")
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         print("WebSocket connected")
         print("Attempting to connect to Redis...")
         redis_client = await get_redis_client()
-        print("Redis connection successful")
         
+        # Fetch and send initial data
+        call_keys = await redis_client.keys("call:*")
+        emergency_data = {}
+        for key in call_keys:
+            call_data = await redis_client.hgetall(key)
+            # Fix: Remove decode() calls
+            emergency_data[key] = {k: v for k, v in call_data.items()}
+        
+        await websocket.send_json({
+            "type": "initial_data",
+            "data": emergency_data
+        })
+
+        # ... rest of the websocket logic ...
+
         await websocket.send_text("Websocket connected to Redis")
         
         #? send test data to redis
         try:
-            for i in range(1,4):
-                call_data = await redis_client.get(f"911 Call {i}") # retrieve based on key
-                await websocket.send_json({"type": "test_data", "data": call_data}) # return a json of the data
-                print(f"Sent call: {i} data to client")
-        
-        # Test Redis connection
-        # try:
-        #     await redis_client.set("test_key", "911 Call") # creates a hash map of key-value pairs in redis
-        #     test_value = await redis_client.get("test_key")
-        #     await websocket.send_text(f"Redis test successful. Retrieved value: {test_value}")
+            #fetch all emergency call keys from redis
+            call_keys = await redis_client.keys("call:*")
+
+            emergency_data = {}
+
+            for key in call_keys:
+                call_data = await redis_client.hgetall(key)
+                emergency_data[key] = call_data
+            # Send emergency data to the client
+            await websocket.send_json({
+                "type": "emergency_data",
+                "data": emergency_data
+            })
+
+            await asyncio.sleep(5) # retrieves data from redis every 5 seconds
+
+           
         except Exception as redis_error:
             print(f"Redis test failed: {str(redis_error)}")
             await websocket.send_text(f"Redis test failed: {str(redis_error)}")

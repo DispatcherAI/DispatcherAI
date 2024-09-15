@@ -11,7 +11,7 @@ from langchain_core.messages import HumanMessage
 from langchain_mistralai.chat_models import ChatMistralAI
 
 begin_sentence = "9-1-1, what's your emergency?"
-
+from server.prompts import SYSTEM_PROMPT
 
 class LlmClient:
     def __init__(self):
