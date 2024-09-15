@@ -44,7 +44,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                     <div className="text-2xl font-bold">
                         {data
                             ? Object.entries(data).filter(
-                                  ([_, value]) => value.severity === "CRITICAL",
+                                  ([_, value]) => value.severityType === "CRITICAL",
                               ).length
                             : "x"}
                     </div>
@@ -54,7 +54,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                     <div className="text-2xl font-bold">
                         {data
                             ? Object.entries(data).filter(
-                                  ([_, value]) => value.severity === "RESOLVED",
+                                  ([_, value]) => value.severityType === "RESOLVED",
                               ).length
                             : "x"}
                     </div>
@@ -81,19 +81,19 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                 )}
                                 onClick={() => handleSelect(emergency.id)}
                             >
-                                {emergency.severity === "CRITICAL" && (
+                                {emergency.severityType === "CRITICAL" && (
                                     <AlertCircle
                                         className="mr-3 min-w-6 text-red-500"
                                         size={24}
                                     />
                                 )}
-                                {emergency.severity === "MODERATE" && (
+                                {emergency.severityType === "MODERATE" && (
                                     <AlertTriangle
                                         className="mr-3 min-w-6 text-orange-500"
                                         size={24}
                                     />
                                 )}
-                                {emergency.severity === "RESOLVED" && (
+                                 {emergency.severityType === "RESOLVED" && (
                                     <ShieldCheck
                                         className="mr-3 min-w-6 text-green-500"
                                         size={24}
@@ -110,19 +110,19 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                         ).toLocaleTimeString()}
                                     </div>
                                 </CardContent>
-                                {emergency.severity ? (
+                                {emergency.severityType ? (
                                     <Badge
                                         className={cn(
                                             "min-w-fit uppercase",
-                                            emergency.severity === "CRITICAL"
+                                            emergency.severityType === "CRITICAL"
                                                 ? "bg-red-500 hover:bg-red-500/80"
-                                                : emergency.severity ===
+                                                : emergency.severityType ===
                                                     "MODERATE"
                                                   ? "bg-yellow-500 hover:bg-yellow-500/80"
                                                   : "bg-green-500 hover:bg-green-500/80",
                                         )}
                                     >
-                                        {emergency.severity}
+                                        {emergency.severityType}
                                     </Badge>
                                 ) : null}
                             </Card>

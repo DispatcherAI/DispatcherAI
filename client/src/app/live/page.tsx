@@ -47,7 +47,7 @@ export type Call = {
     phone: string;
     recommendation: string;
     location: string;
-    severity?: "CRITICAL" | "MODERATE" | "RESOLVED";
+    severityType?: "CRITICAL" | "MODERATE" | "RESOLVED";
     summary: string;
     time: string; // ISO Date String
     title?: string;
@@ -111,7 +111,7 @@ const Page = () => {
             const newData = { ...data };
             Object.keys(newData).forEach((key) => {
                 if (newResolvedIds.includes(newData[key].id)) {
-                    newData[key].severity = "RESOLVED";
+                    newData[key].severityType = "RESOLVED";
                 }
             });
 
@@ -146,7 +146,7 @@ const Page = () => {
                             id: value.id || key,
                             title: value.title || `${value.type || 'Unknown Severity'} on ${value.location || 'Unknown Location'}`,
                             time: value.time || new Date().toISOString(),
-                            severity: value.severity || 'MODERATE',
+                            severityType: value.severityType || 'MODERATE',
                             location_name: value.location_name || 'Unknown Location',
                             name: value.name || 'Loading Name',
                             phone: value.phone || 'Loading Phone',
@@ -154,6 +154,7 @@ const Page = () => {
                             summary: value.summary || 'Unknown Summary',
                             transcript: value.transcript || [],
                             type: value.type || 'Unknown Type',
+                            location: value.location || 'Unknown Location',
                         };
                     });
                     setData(formattedData);

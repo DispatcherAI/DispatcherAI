@@ -43,7 +43,7 @@ async def populate_test_data():
     redis_client = await get_redis_client()
     sample_data = {
         #? sample data based on the Prisma Call Schema
-        "call:1": {"id": "1", "location": "123 Main St", "type": "Medical", "severityType": "CRITICAL", "status": "Active"},
+        "call:1": {"id": "1", "location": "123 Main St", "type": "Medical", "severityType": "MODERATE", "status": "Active"},
         "call:2": {"id": "2", "location": "456 Elm St", "type": "Fire", "severityType": "CRITICAL", "status": "Active"},
         "call:3": {"id": "3", "location": "789 Oak St", "type": "Robbery", "severityType": "CRITICAL", "status": "Resolved"}
     }
