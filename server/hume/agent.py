@@ -5,7 +5,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 import inflect
 from fastapi import WebSocket, APIRouter, WebSocketDisconnect
-from server.evals import eval, hume_eval
+from server.scripts.evals import eval, hume_eval
 import asyncio
 import json
 import uuid
