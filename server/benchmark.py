@@ -8,8 +8,12 @@ from tensorflow.keras.models import load_model
 import torch
 import json
 import tensorflow as tf
-import ollama
+import openai
 import os
+from openai import OpenAI
+
+# Initialize the client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 custom_model = load_model('server/prediction/trained_model.h5')
 
@@ -17,29 +21,34 @@ with open('server/prediction/tokenizer.json', 'r') as f:
     tokenizer_json = json.load(f) # load tokenizer file
     custom_tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(tokenizer_json) # load a tokenizer
 
-MISTRAL_MODEL_PATH = "mistral" # use ollama to load the mistral model
-# HUGGINGFACE_TOKEN = os.getenv("HF_TOKEN")
-# login(token = HUGGINGFACE_TOKEN)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-print(f"Using model: {MISTRAL_MODEL_PATH}")
-# DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def custom_model_predict(input_text):
+    sequence = custom_tokenizer.texts_to_sequences([input_text])
+    padded_sequence = pad_sequences(sequence, maxlen = 100)
+    prediction = custom_model.predict(padded_sequence)
+   
+    return prediction
 
-#use ollama to load the mistral model
+def generate_prompt_911(messages):
+    return messages
 
-# set up the mistral model
-def setup_mistral_model():
-  
-    return None, None  
-
-
-
-def prepare_custom_input(text, max_length = 50):
-    sequence = custom_tokenizer.texts_to_sequences([text])
-    return pad_sequences(sequence, maxlen = max_length, padding = 'post', truncating = 'post')
-
-def custom_model_predict(input_text): # create function to predict with the custom model
-    input_seq = prepare_custom_input(input_text)
-    return custom_model.predict(input_seq)
+def gpt4_predict(input_text):
+    messages = [{"role": "system", "content": "You are a 911 operator. Your job is to handle emergency calls professionally and efficiently. Keep the response short and concise."},
+                {"role": "user", "content": input_text}]
+    
+    try:
+        print(f"Starting GPT-4 Prediction for input: {input_text[:20]}...")
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=100
+        )
+        print("GPT-4 Prediction completed")
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 class TimeoutException(Exception):
     pass
@@ -47,33 +56,13 @@ class TimeoutException(Exception):
 def timeout_handler(signum, frame):
     raise TimeoutException("Function call timed out")
 
-# prepare input for mistral model
-def generate_prompt_911(messages): # create function to generate a prompt for the mistral model
-    prompt = "You are a 911 operator. Your job is to handle emergency calls professionally and efficiently. keep the response short and concise.\n\n"
-    for message in messages:
-        role = "Operator" if message['role'] == 'assistant' else 'Caller' 
-        prompt += f"{role}: {message['content']}\n" # add the role and content to the prompt
-    prompt += "Operator:" # set the end of the prompt
-    return prompt
-
-def mistral_predict(input_text):
-    prompt = generate_prompt_911([{"role": "user", "content": input_text}])
-    
-    try:
-        print(f"Starting Mistral prediction for input: {input_text[:20]}...")
-        response = ollama.generate(model='mistral', prompt=prompt)
-        print("Mistral prediction completed successfully")
-        return response['response']
-    except Exception as e:
-        print(f"Mistral prediction failed: {str(e)}")
-        return None
 
 # create a function to benchmark the performance of the custom model
 def benchmark_model(input_texts, num_runs = 10):
     # initialize dictionary to store the time results for each model 
     results = {
         'Custom Model': [],
-        'Mistral Model': []
+        'GPT-4 Model': []
     }
 
     for i, text in enumerate(input_texts): # for each input text
@@ -92,14 +81,14 @@ def benchmark_model(input_texts, num_runs = 10):
         mistral_times = []
         for _ in range(num_runs):
             start_time = time.time()
-            result = mistral_predict(text)
+            result = gpt4_predict(text)
             if result is not None:
                 end_time = time.time()
                 mistral_times.append(end_time - start_time)
         if mistral_times:
-            results['Mistral Model'].append(np.mean(mistral_times))
+            results['GPT-4 Model'].append(np.mean(mistral_times))
         else:
-            results['Mistral Model'].append(None)
+            results['GPT-4 Model'].append(None)
         
         print(f"Completed input {i+1}/{len(input_texts)}")
     
@@ -108,7 +97,7 @@ def benchmark_model(input_texts, num_runs = 10):
 # plot the results
 def plot_results(results):
     custom_latencies = results['Custom Model']
-    mistral_latencies = results['Mistral Model']
+    mistral_latencies = results['GPT-4 Model']
 
     plt.figure(figsize = (10, 6))
     plt.boxplot([custom_latencies, mistral_latencies], tick_labels = ['Custom Model', 'Mistral Model'])
@@ -137,7 +126,7 @@ if __name__ == "__main__":
 
         print("Average Latencies:")
         print(f"Custom Model: {np.mean(results['Custom Model']):.4f} seconds")
-        print(f"Mistral Model: {np.mean(results['Mistral Model']):.4f} seconds")
+        print(f"GPT-4 Model: {np.mean(results['Mistral Model']):.4f} seconds")
         print("Latency comparison plot saved as 'latency_comparison.png'")
     except Exception as e:
         print(f"An error occurred: {e}")
