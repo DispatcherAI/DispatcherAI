@@ -103,7 +103,7 @@ def plot_results(results):
     plt.boxplot([custom_latencies, mistral_latencies], tick_labels = ['Custom Model', 'Mistral Model'])
     plt.ylabel('Latency (seconds)')
     plt.title('Model Latency Comparison')
-    plt.savefig('server/benchmark/latency_comparison.png')
+    plt.savefig('server/benchmarking/latency_comparison')
     print("Plot saved as 'latency_comparison.png'")
     plt.close()
 
