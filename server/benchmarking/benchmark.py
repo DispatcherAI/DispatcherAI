@@ -77,16 +77,16 @@ def benchmark_model(input_texts, num_runs = 10):
             custom_times.append(end_time - start_time)
         results['Custom Model'].append(np.mean(custom_times)) # append the mean times to the results dictionary for the custom model
 
-        # benchmark the mistral model
-        mistral_times = []
+        # benchmark the gpt-4 model
+        gpt4_times = []
         for _ in range(num_runs):
             start_time = time.time()
             result = gpt4_predict(text)
             if result is not None:
                 end_time = time.time()
-                mistral_times.append(end_time - start_time)
-        if mistral_times:
-            results['GPT-4 Model'].append(np.mean(mistral_times))
+                gpt4_times.append(end_time - start_time)
+        if gpt4_times:
+            results['GPT-4 Model'].append(np.mean(gpt4_times))
         else:
             results['GPT-4 Model'].append(None)
         
@@ -97,14 +97,27 @@ def benchmark_model(input_texts, num_runs = 10):
 # plot the results
 def plot_results(results):
     custom_latencies = results['Custom Model']
-    mistral_latencies = results['GPT-4 Model']
+    gpt4_latencies = results['GPT-4 Model']
 
-    plt.figure(figsize = (10, 6))
-    plt.boxplot([custom_latencies, mistral_latencies], tick_labels = ['Custom Model', 'Mistral Model'])
+    plt.figure(figsize=(12, 6))
+    
+    # Create x-axis values (assuming each latency measurement is a sequential time point)
+    x = range(1, len(custom_latencies) + 1)
+    
+    plt.plot(x, custom_latencies, label='Custom Model', marker='o')
+    plt.plot(x, gpt4_latencies, label='GPT-4 Model', marker='s')
+    
+    plt.xlabel('Sample')
     plt.ylabel('Latency (seconds)')
-    plt.title('Model Latency Comparison')
-    plt.savefig('server/benchmarking/latency_comparison')
-    print("Plot saved as 'latency_comparison.png'")
+    plt.title('Model Latency Comparison Over Time')
+    plt.legend()
+    plt.grid(True, which='both', linestyle='--', linewidth=1.5)
+    
+    # Ensure the directory exists
+    os.makedirs('server/benchmarking', exist_ok=True)
+    
+    plt.savefig('server/benchmarking/latency_comparison_over_time.png')
+    print("Plot saved as 'latency_comparison_over_time.png'")
     plt.close()
 
 if __name__ == "__main__":
@@ -113,6 +126,10 @@ if __name__ == "__main__":
         test_inputs = [
             "Hello, the house is burning! help!",
             "What's the weather like today?",
+            "I'm having a heart attack! Please save me!",
+            "My car is in the middle of the road and it's on fire!",
+            "My neighbors are being very loud and throwing some sort of party",
+            "Hey can I file my insurance and tax reports?"
         ]
 
         print("Model loaded, starting benchmark...")
@@ -126,7 +143,7 @@ if __name__ == "__main__":
 
         print("Average Latencies:")
         print(f"Custom Model: {np.mean(results['Custom Model']):.4f} seconds")
-        print(f"GPT-4 Model: {np.mean(results['Mistral Model']):.4f} seconds")
+        print(f"GPT-4 Model: {np.mean(results['GPT-4 Model']):.4f} seconds")
         print("Latency comparison plot saved as 'latency_comparison.png'")
     except Exception as e:
         print(f"An error occurred: {e}")
