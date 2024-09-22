@@ -10,9 +10,13 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-import { CustomSettingsDrawer } from "./CustomSettingsDrawer";
+import { CustomSettingsDrawer } from "../live/CustomSettingsDrawer";
 
-const Header = ({ connected }: { connected: boolean }) => {
+interface HeaderProps {
+    connected?: boolean;
+}
+
+const Header = ({ connected = false }: HeaderProps) => {
     const [time, setTime] = useState("");
 
     useEffect(() => {

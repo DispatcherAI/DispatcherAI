@@ -89,8 +89,6 @@ export default function Page() {
                     </div>
                 ))}
             </GridLayout>
-
-            {/* <Map center={{ lat: 37.867989, lng: -122.271507 }} pins={[]} /> */}
         </div>
     );
 }

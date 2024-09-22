@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
 import React from "react";
-import Sidebar from "../../components/live/Sidebar";
+import type { Metadata } from "next";
+
+import Sidebar from "../../components/dashboard/Sidebar";
 
 export const metadata: Metadata = {
     title: "Call History — DispatcherAI",

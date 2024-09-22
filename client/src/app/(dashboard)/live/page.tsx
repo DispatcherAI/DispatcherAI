@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Header from "@/components/dashboard/Header";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
-import Header from "@/components/live/Header";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
@@ -168,7 +168,8 @@ const Page = () => {
 
     return (
         <div className="h-full max-h-[calc(100dvh-50px)]">
-            <Header connected={connected} />
+            {/* FIX ME -- disabled for layout purposes */}
+            {/* <Header connected={connected} /> */}
 
             <div className="relative flex h-full justify-between">
                 <EventPanel

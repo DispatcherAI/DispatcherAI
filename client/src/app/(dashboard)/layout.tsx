@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import Header from "@/components/dashboard/Header";
 
-import Sidebar from "../../components/live/Sidebar";
+import Sidebar from "../../components/dashboard/Sidebar";
 
 export const metadata: Metadata = {
-    title: "Live — DispatcherAI",
+    title: "Dashboard — DispatcherAI",
     icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
@@ -15,7 +16,11 @@ export default function RootLayout({
     return (
         <div className="flex h-[100dvh] max-h-[100dvh] min-w-[100dvw] max-w-[100dvw] overflow-hidden">
             <Sidebar />
-            <div className="max-h-[100dvh] w-full">{children}</div>
+
+            <div className="max-h-[100dvh] w-full">
+                <Header />
+                {children}
+            </div>
         </div>
     );
 }
