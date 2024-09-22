@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CallProps } from "@/app/live/page";
+import { CallProps } from "@/app/(dashboard)/live/page";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {

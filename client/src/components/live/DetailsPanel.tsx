@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Call } from "@/app/live/page";
+import { Call } from "@/app/(dashboard)/live/page";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -105,7 +105,7 @@ const DetailsPanel = ({ call, handleResolve }: DetailsPanelProps) => {
                             className="h-[200px] w-full bg-cover bg-no-repeat"
                         />
                     ) : (
-                        <div className="duration-5000 h-[200px] w-full animate-pulse bg-gray-500" />
+                        <div className="h-[200px] w-full animate-pulse bg-gray-500 duration-5000" />
                     )}
                     {call && (
                         <div className="grid grid-cols-2">
