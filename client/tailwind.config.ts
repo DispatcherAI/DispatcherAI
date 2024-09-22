@@ -1,5 +1,12 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Other values!
+ */
+
+export const HEADER_HEIGHT = 50;
+export const MODULES_WIDTH = 350;
+
 const config = {
     darkMode: ["class"],
     content: [
@@ -76,6 +83,18 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+
+                dp: {
+                    // background
+                    background: "#1E1E1E",
+                    cards: "#2D2D2D",
+                    outline: "#515151",
+
+                    // text
+                    heading: "#FFFFFF",
+                    text: "#C5C5C5",
+                    input: "#DBDBDB",
+                },
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -99,6 +118,13 @@ const config = {
             },
             transitionDuration: {
                 "5000": "5000ms",
+            },
+            width: {
+                modules: `${MODULES_WIDTH}px`,
+            },
+            height: {
+                header: `${HEADER_HEIGHT}px`,
+                fullWithHeader: `calc(100dvh - ${HEADER_HEIGHT}px)`,
             },
         },
     },

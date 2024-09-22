@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CallProps } from "@/app/(dashboard)/live/page";
 import { cn } from "@/lib/utils";
-import { HEADER_HEIGHT } from "@/styles/shared";
+import { HEADER_HEIGHT } from "@/root/tailwind.config";
 import { motion } from "framer-motion";
 import {
     ArrowLeftRightIcon,

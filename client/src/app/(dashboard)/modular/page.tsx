@@ -3,10 +3,11 @@
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { ModulesPanel } from "@/components/modular/map/ModulesPanel";
 import { cn } from "@/lib/utils";
-import { HEADER_HEIGHT } from "@/styles/shared";
+import { HEADER_HEIGHT, MODULES_WIDTH } from "@/root/tailwind.config";
 import GridLayout from "react-grid-layout";
 
 const Map = dynamic(() => import("@/components/modular/map/Map"), {
@@ -16,27 +17,13 @@ const Map = dynamic(() => import("@/components/modular/map/Map"), {
 
 export default function Page() {
     const layout = [
-        // { i: "tl", x: 0, y: 0, w: 1, h: 4, static: true },
-        // { i: "bl", x: 0, y: 17.5, w: 1, h: 4, static: true },
-        {
-            i: "mid",
-            x: 2,
-            y: 1,
-            w: 8,
-            h: 3,
-            static: true,
-            hidden: true,
-            showOnDrag: true,
-            className:
-                "stripes stripes-gray-500 stripes-opacity-30 border-gray-500 z-10 border-opacity-30",
-        },
-        { i: "b", x: 1, y: 0, w: 3, h: 1, minW: 2, maxW: 4 },
-        { i: "c", x: 4, y: 0, w: 1, h: 1 },
-        { i: "d", x: 5, y: 0, w: 1, h: 1 },
-        { i: "e", x: 5, y: 0, w: 1, h: 1 },
+        { i: "a", x: 0, y: 0, w: 1, h: 2, maxW: 1, maxH: 4 },
+        { i: "b", x: 0, y: 2, w: 1, h: 2, maxW: 1, maxH: 4 },
+        { i: "c", x: 0, y: 4, w: 1, h: 2, maxW: 1, maxH: 4 },
     ];
 
     const [dragging, setDragging] = useState(false);
+    const [innerHeight, setInnerHeight] = useState<number>();
 
     function handleDragStart() {
         setDragging(true);
@@ -46,50 +33,44 @@ export default function Page() {
         setDragging(false);
     }
 
-    function showItem(hidden?: boolean, showOnDrag?: boolean) {
-        if (!hidden) return true;
-        if (hidden && !showOnDrag) return false;
-        if (hidden && showOnDrag && dragging) return true;
-
-        return false;
-    }
+    useEffect(() => {
+        setInnerHeight(window.innerHeight);
+    }, []);
 
     return (
-        <div className="max-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-w-[100dvw] max-w-[100dvw]">
+        <div className={`h-fullWithHeader w-full`}>
             <Map center={{ lat: 37.867989, lng: -122.271507 }} pins={[]} />
 
-            <GridLayout
-                className={cn(
-                    "layout",
-                    `max-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-w-[100dvw] max-w-[100dvw] border-2 border-green-500`,
-                )}
-                style={{ maxHeight: "100dvh" }}
-                layout={layout}
-                cols={12}
-                rowHeight={window.innerHeight / 10}
-                width={window.innerWidth}
-                compactType={null}
-                preventCollision={true}
-                margin={[0, 0]}
-                isBounded={true}
-                onDragStart={handleDragStart}
-                onDragStop={handleDragStop}
-            >
-                {layout.map((item) => (
-                    <div
-                        key={item.i}
-                        className={cn(
-                            showItem(item.hidden, item.showOnDrag)
-                                ? ""
-                                : "hidden",
-                            "border-2 border-blue-500",
-                            item.className,
-                        )}
-                    >
-                        {item.i}
-                    </div>
-                ))}
-            </GridLayout>
+            <div className="flex-between w-modules ml-auto h-full flex-col">
+                <GridLayout
+                    className={cn(
+                        "layout",
+                        `w-modules h-full border-2 border-green-500`,
+                    )}
+                    layout={layout}
+                    cols={1}
+                    rowHeight={innerHeight ? innerHeight / 8 : undefined}
+                    width={MODULES_WIDTH}
+                    compactType={"vertical"}
+                    preventCollision={true}
+                    margin={[0, 0]}
+                    isBounded={true}
+                    onDragStart={handleDragStart}
+                    onDragStop={handleDragStop}
+                    resizeHandles={["sw"]}
+                >
+                    {layout.map((item) => (
+                        <div
+                            key={item.i}
+                            className={cn("border-2 border-blue-500")}
+                        >
+                            {item.i}
+                        </div>
+                    ))}
+                </GridLayout>
+
+                <ModulesPanel />
+            </div>
         </div>
     );
 }

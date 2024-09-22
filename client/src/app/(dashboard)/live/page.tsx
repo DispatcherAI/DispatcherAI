@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import Header from "@/components/dashboard/Header";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
-import { HEADER_HEIGHT } from "@/styles/shared";
+import { HEADER_HEIGHT } from "@/root/tailwind.config";
 
 import { MESSAGES } from "./messages";
 

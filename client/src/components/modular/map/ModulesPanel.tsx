@@ -3,7 +3,7 @@ import { TruckIcon } from "lucide-react";
 
 export function ModulesPanel() {
     return (
-        <div className="bg-dp-background">
+        <div className="w-modules mt-auto bg-dp-background">
             <div>
                 <p className="">Modules Panel</p>
             </div>

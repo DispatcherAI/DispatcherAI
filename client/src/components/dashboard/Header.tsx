@@ -9,7 +9,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { HEADER_HEIGHT } from "@/styles/shared";
 
 import { CustomSettingsDrawer } from "../live/CustomSettingsDrawer";
 
@@ -32,7 +31,7 @@ const Header = ({ connected = false }: HeaderProps) => {
 
     return (
         <div
-            className={`flex h-[${HEADER_HEIGHT}px] w-full items-center border-b-2 border-[#C2C2C2] bg-white px-5`}
+            className={`h-header flex w-full items-center border-b-2 border-[#C2C2C2] bg-white px-5`}
         >
             <div className="flex-between w-full text-sm font-bold uppercase text-gray-800">
                 <div className="flex-center space-x-3">
