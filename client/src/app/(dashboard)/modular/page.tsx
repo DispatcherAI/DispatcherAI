@@ -6,6 +6,7 @@ import "react-resizable/css/styles.css";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+import { HEADER_HEIGHT } from "@/styles/shared";
 import GridLayout from "react-grid-layout";
 
 const Map = dynamic(() => import("@/components/modular/map/Map"), {
@@ -54,13 +55,13 @@ export default function Page() {
     }
 
     return (
-        <div className="max-h-[100dvh] min-h-[100dvh] min-w-[100dvw] max-w-[100dvw]">
+        <div className="max-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-w-[100dvw] max-w-[100dvw]">
             <Map center={{ lat: 37.867989, lng: -122.271507 }} pins={[]} />
 
             <GridLayout
                 className={cn(
                     "layout",
-                    "max-h-[100dvh] min-h-[100dvh] min-w-[100dvw] max-w-[100dvw] border-2 border-green-500",
+                    `max-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] min-w-[100dvw] max-w-[100dvw] border-2 border-green-500`,
                 )}
                 style={{ maxHeight: "100dvh" }}
                 layout={layout}

@@ -6,6 +6,7 @@ import Header from "@/components/dashboard/Header";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
+import { HEADER_HEIGHT } from "@/styles/shared";
 
 import { MESSAGES } from "./messages";
 
@@ -167,7 +168,7 @@ const Page = () => {
     }, []);
 
     return (
-        <div className="h-full max-h-[calc(100dvh-50px)]">
+        <div className={`h-full max-h-[calc(100dvh-${HEADER_HEIGHT}px)]`}>
             {/* FIX ME -- disabled for layout purposes */}
             {/* <Header connected={connected} /> */}
 

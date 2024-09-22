@@ -2,7 +2,7 @@
     position: absolute;
     bottom: 0;
     width: calc(100dvw - 48px);
-    height: calc(100dvh - 50px);
+    height: calc(100dvh - 50px); /* header height */
     z-index: 0;
 }
 
