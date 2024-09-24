@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { CallProps } from "@/app/live/page";
+import { CallProps } from "@/app/(dashboard)/live/page";
 import { cn } from "@/lib/utils";
+import { HEADER_HEIGHT } from "@/root/tailwind.config";
 import { motion } from "framer-motion";
 import {
     ArrowLeftRightIcon,
@@ -50,7 +51,7 @@ const TranscriptPanel = ({
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className={cn(
-                "fixed right-0 top-[50px] min-h-[calc(100dvh-50px)] w-[400px] overflow-y-auto bg-white shadow-lg",
+                `fixed right-0 top-[${HEADER_HEIGHT}px] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] w-[400px] overflow-y-auto bg-white shadow-lg`,
                 transferred && "brightness-90",
             )}
         >
@@ -122,7 +123,7 @@ const TranscriptPanel = ({
                             variant={"outline"}
                             className="pointer-events-none w-full space-x-2 border-2 border-blue-500 text-black"
                         >
-                            <HeadsetIcon /> <p>Transfered to Human Operator</p>
+                            <HeadsetIcon /> <p>Transferred to Human Operator</p>
                         </Button>
                     ) : loading ? (
                         <Button className="w-full space-x-2 bg-green-500 text-white hover:bg-green-500/80">

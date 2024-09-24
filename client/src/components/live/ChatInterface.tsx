@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { CallProps } from "@/app/live/page";
+import { CallProps } from "@/app/(dashboard)/live/page";
 import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
 

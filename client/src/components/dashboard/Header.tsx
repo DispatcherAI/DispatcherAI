@@ -10,9 +10,13 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-import { CustomSettingsDrawer } from "./CustomSettingsDrawer";
+import { CustomSettingsDrawer } from "../live/CustomSettingsDrawer";
 
-const Header = ({ connected }: { connected: boolean }) => {
+interface HeaderProps {
+    connected?: boolean;
+}
+
+const Header = ({ connected = false }: HeaderProps) => {
     const [time, setTime] = useState("");
 
     useEffect(() => {
@@ -26,7 +30,9 @@ const Header = ({ connected }: { connected: boolean }) => {
     }, []);
 
     return (
-        <div className="flex h-[50px] w-full items-center border-b-2 border-[#C2C2C2] bg-white px-5">
+        <div
+            className={`h-header flex w-full items-center border-b-2 border-[#C2C2C2] bg-white px-5`}
+        >
             <div className="flex-between w-full text-sm font-bold uppercase text-gray-800">
                 <div className="flex-center space-x-3">
                     <div className="pl-1" /* handles the offset width */>

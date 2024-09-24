@@ -13,7 +13,7 @@ const Sidebar = () => {
     const { isSignedIn } = useAuth();
 
     return (
-        <div className="flex-between w-12 flex-col items-center border-r-2 border-[#C2C2C2] bg-[#F6F8FC] p-3">
+        <div className="flex-between z-50 w-12 flex-col items-center border-r-2 border-[#C2C2C2] bg-[#F6F8FC] p-3">
             <div className="">
                 <div className="flex-center flex-col rounded-full ">
                     <Link href="/">

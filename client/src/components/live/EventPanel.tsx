@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { Call } from "@/app/live/page";
+import { Call } from "@/app/(dashboard)/live/page";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

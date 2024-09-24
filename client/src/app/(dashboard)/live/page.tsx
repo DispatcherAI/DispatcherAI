@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
-import Header from "@/components/live/Header";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
+import { HEADER_HEIGHT } from "@/root/tailwind.config";
 
 import { MESSAGES } from "./messages";
 
@@ -167,8 +167,9 @@ const Page = () => {
     }, []);
 
     return (
-        <div className="h-full max-h-[calc(100dvh-50px)]">
-            <Header connected={connected} />
+        <div className={`h-full max-h-[calc(100dvh-${HEADER_HEIGHT}px)]`}>
+            {/* FIX ME -- disabled for layout purposes */}
+            {/* <Header connected={connected} /> */}
 
             <div className="relative flex h-full justify-between">
                 <EventPanel
