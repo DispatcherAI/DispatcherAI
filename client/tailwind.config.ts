@@ -94,6 +94,12 @@ const config = {
                     heading: "#FFFFFF",
                     text: "#C5C5C5",
                     input: "#DBDBDB",
+
+                    // colors
+                    accent: "#69D2FF",
+                    safe: "#69D2FF",
+                    warning: "#69D2FF",
+                    critical: "#69D2FF",
                 },
             },
             borderRadius: {
@@ -119,6 +125,7 @@ const config = {
             transitionDuration: {
                 "5000": "5000ms",
             },
+            spacing: { 15: "60px" },
             width: {
                 modules: `${MODULES_WIDTH}px`,
             },

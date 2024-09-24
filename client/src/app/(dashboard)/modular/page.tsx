@@ -5,9 +5,9 @@ import "react-resizable/css/styles.css";
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { ModulesPanel } from "@/components/modular/map/ModulesPanel";
+import { ModulesPanel } from "@/components/modular/modules/ModulesPanel";
 import { cn } from "@/lib/utils";
-import { HEADER_HEIGHT, MODULES_WIDTH } from "@/root/tailwind.config";
+import { MODULES_WIDTH } from "@/root/tailwind.config";
 import GridLayout from "react-grid-layout";
 
 const Map = dynamic(() => import("@/components/modular/map/Map"), {
@@ -18,8 +18,8 @@ const Map = dynamic(() => import("@/components/modular/map/Map"), {
 export default function Page() {
     const layout = [
         { i: "a", x: 0, y: 0, w: 1, h: 2, maxW: 1, maxH: 4 },
-        { i: "b", x: 0, y: 2, w: 1, h: 2, maxW: 1, maxH: 4 },
-        { i: "c", x: 0, y: 4, w: 1, h: 2, maxW: 1, maxH: 4 },
+        // { i: "b", x: 0, y: 2, w: 1, h: 2, maxW: 1, maxH: 4 },
+        // { i: "c", x: 0, y: 4, w: 1, h: 2, maxW: 1, maxH: 4 },
     ];
 
     const [dragging, setDragging] = useState(false);
