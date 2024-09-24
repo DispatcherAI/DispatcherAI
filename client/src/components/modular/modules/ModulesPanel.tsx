@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { TruckIcon } from "lucide-react";
+
+import { MODULE_BUTTONS } from "./buttons-data";
 
 export function ModulesPanel() {
     return (
@@ -14,27 +15,29 @@ export function ModulesPanel() {
             </div>
 
             <div className="flex-between p-3">
-                <Button
-                    className={cn(
-                        "group size-15 flex-col space-y-1 rounded-none bg-[#292929] p-2", // fix me: color is not in design system
-                        "hover:bg-dp-cards hover:ring-1 hover:ring-dp-accent",
-                    )}
-                >
-                    <TruckIcon
+                {MODULE_BUTTONS.map((button) => (
+                    <Button
                         className={cn(
-                            "stroke-dp-text",
-                            "group-hover:stroke-dp-heading",
-                        )}
-                    />
-                    <p
-                        className={cn(
-                            "text-xs font-semibold text-dp-text",
-                            "group-hover:text-dp-heading",
+                            "group size-15 flex-col space-y-1 rounded-none bg-[#292929] p-2",
+                            "hover:bg-dp-cards hover:ring-1 hover:ring-dp-accent",
                         )}
                     >
-                        Units
-                    </p>
-                </Button>
+                        <button.icon
+                            className={cn(
+                                "stroke-dp-text",
+                                "group-hover:stroke-dp-heading",
+                            )}
+                        />
+                        <p
+                            className={cn(
+                                "text-xs font-semibold text-dp-text",
+                                "group-hover:text-dp-heading",
+                            )}
+                        >
+                            {button.label}
+                        </p>
+                    </Button>
+                ))}
             </div>
         </div>
     );
