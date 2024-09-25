@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation";
 
 import { Separator } from "../ui/separator";
-import { SidebarAccordion } from "./sidebar-accordion";
-import { NAV_ACCORDIONS, NAV_LINKS } from "./sidebar-constants";
+// import { SidebarAccordion } from "./sidebar-accordion";
+import { /*NAV_ACCORDIONS,*/ NAV_LINKS } from "./sidebar-constants";
 import { SidebarLink } from "./sidebar-link";
 import { useOpenItemHook } from "./useOpenItem";
 import { useSidebar } from "./useSidebar";

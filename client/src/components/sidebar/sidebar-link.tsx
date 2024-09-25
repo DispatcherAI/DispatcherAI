@@ -28,6 +28,7 @@ export function SidebarLink({
                 className={cn(
                     "flex space-x-2 justify-center bg-transparent font-normal w-full",
                     isOpen && "justify-start",
+                    !isOpen && "w-fit max-w-full",
                     path === item.href && "text-dp-primary"
                 )}
                 disabled={item.disabled}
