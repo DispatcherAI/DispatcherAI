@@ -22,6 +22,7 @@ export function SidebarNav({ setOpen }: SidebarNavProps) {
         <nav className="flex flex-col gap-y-2 py-5">
             {NAV_LINKS.map((item) => (
                 <SidebarLink
+                    key={item.title}
                     item={item}
                     isOpen={isOpen}
                     path={path}
