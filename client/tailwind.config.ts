@@ -88,7 +88,10 @@ const config = {
                     // background
                     background: "#1E1E1E",
                     cards: "#2D2D2D",
-                    outline: "#515151",
+
+                    outline: "rgba(255,255,255,0.25)",
+
+                    hoverCard: "#3C3C3C",
 
                     // text
                     heading: "#FFFFFF",
