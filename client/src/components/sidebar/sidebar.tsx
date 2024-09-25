@@ -44,15 +44,11 @@ export function Sidebar({ className }: SidebarProps) {
 
             <Separator className="bg-dp-outlineNotSelected h-[1px]" />
 
-            <div className="space-y-4 py-4">
-                <div className="px-3 py-2">
-                    <div className="mt-3 space-y-1">
-                        <SideNav
-                            className="text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100"
-                            items={NAV_ITEMS}
-                        />
-                    </div>
-                </div>
+            <div className="py-5">
+                <SideNav
+                    className="text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100"
+                    items={NAV_ITEMS}
+                />
             </div>
         </nav>
     );

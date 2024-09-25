@@ -51,7 +51,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                     >
                         <AccordionItem
                             value={item.title}
-                            className="border-none "
+                            className="border-none"
                         >
                             <AccordionTrigger
                                 className={cn(
@@ -66,7 +66,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                                 </div>
                                 <div
                                     className={cn(
-                                        "absolute left-12 text-base duration-200 ",
+                                        "absolute left-12 text-base duration-200",
                                         !isOpen && className
                                     )}
                                 >
