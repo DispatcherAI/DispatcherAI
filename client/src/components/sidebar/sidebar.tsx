@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { Separator } from "../ui/separator";
+import { SidebarAvatar } from "./sidebar-avatar";
 import { NAV_ITEMS } from "./sidebar-constants";
 import { SideNav } from "./sidebar-nav";
 import { SidebarToggle } from "./sidebar-toggle";
@@ -26,7 +27,7 @@ export function Sidebar({ className }: SidebarProps) {
     return (
         <nav
             className={cn(
-                `relative z-50 hidden h-screen border-r bg-dp-background px-2 pb-4 pt-3 md:block`,
+                `border-dp-outlineNotSelected relative z-50 hidden h-screen border-r-2 bg-dp-background px-2 pb-4 pt-3 md:block`,
                 status && "duration-500",
                 isOpen ? "w-52 min-w-52" : "w-[50px] min-w-[50px]",
                 className
@@ -37,9 +38,11 @@ export function Sidebar({ className }: SidebarProps) {
                 handleToggle={handleToggle}
             />
 
-            <Separator className="bg-dp-outlineNotSelected my-2 h-[1px]" />
+            <Separator className="bg-dp-outlineNotSelected mt-2 h-[1px]" />
 
-            <div></div>
+            <SidebarAvatar isOpen={isOpen} />
+
+            <Separator className="bg-dp-outlineNotSelected h-[1px]" />
 
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
