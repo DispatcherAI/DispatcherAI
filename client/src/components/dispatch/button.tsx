@@ -8,16 +8,18 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default:
-                    "bg-primary text-primary-foreground hover:bg-primary/90",
+                default: cn(
+                    "text-dp-card bg-dp-primary transition-all",
+                    "hover:bg-dp-primary2"
+                ),
                 secondary: cn(
-                    "bg-[#292929] text-dp-text transition-all",
-                    "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline hover:text-dp-heading"
+                    "bg-dp-card text-dp-text transition-all",
+                    "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline hover:text-dp-headingText"
                 ),
             },
             size: {
-                default: "h-8 px-4 py-2",
-                mini: "h-9 px-3",
+                default: "h-8 px-4 py-2 text-xs",
+                mini: "h-5 px-4 py-[2px] text-xxs",
             },
         },
         defaultVariants: {

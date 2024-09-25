@@ -133,6 +133,9 @@ const config = {
                 header: `${HEADER_HEIGHT}px`,
                 fullWithHeader: `calc(100dvh - ${HEADER_HEIGHT}px)`,
             },
+            fontSize: {
+                xxs: ["10px", "12px"],
+            },
         },
     },
     plugins: [
