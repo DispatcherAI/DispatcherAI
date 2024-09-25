@@ -26,29 +26,28 @@ const config = {
         },
         patterns: {
             opacities: {
-                100: "1",
-                80: ".80",
-                60: ".60",
-                40: ".40",
-                20: ".20",
-                10: ".10",
-                5: ".05",
+                "5": ".05",
+                "10": ".10",
+                "20": ".20",
+                "40": ".40",
+                "60": ".60",
+                "80": ".80",
+                "100": "1",
             },
             sizes: {
-                1: "0.25rem",
-                2: "0.5rem",
-                4: "1rem",
-                6: "1.5rem",
-                8: "2rem",
-                16: "4rem",
-                20: "5rem",
-                24: "6rem",
-                32: "8rem",
+                "1": "0.25rem",
+                "2": "0.5rem",
+                "4": "1rem",
+                "6": "1.5rem",
+                "8": "2rem",
+                "16": "4rem",
+                "20": "5rem",
+                "24": "6rem",
+                "32": "8rem",
             },
         },
         extend: {
             colors: {
-                // shadcn
                 text: "#020817",
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -83,19 +82,14 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
-
                 dp: {
-                    // background
                     background: "#1E1E1E",
                     cards: "#2D2D2D",
                     outline: "#515151",
-
-                    // text
+                    outlineNotSelected: "#3B3B3B",
                     heading: "#FFFFFF",
                     text: "#C5C5C5",
                     input: "#DBDBDB",
-
-                    // colors
                     accent: "#69D2FF",
                     safe: "#69D2FF",
                     warning: "#69D2FF",
@@ -110,12 +104,20 @@ const config = {
             },
             keyframes: {
                 "accordion-down": {
-                    from: { height: "0" },
-                    to: { height: "var(--radix-accordion-content-height)" },
+                    from: {
+                        height: "0",
+                    },
+                    to: {
+                        height: "var(--radix-accordion-content-height)",
+                    },
                 },
                 "accordion-up": {
-                    from: { height: "var(--radix-accordion-content-height)" },
-                    to: { height: "0" },
+                    from: {
+                        height: "var(--radix-accordion-content-height)",
+                    },
+                    to: {
+                        height: "0",
+                    },
                 },
             },
             animation: {
@@ -125,13 +127,18 @@ const config = {
             transitionDuration: {
                 "5000": "5000ms",
             },
-            spacing: { 15: "60px" },
+            spacing: {
+                "15": "60px",
+            },
             width: {
                 modules: `${MODULES_WIDTH}px`,
             },
             height: {
                 header: `${HEADER_HEIGHT}px`,
                 fullWithHeader: `calc(100dvh - ${HEADER_HEIGHT}px)`,
+            },
+            fontSize: {
+                xxs: ["10px", "12px"],
             },
         },
     },
