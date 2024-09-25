@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 
 import { Separator } from "../ui/separator";
 import { SidebarAvatar } from "./sidebar-avatar";
-import { NAV_ITEMS } from "./sidebar-constants";
 import { SidebarNav } from "./sidebar-nav";
 import { SidebarToggle } from "./sidebar-toggle";
 import { useSidebar } from "./useSidebar";
@@ -44,12 +43,7 @@ export function Sidebar({ className }: SidebarProps) {
 
             <Separator className="bg-dp-outlineNotSelected h-[1px]" />
 
-            <div className="py-5">
-                <SidebarNav
-                    className="text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100"
-                    items={NAV_ITEMS}
-                />
-            </div>
+            <SidebarNav />
         </nav>
     );
 }

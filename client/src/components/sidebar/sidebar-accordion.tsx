@@ -1,54 +1,93 @@
-"use client";
-
-import * as React from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { ChevronDownIcon } from "lucide-react";
 
-const Accordion = AccordionPrimitive.Root;
+import { buttonVariants } from "../dispatch/button";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "./sidebar-accordion-radix";
+import { NavAccordionItem } from "./sidebar-constants";
+import { useOpenItemHook } from "./useOpenItem";
+import { useSidebar } from "./useSidebar";
 
-const AccordionItem = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Item>,
-    React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-    <AccordionPrimitive.Item
-        ref={ref}
-        className={cn("border-b", className)}
-        {...props}
-    />
-));
-AccordionItem.displayName = "AccordionItem";
+interface SidebarAccordionProps {
+    item: NavAccordionItem;
+    path: string;
+    setOpen?: (open: boolean) => unknown;
+}
 
-const AccordionTrigger = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-    <AccordionPrimitive.Header className="flex">
-        <AccordionPrimitive.Trigger
-            ref={ref}
-            className={cn(
-                "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
-                className
-            )}
-            {...props}
+export function SidebarAccordion({
+    item,
+    path,
+    setOpen,
+}: SidebarAccordionProps) {
+    const { isOpen } = useSidebar();
+    const { openItem, setOpenItem } = useOpenItemHook({ isOpen, setOpen });
+
+    return (
+        <Accordion
+            type="single"
+            collapsible
+            className="space-y-2"
+            key={item.title}
+            value={openItem}
+            onValueChange={setOpenItem}
         >
-            {children}
-        </AccordionPrimitive.Trigger>
-    </AccordionPrimitive.Header>
-));
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
+            <AccordionItem
+                value={item.title}
+                className="border-none"
+            >
+                <AccordionTrigger
+                    className={cn(
+                        buttonVariants({ variant: "default" }),
+                        "group relative flex h-12 justify-between px-4 py-2 text-base duration-200 hover:bg-muted hover:no-underline"
+                    )}
+                >
+                    <div
+                        className={cn(
+                            "absolute left-12 text-base duration-200"
+                        )}
+                    >
+                        {item.title}
+                    </div>
 
-const AccordionContent = React.forwardRef<
-    React.ElementRef<typeof AccordionPrimitive.Content>,
-    React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-    <AccordionPrimitive.Content
-        ref={ref}
-        className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-        {...props}
-    >
-        <div className={cn("pb-4 pt-0", className)}>{children}</div>
-    </AccordionPrimitive.Content>
-));
-AccordionContent.displayName = AccordionPrimitive.Content.displayName;
+                    {isOpen && (
+                        <ChevronDownIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+                    )}
+                </AccordionTrigger>
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+                <AccordionContent className="mt-2 space-y-4 pb-1">
+                    {item.children?.map((child) => (
+                        <Link
+                            key={child.title}
+                            href={child.href}
+                            onClick={() => {
+                                if (setOpen) setOpen(false);
+                            }}
+                            className={cn(
+                                buttonVariants({
+                                    variant: "default",
+                                }),
+                                "group relative flex h-12 justify-start gap-x-3",
+                                path === child.href &&
+                                    "bg-muted font-bold hover:bg-muted"
+                            )}
+                        >
+                            <child.icon className={cn("h-5 w-5")} />
+                            <div
+                                className={cn(
+                                    "absolute left-12 text-base duration-200"
+                                )}
+                            >
+                                {child.title}
+                            </div>
+                        </Link>
+                    ))}
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+    );
+}

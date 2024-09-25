@@ -1,4 +1,5 @@
 import {
+    BookmarkIcon,
     BookOpenCheck,
     BoxesIcon,
     FolderIcon,
@@ -8,16 +9,19 @@ import {
     type LucideIcon,
 } from "lucide-react";
 
-export interface NavItem {
+export interface NavLinkItem {
     title: string;
     href: string;
     icon: LucideIcon;
-    isChildren?: boolean;
-    children?: NavItem[];
     disabled?: boolean;
 }
 
-export const NAV_ITEMS: NavItem[] = [
+export interface NavAccordionItem extends Omit<NavLinkItem, "href"> {
+    isChildren?: boolean;
+    children?: NavLinkItem[];
+}
+
+export const NAV_LINKS: NavLinkItem[] = [
     {
         title: "Live Dispatch",
         icon: LayoutDashboard,
@@ -47,10 +51,12 @@ export const NAV_ITEMS: NavItem[] = [
         href: "/",
         disabled: true,
     },
+];
+
+export const NAV_ACCORDIONS: NavAccordionItem[] = [
     {
-        title: "Example",
-        icon: BookOpenCheck,
-        href: "/example",
+        title: "Protocols",
+        icon: BookmarkIcon,
         isChildren: true,
         children: [
             {
