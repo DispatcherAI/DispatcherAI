@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import { Separator } from "../ui/separator";
 import { SidebarAvatar } from "./sidebar-avatar";
 import { NAV_ITEMS } from "./sidebar-constants";
-import { SideNav } from "./sidebar-nav";
+import { SidebarNav } from "./sidebar-nav";
 import { SidebarToggle } from "./sidebar-toggle";
 import { useSidebar } from "./useSidebar";
 
@@ -18,11 +18,11 @@ export function Sidebar({ className }: SidebarProps) {
     const { isOpen, toggle } = useSidebar();
     const [status, setStatus] = useState(false);
 
-    const handleToggle = () => {
+    const handleToggle = useCallback(() => {
         setStatus(true);
         toggle();
         setTimeout(() => setStatus(false), 500);
-    };
+    }, []);
 
     return (
         <nav
@@ -45,7 +45,7 @@ export function Sidebar({ className }: SidebarProps) {
             <Separator className="bg-dp-outlineNotSelected h-[1px]" />
 
             <div className="py-5">
-                <SideNav
+                <SidebarNav
                     className="text-background opacity-0 transition-all duration-300 group-hover:z-50 group-hover:ml-4 group-hover:rounded group-hover:bg-foreground group-hover:p-2 group-hover:opacity-100"
                     items={NAV_ITEMS}
                 />

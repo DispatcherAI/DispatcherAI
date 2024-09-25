@@ -1,15 +1,13 @@
-import { useState } from "react";
-
 export interface UseSidebarProps {
     isOpen: boolean;
-    toggle: () => void;
+    toggle: VoidFunction;
 }
 
-export const useSidebar = (): UseSidebarProps => {
-    const [isOpen, setIsOpen] = useState(true);
+let isOpen = false;
 
+export const useSidebar = (): UseSidebarProps => {
     const toggle = () => {
-        setIsOpen((prevState) => !prevState);
+        isOpen = !isOpen;
     };
 
     return {

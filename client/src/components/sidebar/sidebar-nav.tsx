@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 
+import { Button, buttonVariants } from "../dispatch/button";
 import {
     Accordion,
     AccordionContent,
@@ -16,17 +16,24 @@ import {
 import { type NavItem } from "./sidebar-constants";
 import { useSidebar } from "./useSidebar";
 
-interface SideNavProps {
+interface SidebarNavProps {
     items: NavItem[];
     setOpen?: (open: boolean) => void;
     className?: string;
 }
 
-export function SideNav({ items, setOpen, className }: SideNavProps) {
+export function SidebarNav({ items, setOpen, className }: SidebarNavProps) {
     const path = usePathname();
     const { isOpen } = useSidebar();
+
     const [openItem, setOpenItem] = useState("");
     const [lastOpenItem, setLastOpenItem] = useState("");
+
+    const handleClick = () => {
+        if (setOpen) {
+            setOpen(false);
+        }
+    };
 
     useEffect(() => {
         if (isOpen) {
@@ -38,7 +45,7 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
     }, [isOpen]);
 
     return (
-        <nav className="space-y-2">
+        <nav className="flex flex-col gap-y-2">
             {items.map((item) =>
                 item.isChildren ? (
                     <Accordion
@@ -55,14 +62,12 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                         >
                             <AccordionTrigger
                                 className={cn(
-                                    buttonVariants({ variant: "ghost" }),
+                                    buttonVariants({ variant: "default" }),
                                     "group relative flex h-12 justify-between px-4 py-2 text-base duration-200 hover:bg-muted hover:no-underline"
                                 )}
                             >
                                 <div>
-                                    <item.icon
-                                        className={cn("h-5 w-5", item.color)}
-                                    />
+                                    <item.icon className={cn("h-5 w-5")} />
                                 </div>
                                 <div
                                     className={cn(
@@ -87,19 +92,14 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                                         }}
                                         className={cn(
                                             buttonVariants({
-                                                variant: "ghost",
+                                                variant: "default",
                                             }),
                                             "group relative flex h-12 justify-start gap-x-3",
                                             path === child.href &&
                                                 "bg-muted font-bold hover:bg-muted"
                                         )}
                                     >
-                                        <child.icon
-                                            className={cn(
-                                                "h-5 w-5",
-                                                child.color
-                                            )}
-                                        />
+                                        <child.icon className={cn("h-5 w-5")} />
                                         <div
                                             className={cn(
                                                 "absolute left-12 text-base duration-200",
@@ -117,25 +117,34 @@ export function SideNav({ items, setOpen, className }: SideNavProps) {
                     <Link
                         key={item.title}
                         href={item.href}
-                        onClick={() => {
-                            if (setOpen) setOpen(false);
-                        }}
                         className={cn(
-                            buttonVariants({ variant: "ghost" }),
-                            "group relative flex h-12 justify-start",
-                            path === item.href &&
-                                "bg-muted font-bold hover:bg-muted"
+                            "w-full",
+                            item.disabled && "pointer-events-none"
                         )}
                     >
-                        <item.icon className={cn("h-5 w-5", item.color)} />
-                        <span
+                        <Button
+                            variant={"secondary"}
                             className={cn(
-                                "absolute left-12 text-base duration-200",
-                                !isOpen && className
+                                "flex space-x-2 justify-center bg-transparent font-normal w-full",
+                                isOpen && "justify-start",
+                                path === item.href && "text-dp-primary"
                             )}
+                            disabled={item.disabled}
+                            onClick={handleClick}
                         >
-                            {item.title}
-                        </span>
+                            <item.icon
+                                className={cn("size-4 min-h-4 min-w-4")}
+                            />
+
+                            <p
+                                className={cn(
+                                    "flex",
+                                    !isOpen && "hidden opacity-0"
+                                )}
+                            >
+                                {item.title}
+                            </p>
+                        </Button>
                     </Link>
                 )
             )}

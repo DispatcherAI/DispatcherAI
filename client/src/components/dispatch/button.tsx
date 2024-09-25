@@ -13,8 +13,8 @@ const buttonVariants = cva(
                     "hover:bg-dp-primary2"
                 ),
                 secondary: cn(
-                    "bg-dp-card text-dp-text transition-all",
-                    "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline hover:text-dp-headingText"
+                    "bg-dp-card text-dp-headingText transition-all",
+                    "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline"
                 ),
             },
             size: {

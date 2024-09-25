@@ -1,44 +1,71 @@
-import { BookOpenCheck, LayoutDashboard, type LucideIcon } from "lucide-react";
+import {
+    BookOpenCheck,
+    BoxesIcon,
+    FolderIcon,
+    LayoutDashboard,
+    RotateCcwIcon,
+    SettingsIcon,
+    type LucideIcon,
+} from "lucide-react";
 
 export interface NavItem {
     title: string;
     href: string;
     icon: LucideIcon;
-    color?: string;
     isChildren?: boolean;
     children?: NavItem[];
+    disabled?: boolean;
 }
 
 export const NAV_ITEMS: NavItem[] = [
     {
-        title: "Dashboard",
+        title: "Live Dispatch",
         icon: LayoutDashboard,
+        href: "/live",
+    },
+    {
+        title: "Incident Management",
+        icon: BoxesIcon,
         href: "/",
-        color: "text-sky-500",
+        disabled: true,
+    },
+    {
+        title: "Data Management",
+        icon: FolderIcon,
+        href: "/",
+        disabled: true,
+    },
+    {
+        title: "Call History",
+        icon: RotateCcwIcon,
+        href: "/",
+        disabled: true,
+    },
+    {
+        title: "Settings",
+        icon: SettingsIcon,
+        href: "/",
+        disabled: true,
     },
     {
         title: "Example",
         icon: BookOpenCheck,
         href: "/example",
-        color: "text-orange-500",
         isChildren: true,
         children: [
             {
                 title: "Example-01",
                 icon: BookOpenCheck,
-                color: "text-red-500",
                 href: "/example/employees",
             },
             {
                 title: "Example-02",
                 icon: BookOpenCheck,
-                color: "text-red-500",
                 href: "/example/example-02",
             },
             {
                 title: "Example-03",
                 icon: BookOpenCheck,
-                color: "text-red-500",
                 href: "/example/example-03",
             },
         ],
