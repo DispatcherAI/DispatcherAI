@@ -1,8 +1,19 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+/**
+ * @see {@link https://github.com/dcastil/tailwind-merge/blob/main/docs/api-reference.md#extendtailwindmerge}
+ */
+const customTwMerge = extendTailwindMerge({
+    extend: {
+        classGroups: {
+            "font-size": ["text-xxs"],
+        },
+    },
+});
 
 export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
+    return customTwMerge(clsx(inputs));
 }
 
 export function absoluteUrl(path: string) {
