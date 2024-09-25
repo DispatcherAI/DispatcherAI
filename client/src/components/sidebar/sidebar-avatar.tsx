@@ -9,7 +9,7 @@ interface SidebarAvatarProps {
 
 export function SidebarAvatar({ isOpen }: SidebarAvatarProps) {
     return (
-        <div className="flex space-x-1 py-5">
+        <div className="flex space-x-2 py-5">
             <Avatar className={cn("size-8")}>
                 <AvatarImage
                     src="https://github.com/shadcn.png"
@@ -19,7 +19,7 @@ export function SidebarAvatar({ isOpen }: SidebarAvatarProps) {
             </Avatar>
 
             <div className={cn(!isOpen && "hidden")}>
-                <p className="line-clamp-1 text-ellipsis text-sm text-dp-heading">
+                <p className="line-clamp-1 text-ellipsis text-sm text-dp-headingText">
                     John Smith
                 </p>
                 <p className="line-clamp-1 text-ellipsis text-xxs text-dp-text">

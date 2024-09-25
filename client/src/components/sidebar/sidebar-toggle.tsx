@@ -17,7 +17,7 @@ export function SidebarToggle({ isOpen, handleToggle }: SidebarToggleProps) {
         >
             <ChevronLeftIcon
                 className={cn(
-                    "my-auto h-full text-dp-heading",
+                    "my-auto h-full text-dp-headingText w-fit",
                     !isOpen && "w-full rotate-180"
                 )}
             />

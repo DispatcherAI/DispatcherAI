@@ -91,7 +91,7 @@ const config = {
                     primary: "#69D2FF",
                     primary2: "#49B5E2",
                     inputLabelColor: "rgba(255,255,255,0.5)",
-                    outlineNotSelected: "3B3B3B",
+                    outlineNotSelected: "#3B3B3B",
                     nonEmergency: "#47FF85",
                     critical: "#F40000",
                     background: "#1E1E1E",

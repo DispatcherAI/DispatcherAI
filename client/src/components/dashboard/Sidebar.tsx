@@ -28,7 +28,7 @@ const Sidebar = () => {
                     <Link href="/live">
                         <RadioIcon
                             className={cn(
-                                pathname == "/live" && "text-blue-500",
+                                pathname == "/live" && "text-blue-500"
                             )}
                         />
                     </Link>
