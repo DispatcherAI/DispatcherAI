@@ -21,7 +21,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ClerkProvider>
+        <ClerkProvider
+            signInForceRedirectUrl={"/api/auth/new-user"}
+            signUpForceRedirectUrl={"/api/auth/new-user"}
+        >
             <html lang="en">
                 <body className={inter.className}>
                     <main>{children}</main>
