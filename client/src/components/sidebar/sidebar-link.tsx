@@ -1,7 +1,7 @@
 import Link from "next/link";
+import { Button } from "@/components/dispatch/button";
 import { cn } from "@/lib/utils";
 
-import { Button } from "../dispatch/button";
 import { NavLinkItem } from "./sidebar-constants";
 
 interface SidebarLinkProps {
@@ -26,7 +26,7 @@ export function SidebarLink({
             <Button
                 variant={"secondary"}
                 className={cn(
-                    "flex space-x-2 justify-center bg-transparent font-normal w-full",
+                    "flex w-full justify-center space-x-2 bg-transparent font-normal",
                     isOpen && "justify-start",
                     !isOpen && "w-fit max-w-full",
                     path === item.href && "text-dp-primary"
