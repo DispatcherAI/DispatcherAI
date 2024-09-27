@@ -1,47 +1,14 @@
 "use client";
 
 import { Button } from "@/components/dispatch/button";
-import { CircleAlertIcon } from "lucide-react";
-import { toast } from "sonner";
+import { dispatchToast } from "@/components/dispatch/dispatch-toast";
 
 export default function page() {
     const handleToast = () => {
-        const toastId = toast("Critical house fire detected", {
-            position: "top-center",
-            classNames: {
-                toast: "pr-5 pb-14 w-80 border-dp-primary",
-                title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis",
-                description:
-                    "text-xs leading-none line-clamp-1 overflow-hidden text-ellipsis",
-                closeButton:
-                    "ml-auto mt-[8px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
-                icon: "w-5 flex mb-auto align-top",
-            },
+        dispatchToast({
+            title: "Critical house fire detected",
             description: "Detected 3mi away in Spring Ave.",
-            icon: (
-                <div className="flex-center ml-1 mt-[2px] size-5">
-                    <CircleAlertIcon className="size-5 w-full fill-dp-headingText stroke-dp-background" />
-                </div>
-            ),
-            action: (
-                <Button
-                    variant={"secondary"}
-                    className="absolute bottom-3 right-5"
-                >
-                    View
-                </Button>
-            ),
-            cancel: (
-                <Button
-                    className="absolute bottom-3 right-[81px] bg-transparent text-dp-text hover:bg-transparent hover:text-dp-headingText"
-                    onClick={() => toast.dismiss(toastId)}
-                >
-                    Dismiss
-                </Button>
-            ),
-            closeButton: true,
-            dismissible: true,
-            duration: 100000,
+            variant: "success",
         });
     };
 
