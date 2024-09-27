@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster as DispatchToaster } from "@/components/dispatch/toaster";
+import { Toaster as SonnerToaster } from "@/components/dispatch/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -30,7 +30,7 @@ export default function RootLayout({
                 <body className={inter.className}>
                     <main>{children}</main>
                     <Toaster />
-                    <DispatchToaster />
+                    <SonnerToaster />
                 </body>
             </html>
         </ClerkProvider>
