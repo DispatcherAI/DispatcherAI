@@ -6,7 +6,7 @@ import {
     MessageSquareDotIcon,
     TriangleAlertIcon,
 } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "sonner-b4ffb609";
 
 type Position =
     | "top-left"

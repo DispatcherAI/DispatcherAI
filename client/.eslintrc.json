@@ -15,5 +15,8 @@
         "tailwind.config.ts",
         "next.config.js",
         "prisma/seed.ts"
-    ]
+    ],
+    "env": {
+        "node": true
+    }
 }
