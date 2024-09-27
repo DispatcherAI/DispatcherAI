@@ -6,15 +6,15 @@ import { toast } from "sonner";
 
 export default function page() {
     const handleToast = () => {
-        toast("Critical house fire detected", {
+        const toastId = toast("Critical house fire detected", {
             position: "top-center",
             classNames: {
-                toast: "pr-5 pb-14 w-80",
+                toast: "pr-5 pb-14 w-80 border-dp-primary",
                 title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis",
                 description:
                     "text-xs leading-none line-clamp-1 overflow-hidden text-ellipsis",
                 closeButton:
-                    "ml-auto -mr-[3px] mt-[6px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
+                    "ml-auto mt-[8px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
                 icon: "w-5 flex mb-auto align-top",
             },
             description: "Detected 3mi away in Spring Ave.",
@@ -23,7 +23,6 @@ export default function page() {
                     <CircleAlertIcon className="size-5 w-full fill-dp-headingText stroke-dp-background" />
                 </div>
             ),
-            // action: { label: "View", onClick: () => {} },
             action: (
                 <Button
                     variant={"secondary"}
@@ -32,9 +31,11 @@ export default function page() {
                     View
                 </Button>
             ),
-            // cancel: { label: "Dismiss", onClick: () => {} },
             cancel: (
-                <Button className="absolute bottom-3 right-[81px] bg-transparent text-dp-text hover:bg-transparent hover:text-dp-headingText">
+                <Button
+                    className="absolute bottom-3 right-[81px] bg-transparent text-dp-text hover:bg-transparent hover:text-dp-headingText"
+                    onClick={() => toast.dismiss(toastId)}
+                >
                     Dismiss
                 </Button>
             ),
