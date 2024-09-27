@@ -69,7 +69,7 @@ export function dispatchToast({
         position: position,
         classNames: {
             toast: `pr-5 pb-14 w-80 ${borderColor}`,
-            title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis",
+            title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis pb-1",
             description:
                 "text-xs leading-none line-clamp-1 overflow-hidden text-ellipsis",
             closeButton:
@@ -104,6 +104,5 @@ export function dispatchToast({
         closeButton: dismissible && closeButton,
         dismissible: dismissible,
         duration: duration,
-        onAutoClose: () => toast.dismiss(toastId),
     });
 }

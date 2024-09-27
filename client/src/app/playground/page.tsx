@@ -4,17 +4,43 @@ import { Button } from "@/components/dispatch/button";
 import { dispatchToast } from "@/components/dispatch/dispatch-toast";
 
 export default function page() {
-    const handleToast = () => {
+    const handleEmergencyToast = () => {
         dispatchToast({
-            title: "Critical house fire detected",
-            description: "Detected 3mi away in Spring Ave.",
+            title: "Emergency",
+            description: "Ad nisi elit dolor veniam officia velit velit.",
+            variant: "emergency",
+        });
+    };
+    const handleWarningToast = () => {
+        dispatchToast({
+            title: "Warning",
+            description: "Ad nisi elit dolor veniam officia velit velit.",
+            variant: "warning",
+        });
+    };
+    const handleSuccessToast = () => {
+        dispatchToast({
+            title: "Success",
+            description: "Ad nisi elit dolor veniam officia velit velit.",
             variant: "success",
+        });
+    };
+    const handleNotificationToast = () => {
+        dispatchToast({
+            title: "Notification",
+            description: "Ad nisi elit dolor veniam officia velit velit.",
+            variant: "notification",
         });
     };
 
     return (
         <div className="flex h-[100dvh] w-[100dvw] flex-col space-y-4 bg-[#111111] p-4">
-            <Button onClick={handleToast}>Toast me!</Button>
+            <div className="space-x-2">
+                <Button onClick={handleEmergencyToast}>Emergency</Button>
+                <Button onClick={handleWarningToast}>Warning</Button>
+                <Button onClick={handleSuccessToast}>Success</Button>
+                <Button onClick={handleNotificationToast}>Notification</Button>
+            </div>
 
             <div className="space-y-1">
                 <div className="space-x-2">
