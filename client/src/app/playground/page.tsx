@@ -10,8 +10,9 @@ export default function page() {
             position: "top-center",
             classNames: {
                 toast: "pr-5 pb-14 w-80",
-                title: "text-lg leading-none",
-                description: "text-xs leading-none",
+                title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis",
+                description:
+                    "text-xs leading-none line-clamp-1 overflow-hidden text-ellipsis",
                 closeButton:
                     "ml-auto -mr-[3px] mt-[6px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
                 icon: "w-5 flex mb-auto align-top",
