@@ -80,9 +80,12 @@ function DescriptionAndTime({
 /**
  * Custom wrapper around sonner's toast component with custom Dispatch styling
  *
+ * A lot of poor, difficult to maintain code was written to style the sonner component, including (but not limited to) absolute styles, important ! rules, and abuse of props (i.e. adding a timer component to the description component)
+ *
  * @see {@link https://sonner.emilkowal.ski/} Sonner docs
  *
- * @see {@link https://github.com/emilkowalski/sonner/issues/479} There is currently a bug where a toast stack disappears when the first toast disappears
+ * @see {@link https://github.com/emilkowalski/sonner/issues/479} There is currently a bug where a toast stack disappears when the first toast disappears.
+ * @see {@link "/client/scripts/sonner/sonner-b4ffb609-postinstall.mjs"} The above is resolved by installing a specific commit of the library, and running a postinstall script to compile said commit.
  */
 export function dispatchToast({
     position = "top-center",
@@ -107,7 +110,7 @@ export function dispatchToast({
             description: "",
             closeButton:
                 "ml-auto mt-[8px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
-            icon: "w-5 flex mb-auto align-top",
+            icon: "w-5 flex mb-auto align-top mt-[1px]",
         },
         description: (
             <DescriptionAndTime
