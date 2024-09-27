@@ -34,7 +34,7 @@ export default function page() {
             ),
             // cancel: { label: "Dismiss", onClick: () => {} },
             cancel: (
-                <Button className="absolute bottom-3 right-[81px]">
+                <Button className="absolute bottom-3 right-[81px] bg-transparent text-dp-text hover:bg-transparent hover:text-dp-headingText">
                     Dismiss
                 </Button>
             ),
