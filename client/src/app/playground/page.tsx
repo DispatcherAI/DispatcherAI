@@ -34,7 +34,7 @@ export default function page() {
     };
 
     return (
-        <div className="flex h-[100dvh] w-[100dvw] flex-col space-y-4 bg-[#111111] p-4">
+        <div className="flex h-[100dvh] w-[100dvw] flex-col space-y-2 bg-[#111111] p-4">
             <div className="space-x-2">
                 <Button onClick={handleEmergencyToast}>Emergency</Button>
                 <Button onClick={handleWarningToast}>Warning</Button>

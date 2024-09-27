@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/dispatch/button";
 import {
     CircleAlertIcon,
@@ -44,6 +45,38 @@ interface DispatchToastProps {
     handleDismiss?: VoidFunction;
 }
 
+interface DescriptionAndTimeProps {
+    description: string;
+    createdTime: number;
+}
+
+function DescriptionAndTime({
+    description,
+    createdTime,
+}: DescriptionAndTimeProps) {
+    const [timeSince, setTimeSince] = useState(timeAgo(createdTime));
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setTimeSince(timeAgo(createdTime));
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [createdTime]);
+
+    return (
+        <div className="flex-col">
+            <div className="line-clamp-1 overflow-hidden text-ellipsis text-xs leading-none">
+                {description}
+            </div>
+
+            <div className="absolute left-3 top-3 line-clamp-1 overflow-hidden text-ellipsis text-xs leading-none">
+                {timeSince}
+            </div>
+        </div>
+    );
+}
+
 /**
  * Custom wrapper around sonner's toast component with custom Dispatch styling
  *
@@ -64,21 +97,26 @@ export function dispatchToast({
 }: DispatchToastProps) {
     const IconComponent = TOAST_ICONS[variant];
     const borderColor = TOAST_BORDER[variant];
+    const createdTime = Date.now();
 
     const toastId = toast(title, {
         position: position,
         classNames: {
-            toast: `pr-5 pb-14 w-80 ${borderColor}`,
+            toast: `pt-7 pr-5 pb-14 w-80 ${borderColor}`,
             title: "text-lg leading-none line-clamp-1 overflow-hidden text-ellipsis pb-1",
-            description:
-                "text-xs leading-none line-clamp-1 overflow-hidden text-ellipsis",
+            description: "",
             closeButton:
                 "ml-auto mt-[8px] w-fit h-fit border-0 hover:!bg-transparent hover:text-dp-primary",
             icon: "w-5 flex mb-auto align-top",
         },
-        description: <div>{description}</div>,
+        description: (
+            <DescriptionAndTime
+                description={description}
+                createdTime={createdTime}
+            />
+        ),
         icon: (
-            <div className="flex-center border-dp- ml-1 mt-[2px] size-5">
+            <div className="flex-center ml-1 mt-[2px] size-5">
                 <IconComponent className="size-5 w-full fill-dp-headingText stroke-dp-background" />
             </div>
         ),
@@ -105,4 +143,22 @@ export function dispatchToast({
         dismissible: dismissible,
         duration: duration,
     });
+}
+
+function timeAgo(date: number) {
+    const seconds = Math.floor((Date.now() - date) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) return `${interval} years ago`;
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) return `${interval} months ago`;
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) return `${interval} days ago`;
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) return `${interval} hours ago`;
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) return `${interval} minutes ago`;
+    if (interval == 1) return `${interval} minute ago`;
+
+    return `just now`;
 }
