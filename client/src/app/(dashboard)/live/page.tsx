@@ -51,7 +51,7 @@ export interface CallProps {
 }
 
 const wss = new WebSocket(
-    "wss://planned-halimeda-wecracked2-c8137aa7.koyeb.app/ws?client_id=1234",
+    "wss://planned-halimeda-wecracked2-c8137aa7.koyeb.app/ws?client_id=1234"
 );
 
 const emptyCall: Call = {
@@ -75,7 +75,7 @@ const emptyCall: Call = {
 };
 
 const Page = () => {
-    const [connected, setConnected] = useState(false);
+    const [_connected, setConnected] = useState(false);
     const [data, setData] = useState<Record<string, Call>>(MESSAGES);
     const [selectedId, setSelectedId] = useState<string | undefined>();
     const [resolvedIds, setResolvedIds] = useState<string[]>([]);
@@ -112,7 +112,7 @@ const Page = () => {
             JSON.stringify({
                 event: "transfer",
                 id: id,
-            }),
+            })
         );
     };
 
@@ -122,7 +122,7 @@ const Page = () => {
         if (!data[selectedId]?.location_coords) return;
 
         setCenter(
-            data[selectedId].location_coords as { lat: number; lng: number }, // TS being lame, so type-cast
+            data[selectedId].location_coords as { lat: number; lng: number } // TS being lame, so type-cast
         );
     }, [selectedId, data]);
 
@@ -134,7 +134,7 @@ const Page = () => {
             wss.send(
                 JSON.stringify({
                     event: "get_db",
-                }),
+                })
             );
 
             wss.onmessage = (event: MessageEvent) => {
@@ -198,7 +198,7 @@ const Page = () => {
                         .filter(
                             // eslint-disable-next-line @typescript-eslint/no-unused-vars
                             ([_, call]) =>
-                                call.location_coords && call.location_name,
+                                call.location_coords && call.location_name
                         )
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         .map(([_, call]) => {
