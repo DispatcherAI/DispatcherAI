@@ -21,38 +21,46 @@ export function Header() {
                 </div>
             </div>
 
-            <div className="flex flex-row space-x-2">
-                <Time className="my-auto" />
+            <div className="flex flex-row">
+                <div className="flex-center">
+                    <Separator
+                        orientation="vertical"
+                        className="mx-3 h-6 w-[1px] bg-dp-outline"
+                    />
+                </div>
 
-                <div className="uppercase">
-                    <Select
-                        defaultValue="SF"
-                        disabled
-                    >
-                        <SelectTrigger className="h-[30px] min-h-0 w-[200px] rounded-md border-[1px] border-[#D7D7D7] py-0 uppercase text-[#6C6C6C]">
-                            <SelectValue placeholder="Location" />
-                        </SelectTrigger>
-                        <SelectContent className="uppercase">
-                            <SelectItem
-                                value="SF"
-                                className="uppercase"
-                            >
-                                San Francisco, CA
-                            </SelectItem>
-                            <SelectItem
-                                value="BER"
-                                disabled
-                            >
-                                Berkeley, CA
-                            </SelectItem>
-                            <SelectItem
-                                value="OAK"
-                                disabled
-                            >
-                                Oakland, CA
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
+                <div className="flex flex-row space-x-3">
+                    <Time className="my-auto text-xs text-dp-text" />
+                    <div className="uppercase">
+                        <Select
+                            defaultValue="SF"
+                            disabled
+                        >
+                            <SelectTrigger className="h-[30px] min-h-0 w-[200px] rounded-md border-[1px] border-[#D7D7D7] py-0 uppercase text-[#6C6C6C]">
+                                <SelectValue placeholder="Location" />
+                            </SelectTrigger>
+                            <SelectContent className="uppercase">
+                                <SelectItem
+                                    value="SF"
+                                    className="uppercase"
+                                >
+                                    San Francisco, CA
+                                </SelectItem>
+                                <SelectItem
+                                    value="BER"
+                                    disabled
+                                >
+                                    Berkeley, CA
+                                </SelectItem>
+                                <SelectItem
+                                    value="OAK"
+                                    disabled
+                                >
+                                    Oakland, CA
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
         </div>

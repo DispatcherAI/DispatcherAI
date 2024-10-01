@@ -1,10 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface TimeProps {
     className?: string;
 }
+
+const FORMATTER = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+});
 
 export function Time({ className }: TimeProps) {
     const [time, setTime] = useState("");
@@ -12,7 +20,7 @@ export function Time({ className }: TimeProps) {
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
-            setTime(now.toLocaleTimeString());
+            setTime(FORMATTER.format(now));
         };
 
         updateTime();
@@ -22,5 +30,5 @@ export function Time({ className }: TimeProps) {
         return () => clearInterval(intervalId);
     }, []);
 
-    return <p className={className}>{time}</p>;
+    return <p className={cn("uppercase", className)}>{time}</p>;
 }
