@@ -16,22 +16,12 @@ export default function page() {
         <div className="flex h-[100dvh] w-[100dvw] flex-col space-y-2 bg-[#111111] p-4">
             <div className="uppercase">
                 <Select defaultValue="SF">
-                    <SelectTrigger>
+                    <SelectTrigger className="uppercase">
                         <SelectValue placeholder="LOCATION" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem
-                            value="SF"
-                            className="uppercase"
-                        >
-                            San Francisco, CA
-                        </SelectItem>
-                        <SelectItem
-                            value="BER"
-                            disabled
-                        >
-                            Berkeley, CA
-                        </SelectItem>
+                        <SelectItem value="SF">San Francisco, CA</SelectItem>
+                        <SelectItem value="BER">Berkeley, CA</SelectItem>
                         <SelectItem
                             value="OAK"
                             disabled
