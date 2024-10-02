@@ -1,13 +1,14 @@
-import { HeadsetIcon } from "lucide-react";
-
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../ui/select";
+} from "@/components/dispatch/select";
+import { HeadsetIcon } from "lucide-react";
+
 import { Separator } from "../ui/separator";
+import { ConnectionStatus } from "./connection-status";
 import { Time } from "./time";
 
 export function Header() {
@@ -21,7 +22,7 @@ export function Header() {
                 </div>
             </div>
 
-            <div className="flex flex-row">
+            <div className="flex max-h-full min-w-fit flex-row">
                 <div className="flex-center">
                     <Separator
                         orientation="vertical"
@@ -29,38 +30,38 @@ export function Header() {
                     />
                 </div>
 
-                <div className="flex flex-row space-x-3">
-                    <Time className="my-auto text-xs text-dp-text" />
-                    <div className="uppercase">
-                        <Select
-                            defaultValue="SF"
-                            disabled
-                        >
-                            <SelectTrigger className="h-[30px] min-h-0 w-[200px] rounded-md border-[1px] border-[#D7D7D7] py-0 uppercase text-[#6C6C6C]">
-                                <SelectValue placeholder="Location" />
-                            </SelectTrigger>
-                            <SelectContent className="uppercase">
-                                <SelectItem
-                                    value="SF"
-                                    className="uppercase"
-                                >
-                                    San Francisco, CA
-                                </SelectItem>
-                                <SelectItem
-                                    value="BER"
-                                    disabled
-                                >
-                                    Berkeley, CA
-                                </SelectItem>
-                                <SelectItem
-                                    value="OAK"
-                                    disabled
-                                >
-                                    Oakland, CA
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
+                <div className="flex min-w-full flex-row space-x-3">
+                    <div className="my-auto flex h-fit min-w-fit justify-center space-x-1">
+                        <Time className="min-w-28 text-right text-xs text-dp-text" />
+                        <ConnectionStatus />
                     </div>
+
+                    <Select defaultValue="SF">
+                        <SelectTrigger className="h-full p-[0.375rem] text-xs uppercase">
+                            <SelectValue placeholder="LOCATION" />
+                        </SelectTrigger>
+                        <SelectContent className="uppercase">
+                            <SelectItem
+                                value="SF"
+                                className="text-xs"
+                            >
+                                San Francisco, CA
+                            </SelectItem>
+                            <SelectItem
+                                value="BER"
+                                className="text-xs"
+                            >
+                                Berkeley, CA
+                            </SelectItem>
+                            <SelectItem
+                                value="OAK"
+                                disabled
+                                className="text-xs"
+                            >
+                                Oakland, CA
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
         </div>

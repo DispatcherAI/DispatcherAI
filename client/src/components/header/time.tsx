@@ -30,5 +30,9 @@ export function Time({ className }: TimeProps) {
         return () => clearInterval(intervalId);
     }, []);
 
-    return <p className={cn("uppercase", className)}>{time}</p>;
+    return (
+        <div className="h-fit">
+            <p className={cn("uppercase", className)}>{time} PST</p>
+        </div>
+    );
 }
