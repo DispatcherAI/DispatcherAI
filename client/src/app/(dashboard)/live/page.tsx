@@ -192,7 +192,9 @@ const Page = () => {
                     </div>
                 ) : null}
 
-                <Map
+                <div className="absolute h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
+
+                {/* <Map
                     center={center}
                     pins={Object.entries(data)
                         .filter(
@@ -210,7 +212,7 @@ const Page = () => {
                                 popupHtml: `<b>${call.title}</b><br>Location: ${call.location_name}`,
                             };
                         })}
-                />
+                /> */}
             </div>
         </div>
     );
