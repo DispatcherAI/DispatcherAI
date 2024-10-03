@@ -10,10 +10,11 @@ import { HeadsetIcon } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { ConnectionStatus } from "./connection-status";
 import { Time } from "./time";
+import { WeatherCondition } from "./weather-condition";
 
 export function Header() {
     return (
-        <div className="flex-between h-[52px] flex-row border-b-[1px] border-dp-outline bg-dp-background p-3">
+        <div className="flex-between h-[52px] w-full flex-row border-b-[1px] border-dp-outline bg-dp-background p-3">
             <div className="flex space-x-1">
                 <HeadsetIcon className="h-5 text-dp-headingText" />
 
@@ -22,22 +23,24 @@ export function Header() {
                 </div>
             </div>
 
-            <div className="flex max-h-full min-w-fit flex-row">
-                <div className="flex-center">
+            <div className="flex max-h-full flex-row">
+                <WeatherCondition />
+
+                <div className="mx-3 my-auto h-6">
                     <Separator
                         orientation="vertical"
-                        className="mx-3 h-6 w-[1px] bg-dp-outline"
+                        className="w-[1px] bg-dp-outline"
                     />
                 </div>
 
                 <div className="flex min-w-full flex-row space-x-3">
                     <div className="my-auto flex h-fit min-w-fit justify-center space-x-1">
-                        <Time className="min-w-28 text-right text-xs text-dp-text" />
+                        <Time className="min-w-[100px] text-right text-xs text-dp-text" />
                         <ConnectionStatus />
                     </div>
 
                     <Select defaultValue="SF">
-                        <SelectTrigger className="h-full p-[0.375rem] text-xs uppercase">
+                        <SelectTrigger className="h-full w-40 p-2 text-xs uppercase">
                             <SelectValue placeholder="LOCATION" />
                         </SelectTrigger>
                         <SelectContent className="uppercase">
