@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Header from "@/components/dashboard/Header";
+import { Header } from "@/components/header/header";
+// import Header from "@/components/dashboard/Header";
 import { Sidebar } from "@/components/sidebar/sidebar";
-
-// import Sidebar from "../../components/dashboard/Sidebar";
 
 export const metadata: Metadata = {
     title: "Dashboard — DispatcherAI",
@@ -16,11 +15,10 @@ export default function RootLayout({
 }) {
     return (
         <div className="flex h-[100dvh] max-h-[100dvh] min-w-[100dvw] max-w-[100dvw] overflow-hidden">
-            {/* <Sidebar /> */}
-
             <Sidebar />
 
             <div className="max-h-[100dvh] w-full">
+                {/* <Header /> */}
                 <Header />
                 {children}
             </div>
