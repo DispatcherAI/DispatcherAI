@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
@@ -9,10 +9,10 @@ import { HEADER_HEIGHT } from "@/root/tailwind.config";
 
 import { MESSAGES } from "./messages";
 
-const Map = dynamic(() => import("@/components/live/map/Map"), {
-    loading: () => <p>Rendering Map...</p>,
-    ssr: false,
-});
+// const Map = dynamic(() => import("@/components/live/map/Map"), {
+//     loading: () => <p>Rendering Map...</p>,
+//     ssr: false,
+// });
 
 interface ServerMessage {
     event: "db_response";
@@ -80,7 +80,7 @@ const Page = () => {
     const [selectedId, setSelectedId] = useState<string | undefined>();
     const [resolvedIds, setResolvedIds] = useState<string[]>([]);
 
-    const [center, setCenter] = useState<{ lat: number; lng: number }>({
+    const [_center, setCenter] = useState<{ lat: number; lng: number }>({
         lat: 37.867989,
         lng: -122.271507,
     });
