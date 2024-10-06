@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
-import { HEADER_HEIGHT } from "@/root/tailwind.config";
 
 import { MESSAGES } from "./messages";
 
@@ -167,34 +166,30 @@ const Page = () => {
     }, []);
 
     return (
-        <div className={`h-full max-h-[calc(100dvh-${HEADER_HEIGHT}px)]`}>
-            {/* FIX ME -- disabled for layout purposes */}
-            {/* <Header connected={connected} /> */}
+        <div className="relative flex h-full justify-between">
+            <EventPanel
+                data={data}
+                selectedId={selectedId || undefined}
+                handleSelect={handleSelect}
+            />
 
-            <div className="relative flex h-full justify-between">
-                <EventPanel
-                    data={data}
-                    selectedId={selectedId || undefined}
-                    handleSelect={handleSelect}
-                />
+            {selectedId && data ? (
+                <div className="absolute right-0 z-50 flex">
+                    <DetailsPanel
+                        call={selectedId ? data[selectedId] : emptyCall}
+                        handleResolve={handleResolve}
+                    />
+                    <TranscriptPanel
+                        call={selectedId ? data[selectedId] : emptyCall}
+                        selectedId={selectedId || undefined}
+                        handleTransfer={handleTransfer}
+                    />
+                </div>
+            ) : null}
 
-                {selectedId && data ? (
-                    <div className="absolute right-0 z-50 flex">
-                        <DetailsPanel
-                            call={selectedId ? data[selectedId] : emptyCall}
-                            handleResolve={handleResolve}
-                        />
-                        <TranscriptPanel
-                            call={selectedId ? data[selectedId] : emptyCall}
-                            selectedId={selectedId || undefined}
-                            handleTransfer={handleTransfer}
-                        />
-                    </div>
-                ) : null}
+            <div className="absolute h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
 
-                <div className="absolute h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
-
-                {/* <Map
+            {/* <Map
                     center={center}
                     pins={Object.entries(data)
                         .filter(
@@ -213,7 +208,6 @@ const Page = () => {
                             };
                         })}
                 /> */}
-            </div>
         </div>
     );
 };
