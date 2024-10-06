@@ -10,7 +10,7 @@ export function TotalCallsCard({ status, label, value }: TotalCallsCardProps) {
     return (
         <Box className="space-y-2">
             <div className="flex-center h-5 w-16 bg-dp-nonEmergency/15 px-2 py-1">
-                <p className="text-xxs font-bold text-dp-nonEmergency">
+                <p className="text-xxs font-bold uppercase text-dp-nonEmergency">
                     {status}
                 </p>
             </div>

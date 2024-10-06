@@ -19,7 +19,7 @@ export function TotalCalls() {
                 </p>
 
                 <Select defaultValue="2">
-                    <SelectTrigger className="h-full w-40 p-2 text-xs uppercase">
+                    <SelectTrigger className="h-7 w-40 p-2 text-xs uppercase">
                         <SelectValue placeholder="MONTH" />
                     </SelectTrigger>
                     <SelectContent className="uppercase">

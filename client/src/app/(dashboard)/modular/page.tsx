@@ -18,8 +18,8 @@ const Map = dynamic(() => import("@/components/modular/map/Map"), {
 export default function Page() {
     const layout = [
         { i: "a", x: 0, y: 0, w: 1, h: 2, maxW: 1, maxH: 4 },
-        // { i: "b", x: 0, y: 2, w: 1, h: 2, maxW: 1, maxH: 4 },
-        // { i: "c", x: 0, y: 4, w: 1, h: 2, maxW: 1, maxH: 4 },
+        { i: "b", x: 0, y: 2, w: 1, h: 2, maxW: 1, maxH: 4 },
+        { i: "c", x: 0, y: 4, w: 1, h: 2, maxW: 1, maxH: 4 },
     ];
 
     const [dragging, setDragging] = useState(false);
@@ -39,20 +39,23 @@ export default function Page() {
 
     return (
         <div className={`h-fullWithHeader w-full`}>
-            <Map center={{ lat: 37.867989, lng: -122.271507 }} pins={[]} />
+            <Map
+                center={{ lat: 37.867989, lng: -122.271507 }}
+                pins={[]}
+            />
 
-            <div className="flex-between w-modules ml-auto h-full flex-col">
+            <div className="flex-between ml-auto h-full w-modules flex-col">
                 <GridLayout
                     className={cn(
                         "layout",
-                        `w-modules h-full border-2 border-green-500`,
+                        `h-full w-modules border-2 border-green-500`
                     )}
                     layout={layout}
                     cols={1}
                     rowHeight={innerHeight ? innerHeight / 8 : undefined}
                     width={MODULES_WIDTH}
                     compactType={"vertical"}
-                    preventCollision={true}
+                    // preventCollision={true}
                     margin={[0, 0]}
                     isBounded={true}
                     onDragStart={handleDragStart}
