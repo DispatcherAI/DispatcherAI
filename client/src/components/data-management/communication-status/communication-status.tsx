@@ -1,13 +1,19 @@
 import { DataManagementBox } from "@/components/data-management/data-management-box";
-import { TotalCallsCard } from "@/components/data-management/total-calls/total-calls-card";
 
-export function TotalCalls() {
+import { TotalCallsCard } from "../total-calls/total-calls-card";
+
+export function CommunicationStatus() {
+    function handleDownload() {
+        console.log("download!");
+    }
+
     return (
         <DataManagementBox
-            title={"Total calls"}
+            title={"Communication status"}
             className="grow"
+            onDownload={handleDownload}
         >
-            <div className="grid grid-cols-4 gap-x-4">
+            <div className="grid grid-cols-3 gap-x-4">
                 <TotalCallsCard
                     status={"Nominal"}
                     label={"Total calls received"}
@@ -15,18 +21,13 @@ export function TotalCalls() {
                 />
                 <TotalCallsCard
                     status={"Nominal"}
-                    label={"Total calls resolved"}
-                    value={"139"}
+                    label={"Total calls received"}
+                    value={"146"}
                 />
                 <TotalCallsCard
                     status={"Nominal"}
-                    label={"Total wait time"}
-                    value={"31:21 min"}
-                />
-                <TotalCallsCard
-                    status={"Nominal"}
-                    label={"Average wait time"}
-                    value={"5 sec"}
+                    label={"Total calls received"}
+                    value={"146"}
                 />
             </div>
         </DataManagementBox>

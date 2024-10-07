@@ -16,10 +16,15 @@ const buttonVariants = cva(
                     "bg-dp-card text-dp-headingText transition-all",
                     "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline"
                 ),
+                icon: cn(
+                    "bg-transparent border border-dp-outlineNotSelected",
+                    "hover:bg-dp-hoverCard hover:border-dp-outline"
+                ),
             },
             size: {
                 default: "h-8 px-4 py-2 text-xs",
                 mini: "h-5 px-4 py-[2px] text-xxs",
+                icon: "h-10 w-10",
             },
         },
         defaultVariants: {
