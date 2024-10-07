@@ -5,9 +5,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/dispatch/select";
+import { Separator } from "@/components/dispatch/separator";
 import { HeadsetIcon } from "lucide-react";
 
-import { Separator } from "../ui/separator";
 import { ConnectionStatus } from "./connection-status";
 import { Time } from "./time";
 import { WeatherCondition } from "./weather-condition";

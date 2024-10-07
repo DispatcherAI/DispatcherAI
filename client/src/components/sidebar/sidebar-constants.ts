@@ -36,8 +36,8 @@ export const NAV_LINKS: NavLinkItem[] = [
     {
         title: "Data Management",
         icon: FolderIcon,
-        href: "/",
-        disabled: true,
+        href: "/data-management",
+        disabled: false,
     },
     {
         title: "Call History",

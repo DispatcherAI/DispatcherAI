@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { Separator } from "@/components/dispatch/separator";
 
-import { Separator } from "../ui/separator";
 // import { SidebarAccordion } from "./sidebar-accordion";
 import { /*NAV_ACCORDIONS,*/ NAV_LINKS } from "./sidebar-constants";
 import { SidebarLink } from "./sidebar-link";
@@ -30,7 +30,7 @@ export function SidebarNav({ setOpen }: SidebarNavProps) {
                 />
             ))}
 
-            <Separator className="bg-dp-outlineNotSelected h-[1px]" />
+            <Separator className="h-[1px]" />
 
             {/* {NAV_ACCORDIONS.map((item) => (
                 <SidebarAccordion
