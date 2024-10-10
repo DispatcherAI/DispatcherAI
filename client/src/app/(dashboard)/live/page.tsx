@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
+import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 // import dynamic from "next/dynamic";
 import DetailsPanel from "@/components/live/DetailsPanel";
-import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
@@ -77,17 +77,15 @@ const emptyCall: Call = {
 const Page = () => {
     const [_connected, setConnected] = useState(false);
     const [data, setData] = useState<Record<string, Call>>(MESSAGES);
-    const [selectedId, setSelectedId] = useState<string | undefined>();
+
     const [resolvedIds, setResolvedIds] = useState<string[]>([]);
+
+    const { selectedId } = useEmergencyContext();
 
     const [_center, setCenter] = useState<{ lat: number; lng: number }>({
         lat: 37.867989,
         lng: -122.271507,
     });
-
-    const handleSelect = (id: string) => {
-        setSelectedId(id === selectedId ? undefined : id);
-    };
 
     const handleResolve = (id: string) => {
         setResolvedIds((prev) => {
@@ -168,13 +166,7 @@ const Page = () => {
 
     return (
         <div className="relative flex h-full justify-between">
-            {/* <EventPanel
-                data={data}
-                selectedId={selectedId || undefined}
-                handleSelect={handleSelect}
-            /> */}
-
-            <AlertsEmergenciesPanel />
+            <AlertsEmergenciesPanel data={data} />
 
             {selectedId && data ? (
                 <div className="absolute right-0 z-50 flex">

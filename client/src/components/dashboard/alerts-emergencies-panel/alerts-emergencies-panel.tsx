@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Call } from "@/app/(dashboard)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency-stat";
 import { Input } from "@/components/dispatch/input";
@@ -30,11 +31,14 @@ const ITEMS = [
     },
 ];
 
-export function AlertsEmergenciesPanel() {
+export function AlertsEmergenciesPanel({
+    data,
+}: {
+    data: Record<string, Call>;
+}) {
     const [value, setValue] = useState<string | undefined>();
 
     const handleValueChange = (newValue: string) => {
-        console.log(newValue);
         setValue(newValue === "_CLEAR" ? undefined : newValue);
     };
 
@@ -85,81 +89,14 @@ export function AlertsEmergenciesPanel() {
                         )}
                         type="scroll"
                     >
-                        <EmergencyCard
-                            title={"House Fire in Blair Hill"}
-                            time={"10:31 AM"}
-                            status={"live"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"critical"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"warning"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"safe"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"critical"}
-                        />
-                        <EmergencyCard
-                            title={"House Fire in Blair Hills"}
-                            time={"10:31 AM"}
-                            status={"warning"}
-                        />
+                        {Object.entries(data).map(([id, _call]) => (
+                            <EmergencyCard
+                                id={id}
+                                title={"House Fire in Blair Hill"}
+                                time={"10:31 AM"}
+                                status={"live"}
+                            />
+                        ))}
                     </ScrollArea>
                 </div>
             </div>

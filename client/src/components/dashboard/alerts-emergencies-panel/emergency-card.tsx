@@ -6,9 +6,12 @@ import {
     TriangleAlertIcon,
 } from "lucide-react";
 
+import { useEmergencyContext } from "../emergency-context";
+
 type Status = "live" | "critical" | "warning" | "safe";
 
 interface EmergencyCardProps {
+    id: string;
     title: string;
     time: string;
     status: Status;
@@ -28,9 +31,15 @@ const CARD_COLOR: Record<Status, string> = {
     safe: "text-dp-nonEmergency",
 };
 
-export function EmergencyCard({ title, time, status }: EmergencyCardProps) {
+export function EmergencyCard({ id, title, time, status }: EmergencyCardProps) {
     const Icon = CARD_ICONS[status];
     const cardColor = CARD_COLOR[status];
+
+    const { handleSelect } = useEmergencyContext();
+
+    const handleClick = () => {
+        handleSelect(id);
+    };
 
     return (
         <div
@@ -38,6 +47,7 @@ export function EmergencyCard({ title, time, status }: EmergencyCardProps) {
                 "flex space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3",
                 "hover:bg-dp-backgroundHover"
             )}
+            onClick={handleClick}
         >
             <Icon className={cn("my-auto size-5 min-w-5", cardColor)} />
 
