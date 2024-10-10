@@ -1,3 +1,4 @@
+import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import { cn } from "@/lib/utils";
 import {
     CircleAlertIcon,
@@ -5,8 +6,6 @@ import {
     RadioTowerIcon,
     TriangleAlertIcon,
 } from "lucide-react";
-
-import { useEmergencyContext } from "../../emergency-context";
 
 type Status = "live" | "critical" | "warning" | "safe";
 

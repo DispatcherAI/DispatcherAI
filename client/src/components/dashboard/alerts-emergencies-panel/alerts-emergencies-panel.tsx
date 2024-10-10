@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Call } from "@/app/(layout)/live/page";
+import { AlertTab } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-tab";
 import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
 import { Input } from "@/components/dispatch/input";
 import {
@@ -87,6 +88,9 @@ export function AlertsEmergenciesPanel({
 
                 <TabsContent value="emergencies">
                     <EmergencyTab data={data} />
+                </TabsContent>
+                <TabsContent value="alerts">
+                    <AlertTab />
                 </TabsContent>
             </Tabs>
         </div>
