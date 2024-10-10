@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
 // import dynamic from "next/dynamic";
 import DetailsPanel from "@/components/live/DetailsPanel";
 import EventPanel from "@/components/live/EventPanel";
@@ -167,11 +168,13 @@ const Page = () => {
 
     return (
         <div className="relative flex h-full justify-between">
-            <EventPanel
+            {/* <EventPanel
                 data={data}
                 selectedId={selectedId || undefined}
                 handleSelect={handleSelect}
-            />
+            /> */}
+
+            <AlertsEmergenciesPanel />
 
             {selectedId && data ? (
                 <div className="absolute right-0 z-50 flex">
@@ -187,7 +190,7 @@ const Page = () => {
                 </div>
             ) : null}
 
-            <div className="absolute h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
+            <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
 
             {/* <Map
                     center={center}
