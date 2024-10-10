@@ -40,7 +40,7 @@ export function Header() {
                     </div>
 
                     <Select defaultValue="SF">
-                        <SelectTrigger className="h-full w-40 p-2 text-xs uppercase">
+                        <SelectTrigger className="h-full w-40 p-2 text-left text-xs uppercase">
                             <SelectValue placeholder="LOCATION" />
                         </SelectTrigger>
                         <SelectContent className="uppercase">
