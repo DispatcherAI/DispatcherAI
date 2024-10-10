@@ -46,6 +46,7 @@ export function AlertsEmergenciesPanel() {
                     placeholder="Search a location..."
                     className="h-7 text-xs"
                     startIconClassName="text-dp-inputText size-3"
+                    startIconPadding="pl-5"
                 />
 
                 <Select

@@ -6,12 +6,21 @@ export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
     startIcon?: LucideIcon;
     startIconClassName?: string;
+    startIconPadding?: string;
     endIcon?: LucideIcon;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
     (
-        { className, startIconClassName, type, startIcon, endIcon, ...props },
+        {
+            className,
+            startIconClassName,
+            startIconPadding,
+            type,
+            startIcon,
+            endIcon,
+            ...props
+        },
         ref
     ) => {
         const StartIcon = startIcon;
@@ -34,7 +43,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     type={type}
                     className={cn(
                         "flex h-10 w-full rounded-none border border-dp-outline bg-transparent px-4 py-2 text-sm text-dp-headingText ring-offset-background placeholder:text-dp-inputText focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-dp-outline focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50",
-                        startIcon ? "pl-8" : "",
+                        startIcon ? cn("pl-8", startIconPadding) : "",
                         endIcon ? "pr-8" : "",
                         className
                     )}
