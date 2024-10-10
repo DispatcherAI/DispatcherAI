@@ -1,4 +1,6 @@
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency-stat";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 import { EmergencyCard } from "./emergency-card";
 
@@ -12,27 +14,90 @@ export function AlertsEmergenciesPanel() {
                     <EmergencyStat />
                 </div>
 
-                <div className="flex flex-col">
-                    <EmergencyCard
-                        title={"House Fire in Blair Hill"}
-                        time={"10:31 AM"}
-                        status={"live"}
-                    />
-                    <EmergencyCard
-                        title={"House Fire in Blair Hills"}
-                        time={"10:31 AM"}
-                        status={"critical"}
-                    />
-                    <EmergencyCard
-                        title={"House Fire in Blair Hills"}
-                        time={"10:31 AM"}
-                        status={"warning"}
-                    />
-                    <EmergencyCard
-                        title={"House Fire in Blair Hills"}
-                        time={"10:31 AM"}
-                        status={"safe"}
-                    />
+                <div className="h-full">
+                    <ScrollArea
+                        className={cn(
+                            "flex flex-col overflow-y-auto",
+                            "max-h-[calc(100vh-152px)]" // this is bad code, but it sizes the scroll area correctly
+                        )}
+                        type="scroll"
+                    >
+                        <EmergencyCard
+                            title={"House Fire in Blair Hill"}
+                            time={"10:31 AM"}
+                            status={"live"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"critical"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"warning"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"safe"}
+                        />
+                        <EmergencyCard
+                            title={"House Fire in Blair Hills"}
+                            time={"10:31 AM"}
+                            status={"warning"}
+                        />
+                    </ScrollArea>
                 </div>
             </div>
         </div>
