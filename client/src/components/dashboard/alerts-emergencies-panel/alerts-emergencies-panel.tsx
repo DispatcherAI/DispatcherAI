@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Call } from "@/app/(dashboard)/live/page";
+import { Call } from "@/app/(layout)/live/page";
 import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
 import { Input } from "@/components/dispatch/input";
 import {

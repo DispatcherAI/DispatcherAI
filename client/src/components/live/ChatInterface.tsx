@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { CallProps } from "@/app/(dashboard)/live/page";
+import { CallProps } from "@/app/(layout)/live/page";
 import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
 
@@ -40,7 +40,7 @@ const ChatInterface = ({ call }: ChatInterfaceProps) => {
                                 "flex",
                                 message.role === "user"
                                     ? "justify-end"
-                                    : "justify-start",
+                                    : "justify-start"
                             )}
                         >
                             <div
@@ -48,7 +48,7 @@ const ChatInterface = ({ call }: ChatInterfaceProps) => {
                                     "flex items-end",
                                     message.role === "user"
                                         ? "flex-row-reverse"
-                                        : "flex-row",
+                                        : "flex-row"
                                 )}
                             >
                                 <div
@@ -56,13 +56,21 @@ const ChatInterface = ({ call }: ChatInterfaceProps) => {
                                         "mb-auto flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-full",
                                         message.role === "user"
                                             ? "hidden bg-blue-500"
-                                            : "bg-gray-500",
+                                            : "bg-gray-500"
                                     )}
                                 >
                                     {message.role === "user" ? (
-                                        null ?? <User size={20} color="white" />
+                                        null ?? (
+                                            <User
+                                                size={20}
+                                                color="white"
+                                            />
+                                        )
                                     ) : (
-                                        <Bot size={20} color="white" />
+                                        <Bot
+                                            size={20}
+                                            color="white"
+                                        />
                                     )}
                                 </div>
                                 <div
@@ -70,7 +78,7 @@ const ChatInterface = ({ call }: ChatInterfaceProps) => {
                                         "rounded-lg px-4 py-2",
                                         message.role === "user"
                                             ? "mr-2 max-w-[360px] bg-blue-500 text-white"
-                                            : "ml-2 max-w-[250px] bg-white text-gray-800",
+                                            : "ml-2 max-w-[250px] bg-white text-gray-800"
                                     )}
                                 >
                                     {message.content}

@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from "react";
-import { Call } from "@/app/(dashboard)/live/page";
+import { Call } from "@/app/(layout)/live/page";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -44,7 +44,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                     <div className="text-2xl font-bold">
                         {data
                             ? Object.entries(data).filter(
-                                  ([_, value]) => value.severity === "CRITICAL",
+                                  ([_, value]) => value.severity === "CRITICAL"
                               ).length
                             : "x"}
                     </div>
@@ -54,7 +54,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                     <div className="text-2xl font-bold">
                         {data
                             ? Object.entries(data).filter(
-                                  ([_, value]) => value.severity === "RESOLVED",
+                                  ([_, value]) => value.severity === "RESOLVED"
                               ).length
                             : "x"}
                     </div>
@@ -66,10 +66,10 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                 {data &&
                     Object.entries(data)
                         .filter(([_, emergency]) =>
-                            emergency.title?.includes(search),
+                            emergency.title?.includes(search)
                         )
                         .sort(([_, a], [__, b]) =>
-                            new Date(a.time) < new Date(b.time) ? 1 : -1,
+                            new Date(a.time) < new Date(b.time) ? 1 : -1
                         )
                         .map(([_, emergency]) => (
                             <Card
@@ -77,7 +77,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                 className={cn(
                                     "m-2 flex cursor-pointer items-center p-3",
                                     selectedId === emergency.id &&
-                                        "ring-2 ring-blue-500 ring-offset-2",
+                                        "ring-2 ring-blue-500 ring-offset-2"
                                 )}
                                 onClick={() => handleSelect(emergency.id)}
                             >
@@ -105,7 +105,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                     </div>
                                     <div className="text-sm text-gray-500">
                                         {new Date(
-                                            emergency.time,
+                                            emergency.time
                                         ).toLocaleTimeString()}
                                     </div>
                                 </CardContent>
@@ -118,7 +118,7 @@ const EventPanel = ({ data, selectedId, handleSelect }: EventPanelProps) => {
                                                 : emergency.severity ===
                                                     "MODERATE"
                                                   ? "bg-yellow-500 hover:bg-yellow-500/80"
-                                                  : "bg-green-500 hover:bg-green-500/80",
+                                                  : "bg-green-500 hover:bg-green-500/80"
                                         )}
                                     >
                                         {emergency.severity}

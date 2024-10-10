@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Call } from "@/app/(dashboard)/live/page";
+import { Call } from "@/app/(layout)/live/page";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,7 @@ const EmergencyInfoItem = ({
     <div
         className={cn(
             "line-clamp-3 space-y-1 px-3 pt-2",
-            side === "left" ? "border-l" : "border-r",
+            side === "left" ? "border-l" : "border-r"
         )}
     >
         <p className="text-sm font-medium leading-3 text-black text-opacity-50">
@@ -91,7 +91,7 @@ const DetailsPanel = ({ call, handleResolve }: DetailsPanelProps) => {
                                         ? "bg-hover:bg-red-500/80 bg-red-500"
                                         : call.severity === "MODERATE"
                                           ? "bg-yellow-500 hover:bg-yellow-500/80"
-                                          : "bg-hover:bg-green-500/80 bg-green-500",
+                                          : "bg-hover:bg-green-500/80 bg-green-500"
                                 )}
                             >
                                 {call.severity}
@@ -120,7 +120,7 @@ const DetailsPanel = ({ call, handleResolve }: DetailsPanelProps) => {
                                 label="Time of Call"
                                 value={new Date(
                                     new Date(call.time).getTime() -
-                                        7 * 60 * 60 * 1000,
+                                        7 * 60 * 60 * 1000
                                 ).toLocaleTimeString("en-US", {
                                     timeZone: "America/Los_Angeles",
                                 })}

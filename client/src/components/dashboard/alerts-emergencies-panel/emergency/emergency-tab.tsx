@@ -1,4 +1,4 @@
-import { Call } from "@/app/(dashboard)/live/page";
+import { Call } from "@/app/(layout)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-stat";
 import { ScrollArea } from "@/components/ui/scroll-area";

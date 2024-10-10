@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CallProps } from "@/app/(dashboard)/live/page";
+import { CallProps } from "@/app/(layout)/live/page";
 import { cn } from "@/lib/utils";
 import { HEADER_HEIGHT } from "@/root/tailwind.config";
 import { motion } from "framer-motion";
@@ -28,7 +28,7 @@ const TranscriptPanel = ({
     const [loading, setLoading] = useState(false);
 
     const emotions = call?.emotions?.sort((a, b) =>
-        a.intensity < b.intensity ? 1 : -1,
+        a.intensity < b.intensity ? 1 : -1
     );
 
     if (!call) {
@@ -52,7 +52,7 @@ const TranscriptPanel = ({
             transition={{ duration: 0.3, ease: "easeOut" }}
             className={cn(
                 `fixed right-0 top-[${HEADER_HEIGHT}px] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] w-[400px] overflow-y-auto bg-white shadow-lg`,
-                transferred && "brightness-90",
+                transferred && "brightness-90"
             )}
         >
             <p className="px-2 py-[6px]">Live Transcript</p>
@@ -61,7 +61,10 @@ const TranscriptPanel = ({
             <div className="mb-3 space-y-4 p-2 pb-3">
                 <div className="flex items-center space-x-1">
                     {transferred ? (
-                        <HeadsetIcon className="text-blue-500" size={24} />
+                        <HeadsetIcon
+                            className="text-blue-500"
+                            size={24}
+                        />
                     ) : (
                         <CheckCircle2Icon
                             className="text-green-500"
@@ -71,7 +74,7 @@ const TranscriptPanel = ({
                     <p
                         className={cn(
                             "text-md font-semibold",
-                            transferred ? "text-blue-500" : "text-green-500",
+                            transferred ? "text-blue-500" : "text-green-500"
                         )}
                     >
                         {transferred
@@ -116,7 +119,10 @@ const TranscriptPanel = ({
                         </p>
                     </div>
 
-                    <ChatInterface call={call} selectedId={selectedId} />
+                    <ChatInterface
+                        call={call}
+                        selectedId={selectedId}
+                    />
 
                     {transferred ? (
                         <Button
