@@ -6,7 +6,7 @@ import {
     TriangleAlertIcon,
 } from "lucide-react";
 
-import { useEmergencyContext } from "../emergency-context";
+import { useEmergencyContext } from "../../emergency-context";
 
 type Status = "live" | "critical" | "warning" | "safe";
 

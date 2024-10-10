@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Call } from "@/app/(dashboard)/live/page";
+import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
 import { Input } from "@/components/dispatch/input";
 import {
     Select,
@@ -17,8 +18,6 @@ import {
     TabsTrigger,
 } from "@/components/dispatch/tabs";
 import { SearchIcon } from "lucide-react";
-
-import { EmergencyTab } from "./emergency/emergency-tab";
 
 const ITEMS = [
     {
