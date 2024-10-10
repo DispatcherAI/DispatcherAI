@@ -90,12 +90,29 @@ export function AlertsEmergenciesPanel({
                         type="scroll"
                     >
                         {Object.entries(data).map(([id, _call]) => (
-                            <EmergencyCard
-                                id={id}
-                                title={"House Fire in Blair Hill"}
-                                time={"10:31 AM"}
-                                status={"live"}
-                            />
+                            <>
+                                <EmergencyCard
+                                    key={id}
+                                    id={id}
+                                    title={"House Fire in Blair Hill"}
+                                    time={"10:31 AM"}
+                                    status={"live"}
+                                />
+                                <EmergencyCard
+                                    key={"foo"}
+                                    id={"foo"}
+                                    title={"House Fire in Blair Hill"}
+                                    time={"10:31 AM"}
+                                    status={"live"}
+                                />
+                                <EmergencyCard
+                                    key={"bar"}
+                                    id={"bar"}
+                                    title={"House Fire in Blair Hill"}
+                                    time={"10:31 AM"}
+                                    status={"live"}
+                                />
+                            </>
                         ))}
                     </ScrollArea>
                 </div>

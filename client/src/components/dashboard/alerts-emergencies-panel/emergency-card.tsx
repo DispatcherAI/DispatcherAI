@@ -35,7 +35,7 @@ export function EmergencyCard({ id, title, time, status }: EmergencyCardProps) {
     const Icon = CARD_ICONS[status];
     const cardColor = CARD_COLOR[status];
 
-    const { handleSelect } = useEmergencyContext();
+    const { selectedId, handleSelect } = useEmergencyContext();
 
     const handleClick = () => {
         handleSelect(id);
@@ -44,8 +44,9 @@ export function EmergencyCard({ id, title, time, status }: EmergencyCardProps) {
     return (
         <div
             className={cn(
-                "flex space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3",
-                "hover:bg-dp-backgroundHover"
+                "flex cursor-pointer space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3",
+                "hover:bg-dp-backgroundHover",
+                selectedId === id && "bg-dp-card hover:bg-dp-card"
             )}
             onClick={handleClick}
         >
