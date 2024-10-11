@@ -8,6 +8,8 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+import { ALERTS } from "./alerts.type";
+
 const TABS = [
     {
         value: "active",
@@ -20,6 +22,8 @@ const TABS = [
 ];
 
 const HEIGHT = 167;
+const ACTIVE_ALERTS = ALERTS.active;
+const RESOLVED_ALERTS = ALERTS.resolved;
 
 export function AlertTab() {
     return (
@@ -39,10 +43,7 @@ export function AlertTab() {
                     ))}
                 </TabsList>
 
-                <TabsContent
-                    value="active"
-                    className="mt-0"
-                >
+                <TabsContent value="active">
                     <div className="h-full">
                         <ScrollArea
                             className={cn(
@@ -51,21 +52,17 @@ export function AlertTab() {
                             )}
                             type="scroll"
                         >
-                            <AlertCard
-                                id="foo"
-                                title="High Call Volume Alert"
-                                details="Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity."
-                                time="10:31AM" // ! should be UNIX
-                                status="active"
-                            />
+                            {ACTIVE_ALERTS.map((alert) => (
+                                <AlertCard
+                                    key={alert.id}
+                                    {...alert}
+                                />
+                            ))}
                         </ScrollArea>
                     </div>
                 </TabsContent>
 
-                <TabsContent
-                    value="resolved"
-                    className="mt-0"
-                >
+                <TabsContent value="resolved">
                     <div className="h-full">
                         <ScrollArea
                             className={cn(
@@ -74,13 +71,12 @@ export function AlertTab() {
                             )}
                             type="scroll"
                         >
-                            <AlertCard
-                                id="foo"
-                                title="High Call Volume Alert"
-                                details="Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity."
-                                time="10:31AM" // ! should be UNIX
-                                status="resolved"
-                            />
+                            {RESOLVED_ALERTS.map((alert) => (
+                                <AlertCard
+                                    key={alert.id}
+                                    {...alert}
+                                />
+                            ))}
                         </ScrollArea>
                     </div>
                 </TabsContent>

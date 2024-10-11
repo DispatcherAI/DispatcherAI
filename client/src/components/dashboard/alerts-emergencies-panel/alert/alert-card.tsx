@@ -1,22 +1,14 @@
 import { cn } from "@/lib/utils";
 import { CircleCheckIcon, LucideIcon, TriangleAlertIcon } from "lucide-react";
 
-type Status = "active" | "resolved";
-
-interface AlertCardProps {
-    id: string;
-    title: string;
-    details: string;
-    time: string;
-    status: Status;
-}
+import { Alert, Status } from "./alerts.type";
 
 const CARD_ICONS: Record<Status, LucideIcon> = {
     active: TriangleAlertIcon,
     resolved: CircleCheckIcon,
 };
 
-export function AlertCard({ title, details, time, status }: AlertCardProps) {
+export function AlertCard({ title, details, time, status }: Alert) {
     const Icon = CARD_ICONS[status];
 
     return (
