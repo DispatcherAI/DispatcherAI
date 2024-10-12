@@ -76,7 +76,7 @@ const Map: React.FC<MapProps> = ({ center, pins }) => {
             {
                 animate: true,
                 duration: 1,
-            },
+            }
         );
 
         // Clear existing markers
@@ -96,7 +96,10 @@ const Map: React.FC<MapProps> = ({ center, pins }) => {
 
     return (
         <div className={styles.mapWrap}>
-            <div ref={mapContainer} className={styles.map} />
+            <div
+                ref={mapContainer}
+                className={styles.map}
+            />
         </div>
     );
 };

@@ -19,6 +19,7 @@ const config = {
         "@ianvs/prettier-plugin-sort-imports",
         "prettier-plugin-tailwindcss",
     ],
+    tailwindFunctions: ["cva", "cn", "clsx"], // https://github.com/tailwindlabs/tailwindcss/discussions/7558#discussioncomment-9217030
     importOrder: [
         "^(react/(.*)$)|^(react$)",
         "^(next/(.*)$)|^(next$)",

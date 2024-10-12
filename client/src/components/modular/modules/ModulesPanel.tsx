@@ -19,19 +19,19 @@ export function ModulesPanel() {
                     <Button
                         className={cn(
                             "group size-15 flex-col space-y-1 rounded-none bg-[#292929] p-2",
-                            "hover:bg-dp-cards hover:ring-1 hover:ring-dp-accent",
+                            "hover:bg-dp-cards hover:ring-dp-accent hover:ring-1"
                         )}
                     >
                         <button.icon
                             className={cn(
                                 "stroke-dp-text",
-                                "group-hover:stroke-dp-heading",
+                                "group-hover:stroke-dp-heading"
                             )}
                         />
                         <p
                             className={cn(
                                 "text-xs font-semibold text-dp-text",
-                                "group-hover:text-dp-heading",
+                                "group-hover:text-dp-heading"
                             )}
                         >
                             {button.label}
