@@ -1,4 +1,5 @@
 import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
+import { AlertDropdownMenu } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-dropdown-menu";
 import {
     Tabs,
     TabsContent,
@@ -53,9 +54,9 @@ export function AlertTab() {
                             type="scroll"
                         >
                             {ACTIVE_ALERTS.map((alert) => (
-                                <AlertCard
+                                <AlertDropdownMenu
                                     key={alert.id}
-                                    {...alert}
+                                    alert={alert}
                                 />
                             ))}
                         </ScrollArea>

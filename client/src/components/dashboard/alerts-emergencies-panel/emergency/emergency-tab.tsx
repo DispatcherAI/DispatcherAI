@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Call } from "@/app/(layout)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-stat";
@@ -21,7 +22,7 @@ export function EmergencyTab({ data }: { data: Record<string, Call> }) {
                     type="scroll"
                 >
                     {Object.entries(data).map(([id, _call]) => (
-                        <>
+                        <Fragment key={id}>
                             <EmergencyCard
                                 key={id}
                                 id={id}
@@ -43,7 +44,7 @@ export function EmergencyTab({ data }: { data: Record<string, Call> }) {
                                 time={"10:31 AM"}
                                 status={"live"}
                             />
-                        </>
+                        </Fragment>
                     ))}
                 </ScrollArea>
             </div>
