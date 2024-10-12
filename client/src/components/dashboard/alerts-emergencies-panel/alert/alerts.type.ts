@@ -19,14 +19,14 @@ export interface ResolvedAlert extends Alert {
 export const ALERTS: { active: ActiveAlert[]; resolved: ResolvedAlert[] } = {
     active: [
         {
-            id: "1",
+            id: "active1",
             title: "Unit unreachable",
             details: "The unit cannot be reached. Possible radio failure.",
             time: "11:56AM",
             status: "active",
         },
         {
-            id: "2",
+            id: "active2",
             title: "High Call Volume Alert",
             details:
                 "Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity.",
@@ -34,14 +34,14 @@ export const ALERTS: { active: ActiveAlert[]; resolved: ResolvedAlert[] } = {
             status: "active",
         },
         {
-            id: "3",
+            id: "active3",
             title: "Large bush fire in the region",
             details: "May impact several homes in the Coarse County region.",
             time: "7:41AM",
             status: "active",
         },
         {
-            id: "4",
+            id: "active4",
             title: "Communication lines unstable",
             details:
                 "Recent rainstorm has caused communication in the region to be unstable.",
@@ -51,7 +51,7 @@ export const ALERTS: { active: ActiveAlert[]; resolved: ResolvedAlert[] } = {
     ],
     resolved: [
         {
-            id: "1",
+            id: "resolved1",
             title: "High Call Volume Alert",
             details:
                 "Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity.",
@@ -59,7 +59,7 @@ export const ALERTS: { active: ActiveAlert[]; resolved: ResolvedAlert[] } = {
             status: "resolved",
         },
         {
-            id: "2",
+            id: "resolved2",
             title: "FPD 2334 Unavailable",
             details:
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eget purus id erat volutpat ultricies.",
