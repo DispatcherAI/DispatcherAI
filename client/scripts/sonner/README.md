@@ -9,3 +9,6 @@ More specific dependency details can be found in `package.json`:
 ```json
 "sonner-b4ffb609": "git+https://github.com/emilkowalski/sonner.git#b4ffb609bd5a7e95beff26214d310e4edfc9054c",
 ```
+
+> [!CAUTION]
+> Installing components from shadcn with Bun (`bunx --bun shadcn@latest add ...`) will fail when used with the `--bun` flag.
