@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
+import { AlertDetailsAction } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-action";
 import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-details";
 import { AlertDetailsCollapsibleRecommendedActions } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-recommended-actions";
 import { AlertDetailsLabel } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-label";
-import { AlertDetailsDialog } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-resolve";
 import { Label } from "@/components/dispatch/label";
 import {
     DropdownMenu,
@@ -89,7 +89,7 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 <AlertDetailsCollapsibleRecommendedActions alert={alert} />
 
                 <div className="flex-between space-x-2 p-3">
-                    <AlertDetailsDialog
+                    <AlertDetailsAction
                         open={resolveDialogOpen}
                         setOpen={setResolveDialogOpen}
                         alert={alert}

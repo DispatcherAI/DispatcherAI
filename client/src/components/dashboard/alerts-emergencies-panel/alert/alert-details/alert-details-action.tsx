@@ -17,11 +17,16 @@ interface AlertDetailsDialogProps {
     alert: Alert;
 }
 
-export function AlertDetailsDialog({
+export function AlertDetailsAction({
     open,
     setOpen,
     alert,
 }: AlertDetailsDialogProps) {
+    const active = alert.status === "active";
+
+    const buttonText = `${active ? "Mark as Resolved" : "Reopen"}`;
+    const title = `Are you sure you want to ${active ? "resolve" : "reopen"} this issue?`;
+
     return (
         <Dialog
             open={open}
@@ -32,14 +37,12 @@ export function AlertDetailsDialog({
                     variant={"default"}
                     className="grow"
                 >
-                    Mark as Resolved
+                    {buttonText}
                 </Button>
             </DialogTrigger>
             <DialogContent className="[&>button]:hidden">
                 <DialogHeader className="space-y-3">
-                    <DialogTitle className="text-sm">
-                        Are you sure you want to resolve this issue?
-                    </DialogTitle>
+                    <DialogTitle className="text-sm">{title}</DialogTitle>
                     <DialogDescription>
                         <div className="space-y-2 border border-dp-outlineNotSelected p-2">
                             <p className="text-sm font-semibold leading-none text-dp-headingText">
