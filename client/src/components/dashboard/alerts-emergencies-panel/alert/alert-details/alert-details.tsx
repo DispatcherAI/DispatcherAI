@@ -3,6 +3,7 @@ import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert
 import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-details";
 import { AlertDetailsCollapsibleRecommendedActions } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-recommended-actions";
 import { AlertDetailsLabel } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-label";
+import { Button } from "@/components/dispatch/button";
 import { Label } from "@/components/dispatch/label";
 import {
     DropdownMenu,
@@ -73,6 +74,21 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 <DropdownMenuSeparator className="my-0 bg-dp-outlineNotSelected" />
 
                 <AlertDetailsCollapsibleRecommendedActions alert={alert} />
+
+                <div className="flex-between space-x-2 p-3">
+                    <Button
+                        variant={"secondary"}
+                        className="w-20"
+                    >
+                        Dismiss
+                    </Button>
+                    <Button
+                        variant={"default"}
+                        className="grow"
+                    >
+                        Mark as Resolved
+                    </Button>
+                </div>
             </DropdownMenuContent>
         </DropdownMenu>
     );
