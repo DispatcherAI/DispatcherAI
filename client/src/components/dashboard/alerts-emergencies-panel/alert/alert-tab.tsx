@@ -14,16 +14,16 @@ const TABS = [
     {
         value: "active",
         label: "Active",
+        alerts: ALERTS.active,
     },
     {
         value: "resolved",
         label: "Resolved",
+        alerts: ALERTS.resolved,
     },
 ];
 
 const HEIGHT = 167;
-const ACTIVE_ALERTS = ALERTS.active;
-const RESOLVED_ALERTS = ALERTS.resolved;
 
 export function AlertTab() {
     return (
@@ -43,43 +43,29 @@ export function AlertTab() {
                     ))}
                 </TabsList>
 
-                <TabsContent value="active">
-                    <div className="h-full">
-                        <ScrollArea
-                            className={cn(
-                                "flex flex-col overflow-y-auto",
-                                `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
-                            )}
-                            type="scroll"
-                        >
-                            {ACTIVE_ALERTS.map((alert) => (
-                                <AlertDropdownMenu
-                                    key={alert.id}
-                                    alert={alert}
-                                />
-                            ))}
-                        </ScrollArea>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="resolved">
-                    <div className="h-full">
-                        <ScrollArea
-                            className={cn(
-                                "flex flex-col overflow-y-auto",
-                                `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
-                            )}
-                            type="scroll"
-                        >
-                            {RESOLVED_ALERTS.map((alert) => (
-                                <AlertDropdownMenu
-                                    key={alert.id}
-                                    alert={alert}
-                                />
-                            ))}
-                        </ScrollArea>
-                    </div>
-                </TabsContent>
+                {TABS.map((tab) => (
+                    <TabsContent
+                        key={tab.value}
+                        value={tab.value}
+                    >
+                        <div className="h-full">
+                            <ScrollArea
+                                className={cn(
+                                    "flex flex-col overflow-y-auto",
+                                    `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
+                                )}
+                                type="scroll"
+                            >
+                                {tab.alerts.map((alert) => (
+                                    <AlertDropdownMenu
+                                        key={alert.id}
+                                        alert={alert}
+                                    />
+                                ))}
+                            </ScrollArea>
+                        </div>
+                    </TabsContent>
+                ))}
             </Tabs>
         </div>
     );
