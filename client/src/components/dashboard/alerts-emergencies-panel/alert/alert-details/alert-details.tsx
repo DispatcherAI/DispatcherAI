@@ -3,7 +3,7 @@ import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert
 import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-details";
 import { AlertDetailsCollapsibleRecommendedActions } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-recommended-actions";
 import { AlertDetailsLabel } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-label";
-import { Button } from "@/components/dispatch/button";
+import { AlertDetailsDialog } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-resolve";
 import { Label } from "@/components/dispatch/label";
 import {
     DropdownMenu,
@@ -16,8 +16,20 @@ import { Alert } from "../alerts.type";
 
 export function AlertDropdownMenu({ alert }: { alert: Alert }) {
     const [open, setOpen] = useState(false);
+    const [resolveDialogOpen, setResolveDialogOpen] = useState(false);
 
     const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleEscapeKeyDown = (e: KeyboardEvent) => {
+        if (resolveDialogOpen) {
+            e.preventDefault();
+            e.stopPropagation();
+            setResolveDialogOpen(false);
+            return;
+        }
+
         setOpen(false);
     };
 
@@ -37,6 +49,7 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 sideOffset={20}
                 align="start"
                 className="w-[250px] rounded-none border-none bg-dp-background p-0 text-dp-headingText"
+                onEscapeKeyDown={handleEscapeKeyDown}
             >
                 <AlertDetailsLabel handleClose={handleClose} />
 
@@ -76,18 +89,11 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 <AlertDetailsCollapsibleRecommendedActions alert={alert} />
 
                 <div className="flex-between space-x-2 p-3">
-                    <Button
-                        variant={"secondary"}
-                        className="w-20"
-                    >
-                        Dismiss
-                    </Button>
-                    <Button
-                        variant={"default"}
-                        className="grow"
-                    >
-                        Mark as Resolved
-                    </Button>
+                    <AlertDetailsDialog
+                        open={resolveDialogOpen}
+                        setOpen={setResolveDialogOpen}
+                        alert={alert}
+                    />
                 </div>
             </DropdownMenuContent>
         </DropdownMenu>

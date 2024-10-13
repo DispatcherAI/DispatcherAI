@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Call } from "@/app/(layout)/live/page";
 import { AlertTab } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-tab";
 import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
+import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import { Input } from "@/components/dispatch/input";
 import {
     Select,
@@ -42,7 +43,13 @@ export function AlertsEmergenciesPanel({
 }) {
     const [value, setValue] = useState<string | undefined>();
 
-    const handleValueChange = (newValue: string) => {
+    const { setSelectedId } = useEmergencyContext();
+
+    const handleTabValueChange = () => {
+        setSelectedId(undefined);
+    };
+
+    const handleFilterValueChange = (newValue: string) => {
         setValue(newValue === "_CLEAR" ? undefined : newValue);
     };
 
@@ -51,6 +58,7 @@ export function AlertsEmergenciesPanel({
             <Tabs
                 defaultValue="emergencies"
                 className="px-3 pt-1"
+                onValueChange={handleTabValueChange}
             >
                 <TabsList className="h-fit w-full justify-start border-b border-dp-outlineNotSelected">
                     <TabsTrigger value="emergencies">Emergencies</TabsTrigger>
@@ -67,7 +75,7 @@ export function AlertsEmergenciesPanel({
                     />
                     <Select
                         value={value || ""}
-                        onValueChange={handleValueChange}
+                        onValueChange={handleFilterValueChange}
                     >
                         <SelectTrigger className="h-7 w-20 min-w-20 p-2 text-left text-xs focus:ring-1 focus:ring-offset-0">
                             <SelectValue placeholder="Filter" />

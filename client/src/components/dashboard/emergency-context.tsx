@@ -1,9 +1,16 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import {
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useState,
+} from "react";
 
 interface EmergencyContextType {
     selectedId: string | undefined;
+    setSelectedId: Dispatch<SetStateAction<string | undefined>>;
     handleSelect: (id: string) => void;
 }
 
@@ -23,7 +30,9 @@ export const EmergencyProvider = ({
     };
 
     return (
-        <EmergencyContext.Provider value={{ selectedId, handleSelect }}>
+        <EmergencyContext.Provider
+            value={{ selectedId, setSelectedId, handleSelect }}
+        >
             {children}
         </EmergencyContext.Provider>
     );
