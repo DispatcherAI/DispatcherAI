@@ -11,6 +11,7 @@ interface AlertDetailsCollapsibleProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     title: string;
+    collapsibleContentClassname?: string;
     children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ export function AlertDetailsCollapsible({
     open,
     onOpenChange,
     title,
+    collapsibleContentClassname,
     children,
 }: AlertDetailsCollapsibleProps) {
     const Icon = open ? ChevronUpIcon : ChevronDownIcon;
@@ -39,7 +41,12 @@ export function AlertDetailsCollapsible({
                 <Icon className="size-4 stroke-dp-text group-hover:stroke-dp-headingText" />
             </CollapsibleTrigger>
 
-            <CollapsibleContent className="space-y-2 px-3 pb-2">
+            <CollapsibleContent
+                className={cn(
+                    "space-y-2 px-3 pb-2",
+                    collapsibleContentClassname
+                )}
+            >
                 {children}
             </CollapsibleContent>
         </Collapsible>
