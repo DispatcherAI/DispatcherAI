@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
+import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible-details";
+import { AlertDetailsLabel } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-label";
 import { Label } from "@/components/dispatch/label";
-import { CloseButton } from "@/components/shared/CloseButton";
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Alert } from "./alerts.type";
+import { Alert } from "../alerts.type";
 
 export function AlertDropdownMenu({ alert }: { alert: Alert }) {
     const [open, setOpen] = useState(false);
@@ -36,18 +36,11 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 align="start"
                 className="w-[250px] rounded-none border-none bg-dp-background p-0 text-dp-headingText"
             >
-                <DropdownMenuLabel className="relative px-3 py-1 text-xs font-normal text-dp-text">
-                    <p>Alert Details</p>
-                    <CloseButton
-                        buttonClassname="size-6 absolute right-0 top-0 "
-                        iconClassname="size-4"
-                        handleClose={handleClose}
-                    />
-                </DropdownMenuLabel>
+                <AlertDetailsLabel handleClose={handleClose} />
 
                 <DropdownMenuSeparator className="my-0 bg-dp-outlineNotSelected" />
 
-                <div className="space-y-2 p-3">
+                <div className="space-y-2 px-3 py-2">
                     <p className="text-lg font-bold leading-none text-dp-headingText">
                         {alert.title}
                     </p>
@@ -71,6 +64,10 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                         </p>
                     </div>
                 </div>
+
+                <DropdownMenuSeparator className="my-0 bg-dp-outlineNotSelected" />
+
+                <AlertDetailsCollapsibleDetails alert={alert} />
 
                 <DropdownMenuSeparator className="my-0 bg-dp-outlineNotSelected" />
             </DropdownMenuContent>

@@ -18,14 +18,14 @@ export function CloseButton({
             variant={"secondary"}
             size={"icon"}
             className={cn(
-                "border-l border-dp-outline bg-dp-background hover:ring-0",
+                "group border-l border-dp-outline bg-dp-background hover:ring-0",
                 buttonClassname
             )}
             onClick={handleClose}
         >
             <XIcon
                 className={cn(
-                    "text-dp-text hover:text-dp-headingText",
+                    "text-dp-text group-hover:text-dp-headingText",
                     iconClassname
                 )}
             />

@@ -1,5 +1,5 @@
 import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
-import { AlertDropdownMenu } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-dropdown-menu";
+import { AlertDropdownMenu } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details";
 import {
     Tabs,
     TabsContent,
