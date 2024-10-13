@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
-import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible-details";
+import { AlertDetailsCollapsible } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible";
+import { AlertDetailsCollapsibleDetails } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-details";
+import { AlertDetailsCollapsibleRecommendedActions } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-collapsible/alert-details-collapsible-recommended-actions";
 import { AlertDetailsLabel } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details-label";
 import { Label } from "@/components/dispatch/label";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { ChevronDownIcon } from "lucide-react";
 
 import { Alert } from "../alerts.type";
 
@@ -70,6 +79,8 @@ export function AlertDropdownMenu({ alert }: { alert: Alert }) {
                 <AlertDetailsCollapsibleDetails alert={alert} />
 
                 <DropdownMenuSeparator className="my-0 bg-dp-outlineNotSelected" />
+
+                <AlertDetailsCollapsibleRecommendedActions alert={alert} />
             </DropdownMenuContent>
         </DropdownMenu>
     );
