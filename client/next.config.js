@@ -8,4 +8,11 @@ const nextConfig = {
     },
 };
 
-module.exports = nextConfig;
+module.exports = {
+    ...nextConfig,
+    parserOptions: {
+        project: "./tsconfig.json",  
+        tsconfigRootDir: __dirname,  
+        sourceType: "module",
+    },
+};
