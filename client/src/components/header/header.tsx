@@ -6,11 +6,10 @@ import {
     SelectValue,
 } from "@/components/dispatch/select";
 import { Separator } from "@/components/dispatch/separator";
+import { ConnectionStatus } from "@/components/header/connection-status";
+import { Time } from "@/components/header/time";
+import { WeatherCondition } from "@/components/header/weather-condition";
 import { HeadsetIcon } from "lucide-react";
-
-import { ConnectionStatus } from "./connection-status";
-import { Time } from "./time";
-import { WeatherCondition } from "./weather-condition";
 
 export function Header() {
     return (
@@ -40,7 +39,7 @@ export function Header() {
                     </div>
 
                     <Select defaultValue="SF">
-                        <SelectTrigger className="h-full w-40 p-2 text-xs uppercase">
+                        <SelectTrigger className="h-full w-40 p-2 text-left text-xs uppercase">
                             <SelectValue placeholder="LOCATION" />
                         </SelectTrigger>
                         <SelectContent className="uppercase">

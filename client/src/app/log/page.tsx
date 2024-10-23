@@ -1,18 +1,15 @@
 "use client";
+
 import React from "react";
-import LogTable from '../../components/log/logTable';
 
-
+import LogTable from "../../components/log/logTable";
 
 const LogPage = () => {
-
-
-    return(
-
+    return (
         <div>
-            <LogTable/>
+            <LogTable />
         </div>
-    )
-}
+    );
+};
 
 export default LogPage;

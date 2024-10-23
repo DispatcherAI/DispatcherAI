@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
+import { Skeleton } from "../ui/skeleton";
+
 interface TimeProps {
     className?: string;
 }
@@ -15,7 +17,7 @@ const FORMATTER = new Intl.DateTimeFormat("en-GB", {
 });
 
 export function Time({ className }: TimeProps) {
-    const [time, setTime] = useState("");
+    const [time, setTime] = useState<string | undefined>();
 
     useEffect(() => {
         const updateTime = () => {
@@ -29,6 +31,14 @@ export function Time({ className }: TimeProps) {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    if (!time) {
+        return (
+            <Skeleton
+                className={cn(className, "rounded-none bg-dp-hoverCard")}
+            />
+        );
+    }
 
     return (
         <div className="h-fit">

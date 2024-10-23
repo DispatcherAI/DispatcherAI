@@ -1,17 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import dynamic from "next/dynamic";
+import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
+import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import DetailsPanel from "@/components/live/DetailsPanel";
-import EventPanel from "@/components/live/EventPanel";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
-
-// const Map = dynamic(() => import("@/components/live/map/Map"), {
-//     loading: () => <p>Rendering Map...</p>,
-//     ssr: false,
-// });
 
 interface ServerMessage {
     event: "db_response";
@@ -73,20 +68,19 @@ const emptyCall: Call = {
     type: "",
 };
 
+const DEFAULT_CENTER = { lat: 37.867989, lng: -122.271507 };
+
 const Page = () => {
     const [_connected, setConnected] = useState(false);
     const [data, setData] = useState<Record<string, Call>>(MESSAGES);
-    const [selectedId, setSelectedId] = useState<string | undefined>();
+
     const [resolvedIds, setResolvedIds] = useState<string[]>([]);
 
-    const [_center, setCenter] = useState<{ lat: number; lng: number }>({
-        lat: 37.867989,
-        lng: -122.271507,
-    });
+    const { selectedId } = useEmergencyContext();
 
-    const handleSelect = (id: string) => {
-        setSelectedId(id === selectedId ? undefined : id);
-    };
+    const [_center, setCenter] = useState<{ lat: number; lng: number }>(
+        DEFAULT_CENTER
+    );
 
     const handleResolve = (id: string) => {
         setResolvedIds((prev) => {
@@ -116,7 +110,10 @@ const Page = () => {
     };
 
     useEffect(() => {
-        if (!selectedId) return;
+        if (!selectedId) {
+            setCenter(DEFAULT_CENTER);
+            return;
+        }
 
         if (!data[selectedId]?.location_coords) return;
 
@@ -167,11 +164,7 @@ const Page = () => {
 
     return (
         <div className="relative flex h-full justify-between">
-            <EventPanel
-                data={data}
-                selectedId={selectedId || undefined}
-                handleSelect={handleSelect}
-            />
+            <AlertsEmergenciesPanel data={data} />
 
             {selectedId && data ? (
                 <div className="absolute right-0 z-50 flex">
@@ -187,27 +180,25 @@ const Page = () => {
                 </div>
             ) : null}
 
-            <div className="absolute h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
+            <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
 
             {/* <Map
-                    center={center}
-                    pins={Object.entries(data)
-                        .filter(
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                            ([_, call]) =>
-                                call.location_coords && call.location_name
-                        )
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        .map(([_, call]) => {
-                            return {
-                                coordinates: [
-                                    call.location_coords?.lat as number, // type-cast cuz TS trolling
-                                    call.location_coords?.lng as number, // type-cast cuz TS trolling
-                                ],
-                                popupHtml: `<b>${call.title}</b><br>Location: ${call.location_name}`,
-                            };
-                        })}
-                /> */}
+                center={center}
+                pins={Object.entries(data)
+                    .filter(
+                        ([_, call]) =>
+                            call.location_coords && call.location_name
+                    )
+                    .map(([_, call]) => {
+                        return {
+                            coordinates: [
+                                call.location_coords?.lat as number, // type-cast cuz TS trolling
+                                call.location_coords?.lng as number, // type-cast cuz TS trolling
+                            ],
+                            popupHtml: `<b>${call.title}</b><br>Location: ${call.location_name}`,
+                        };
+                    })}
+            /> */}
         </div>
     );
 };

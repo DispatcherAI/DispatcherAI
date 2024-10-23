@@ -9,7 +9,7 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default: cn(
-                    "text-dp-card bg-dp-primary transition-all",
+                    "bg-dp-primary text-dp-card transition-all",
                     "hover:bg-dp-primary2"
                 ),
                 secondary: cn(
@@ -17,8 +17,8 @@ const buttonVariants = cva(
                     "hover:bg-dp-hoverCard hover:ring-1 hover:ring-dp-outline"
                 ),
                 icon: cn(
-                    "bg-transparent border border-dp-outlineNotSelected",
-                    "hover:bg-dp-hoverCard hover:border-dp-outline"
+                    "border border-dp-outlineNotSelected bg-transparent",
+                    "hover:border-dp-outline hover:bg-dp-hoverCard"
                 ),
             },
             size: {

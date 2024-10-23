@@ -130,10 +130,16 @@ const _CustomSettingsDrawer = () => {
                                 <SelectItem value="MISTRAL">
                                     Mistral 7Bx8
                                 </SelectItem>
-                                <SelectItem value="OAI" disabled>
+                                <SelectItem
+                                    value="OAI"
+                                    disabled
+                                >
                                     GPT 4o
                                 </SelectItem>
-                                <SelectItem value="LLAMA" disabled>
+                                <SelectItem
+                                    value="LLAMA"
+                                    disabled
+                                >
                                     Llama 3.1 8B
                                 </SelectItem>
                             </SelectContent>

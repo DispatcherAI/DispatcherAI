@@ -12,3 +12,5 @@ export const MONTHS = [
     "November",
     "December",
 ];
+
+export type Severity = "critical" | "warning" | "safe";
