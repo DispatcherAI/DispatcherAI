@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//* define type data
+enum callType {
+  Fire
+  Medical
+  Police
+}
+
+enum severityType {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum statusType {
+  Active
+  Resolved
+}
+
+
+model Call {
+  id            String          @id @default(cuid()) // primary key
+  createdAt     DateTime        @default(now())
+  endedAt       DateTime?
+  inProgress    Boolean?
+  status        statusType
+  userId        String? // foreign key referencing the user
+  user          User?           @relation(fields: [userId], references: [id]) // many-to-one relation
+  CallAnalytics CallAnalytics[]
+  Messages      Message[]
+}
+
+//* define tables
+model User {
+  id          String   @id @default(cuid()) // primary key
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  clerkUserId String?  @unique // enforce uniqueness
+  phoneNumber String?
+  calls       Call[] // one-to-many relation
+}
+
+
+model CallAnalytics {
+  id        String   @id @default(cuid()) // primary key
+  callId    String
+  call      Call     @relation(fields: [callId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  type      callType?
+  severity  severityType?
+  summary   String?
+  sentiment String?
+  topics    String[]
+  location  String?
+  latitude  Float?
+  longitude Float?
+  name      String?
+  address   String?
+  object    String?
+}
+
+model Message {
+  id        String   @id @default(cuid()) // primary key
+  callId    String
+  call      Call     @relation(fields: [callId], references: [id])
+  speaker   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
