@@ -47,6 +47,7 @@ model User {
   clerkUserId String?  @unique // enforce uniqueness
   phoneNumber String?
   calls       Call[] // one-to-many relation
+  credits     Int      @default(50)
 }
 
 

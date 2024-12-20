@@ -7,58 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String     @id @default(cuid())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now()) @updatedAt
-  clerkUserId String?    @unique
-  email       String?    @unique
-  name        String?
-  phone       String?
-  userModel   String?
-  userPrompt  String?
-  callId      String?
-  calls       UserCall[]
-}
-
-model Call {
-  id        String       @id @default(cuid())
-  type      callType
-  createdAt DateTime     @default(now())
-  endedAt   DateTime?
-  duration  Int?
-  severity  severityType
-  status    statusType
-  userId    String?
-  waitTime  Int?
-  messages  Message[]
-  users     UserCall[]
-}
-
-model Message {
-  id        String      @id @default(cuid())
-  createdAt DateTime    @default(now())
-  role      messageRole
-  content   String
-  callId    String
-  call      Call        @relation(fields: [callId], references: [id])
-}
-
-model UserCall {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  userId    String
-  callId    String
-  call      Call     @relation(fields: [callId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-}
-
+//* define type data
 enum callType {
   Fire
   Medical
-  Flood
-  Robbery
-  Critical
+  Police
 }
 
 enum severityType {
@@ -73,7 +26,56 @@ enum statusType {
   Resolved
 }
 
-enum messageRole {
-  DISPATCHER
-  CALLER
+
+model Call {
+  id            String          @id @default(cuid()) // primary key
+  createdAt     DateTime        @default(now())
+  endedAt       DateTime?
+  inProgress    Boolean?
+  status        statusType
+  userId        String? // foreign key referencing the user
+  user          User?           @relation(fields: [userId], references: [id]) // many-to-one relation
+  CallAnalytics CallAnalytics[]
+  Messages      Message[]
+}
+
+//* define tables
+model User {
+  id          String   @id @default(cuid()) // primary key
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  clerkUserId String?  @unique // enforce uniqueness
+  phoneNumber String?
+  calls       Call[] // one-to-many relation
+  credits     Int      @default(50)
+}
+
+
+model CallAnalytics {
+  id        String   @id @default(cuid()) // primary key
+  callId    String
+  call      Call     @relation(fields: [callId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  type      callType?
+  severity  severityType?
+  summary   String?
+  sentiment String?
+  topics    String[]
+  location  String?
+  latitude  Float?
+  longitude Float?
+  name      String?
+  address   String?
+  object    String?
+}
+
+model Message {
+  id        String   @id @default(cuid()) // primary key
+  callId    String
+  call      Call     @relation(fields: [callId], references: [id])
+  speaker   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
