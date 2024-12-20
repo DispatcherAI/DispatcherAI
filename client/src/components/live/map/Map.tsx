@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "leaflet/dist/leaflet.css";
 
+import { cn } from "@/lib/utils";
 //@ts-expect-error trust me bro
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import L from "leaflet";
@@ -29,9 +30,10 @@ interface MapProps {
         lat: number;
     };
     pins: MapPin[];
+    className?: string;
 }
 
-const Map: React.FC<MapProps> = ({ center, pins }) => {
+const Map: React.FC<MapProps> = ({ center, pins, className }) => {
     const mapContainer = useRef(null);
     const map = useRef<L.Map | null>(null);
 
@@ -64,6 +66,7 @@ const Map: React.FC<MapProps> = ({ center, pins }) => {
             const mtLayer = new MaptilerLayer({
                 // Get your free API key at https://cloud.maptiler.com
                 apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
+                style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_API_KEY}`,
             });
 
             mtLayer.addTo(map.current);
@@ -95,7 +98,7 @@ const Map: React.FC<MapProps> = ({ center, pins }) => {
     }, [adjustedCenter.lng, adjustedCenter.lat, zoom, pins]);
 
     return (
-        <div className={styles.mapWrap}>
+        <div className={cn(styles.mapWrap, className)}>
             <div
                 ref={mapContainer}
                 className={styles.map}

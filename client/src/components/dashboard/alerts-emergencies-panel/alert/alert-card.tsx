@@ -1,29 +1,31 @@
+import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import { cn } from "@/lib/utils";
 import { CircleCheckIcon, LucideIcon, TriangleAlertIcon } from "lucide-react";
 
-type Status = "active" | "resolved";
-
-interface AlertCardProps {
-    id: string;
-    title: string;
-    details: string;
-    time: string;
-    status: Status;
-}
+import { Alert, Status } from "./alerts.type";
 
 const CARD_ICONS: Record<Status, LucideIcon> = {
     active: TriangleAlertIcon,
     resolved: CircleCheckIcon,
 };
 
-export function AlertCard({ title, details, time, status }: AlertCardProps) {
+export function AlertCard({ id, title, details, time, status }: Alert) {
     const Icon = CARD_ICONS[status];
+
+    const { selectedId, handleSelect } = useEmergencyContext();
+
+    const handleClick = () => {
+        handleSelect(id);
+    };
 
     return (
         <div
             className={cn(
-                "flex space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3"
+                "flex cursor-pointer space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3",
+                "hover:bg-dp-backgroundHover",
+                selectedId === id && "bg-dp-card hover:bg-dp-card"
             )}
+            onClick={handleClick}
         >
             <Icon
                 className={cn("my-auto size-5 min-w-5 text-dp-headingText")}

@@ -1,4 +1,4 @@
-import { AlertCard } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-card";
+import { AlertDropdownMenu } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-details/alert-details";
 import {
     Tabs,
     TabsContent,
@@ -8,14 +8,18 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+import { ALERTS } from "./alerts.type";
+
 const TABS = [
     {
         value: "active",
         label: "Active",
+        alerts: ALERTS.active,
     },
     {
         value: "resolved",
         label: "Resolved",
+        alerts: ALERTS.resolved,
     },
 ];
 
@@ -39,51 +43,29 @@ export function AlertTab() {
                     ))}
                 </TabsList>
 
-                <TabsContent
-                    value="active"
-                    className="mt-0"
-                >
-                    <div className="h-full">
-                        <ScrollArea
-                            className={cn(
-                                "flex flex-col overflow-y-auto",
-                                `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
-                            )}
-                            type="scroll"
-                        >
-                            <AlertCard
-                                id="foo"
-                                title="High Call Volume Alert"
-                                details="Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity."
-                                time="10:31AM" // ! should be UNIX
-                                status="active"
-                            />
-                        </ScrollArea>
-                    </div>
-                </TabsContent>
-
-                <TabsContent
-                    value="resolved"
-                    className="mt-0"
-                >
-                    <div className="h-full">
-                        <ScrollArea
-                            className={cn(
-                                "flex flex-col overflow-y-auto",
-                                `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
-                            )}
-                            type="scroll"
-                        >
-                            <AlertCard
-                                id="foo"
-                                title="High Call Volume Alert"
-                                details="Multiple 911 calls received in the last 10 minutes. Prioritize response based on severity."
-                                time="10:31AM" // ! should be UNIX
-                                status="resolved"
-                            />
-                        </ScrollArea>
-                    </div>
-                </TabsContent>
+                {TABS.map((tab) => (
+                    <TabsContent
+                        key={tab.value}
+                        value={tab.value}
+                    >
+                        <div className="h-full">
+                            <ScrollArea
+                                className={cn(
+                                    "flex flex-col overflow-y-auto",
+                                    `max-h-[calc(100vh-${HEIGHT}px)]` // this is bad code, but it sizes the scroll area correctly
+                                )}
+                                type="scroll"
+                            >
+                                {tab.alerts.map((alert) => (
+                                    <AlertDropdownMenu
+                                        key={alert.id}
+                                        alert={alert}
+                                    />
+                                ))}
+                            </ScrollArea>
+                        </div>
+                    </TabsContent>
+                ))}
             </Tabs>
         </div>
     );
