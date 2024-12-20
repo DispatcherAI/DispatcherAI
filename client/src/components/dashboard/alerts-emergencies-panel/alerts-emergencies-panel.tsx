@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Call } from "@/app/(layout)/live/page";
 import { AlertTab } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-tab";
 import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
@@ -19,6 +16,7 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/dispatch/tabs";
+import { cn } from "@/lib/utils";
 import { SearchIcon } from "lucide-react";
 
 const ITEMS = [
@@ -27,12 +25,16 @@ const ITEMS = [
         label: "",
     },
     {
-        value: "SF",
-        label: "San Francisco, CA",
+        value: "critical",
+        label: "Critical",
     },
     {
-        value: "BER",
-        label: "Berkeley, CA",
+        value: "warning",
+        label: "Warning",
+    },
+    {
+        value: "safe",
+        label: "Safe",
     },
 ];
 
@@ -41,20 +43,15 @@ export function AlertsEmergenciesPanel({
 }: {
     data: Record<string, Call>;
 }) {
-    const [value, setValue] = useState<string | undefined>();
-
-    const { setSelectedId } = useEmergencyContext();
+    const { setSelectedId, filterValue, handleFilterValueChange } =
+        useEmergencyContext();
 
     const handleTabValueChange = () => {
         setSelectedId(undefined);
     };
 
-    const handleFilterValueChange = (newValue: string) => {
-        setValue(newValue === "_CLEAR" ? undefined : newValue);
-    };
-
     return (
-        <div className="h-full w-[350px] bg-[#1E1E1E]">
+        <div className="z-10 h-full w-[350px] bg-[#1E1E1E]">
             <Tabs
                 defaultValue="emergencies"
                 className="px-3 pt-1"
@@ -73,14 +70,21 @@ export function AlertsEmergenciesPanel({
                         startIconClassName="text-dp-inputText size-3"
                         startIconPadding="pl-5"
                     />
+
                     <Select
-                        value={value || ""}
+                        value={filterValue || ""}
                         onValueChange={handleFilterValueChange}
                     >
-                        <SelectTrigger className="h-7 w-20 min-w-20 p-2 text-left text-xs focus:ring-1 focus:ring-offset-0">
+                        <SelectTrigger
+                            className={cn(
+                                "h-7 w-20 min-w-20 max-w-20 overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left text-xs",
+                                "focus:ring-1 focus:ring-offset-0",
+                                "[&>span]:block [&>span]:overflow-hidden [&>span]:text-ellipsis"
+                            )}
+                        >
                             <SelectValue placeholder="Filter" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="min-w-24">
                             {ITEMS.map((item) => (
                                 <SelectItem
                                     key={item.value}

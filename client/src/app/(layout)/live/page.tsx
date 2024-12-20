@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import DetailsPanel from "@/components/live/DetailsPanel";
+import Map from "@/components/live/map/Map";
 import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
@@ -180,10 +181,10 @@ const Page = () => {
                 </div>
             ) : null}
 
-            <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
+            {/* <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" /> */}
 
-            {/* <Map
-                center={center}
+            <Map
+                center={{ lat: 37.867989, lng: -122.271507 }}
                 pins={Object.entries(data)
                     .filter(
                         ([_, call]) =>
@@ -198,7 +199,7 @@ const Page = () => {
                             popupHtml: `<b>${call.title}</b><br>Location: ${call.location_name}`,
                         };
                     })}
-            /> */}
+            />
         </div>
     );
 };

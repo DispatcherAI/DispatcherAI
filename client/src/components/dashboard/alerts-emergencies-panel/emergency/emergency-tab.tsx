@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Call } from "@/app/(layout)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-stat";
@@ -22,30 +21,28 @@ export function EmergencyTab({ data }: { data: Record<string, Call> }) {
                     type="scroll"
                 >
                     {Object.entries(data).map(([id, _call]) => (
-                        <Fragment key={id}>
-                            <EmergencyCard
-                                key={id}
-                                id={id}
-                                title={"House Fire in Blair Hill"}
-                                time={"10:31 AM"}
-                                status={"live"}
-                            />
-                            <EmergencyCard
-                                key={"foo"}
-                                id={"foo"}
-                                title={"House Fire in Blair Hill"}
-                                time={"10:31 AM"}
-                                status={"live"}
-                            />
-                            <EmergencyCard
-                                key={"bar"}
-                                id={"bar"}
-                                title={"House Fire in Blair Hill"}
-                                time={"10:31 AM"}
-                                status={"live"}
-                            />
-                        </Fragment>
+                        <EmergencyCard
+                            key={id}
+                            id={id}
+                            title={"House Fire in Blair Hill"}
+                            time={"10:31 AM"}
+                            severity={"live"}
+                        />
                     ))}
+                    <EmergencyCard
+                        key={"foo"}
+                        id={"foo"}
+                        title={"House Fire in Blair Hill"}
+                        time={"10:31 AM"}
+                        severity={"warning"}
+                    />
+                    <EmergencyCard
+                        key={"bar"}
+                        id={"bar"}
+                        title={"House Fire in Blair Hill"}
+                        time={"10:31 AM"}
+                        severity={"safe"}
+                    />
                 </ScrollArea>
             </div>
         </div>

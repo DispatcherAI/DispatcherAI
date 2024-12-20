@@ -1,4 +1,5 @@
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
+import { Severity } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import {
     CircleAlertIcon,
@@ -7,32 +8,37 @@ import {
     TriangleAlertIcon,
 } from "lucide-react";
 
-type Status = "live" | "critical" | "warning" | "safe";
+type SeverityWithLive = Severity | "live";
 
 interface EmergencyCardProps {
     id: string;
     title: string;
     time: string;
-    status: Status;
+    severity: SeverityWithLive;
 }
 
-const CARD_ICONS: Record<Status, LucideIcon> = {
+const CARD_ICONS: Record<SeverityWithLive, LucideIcon> = {
     live: RadioTowerIcon,
     critical: TriangleAlertIcon,
     warning: TriangleAlertIcon,
     safe: CircleAlertIcon,
 };
 
-const CARD_COLOR: Record<Status, string> = {
+const CARD_COLOR: Record<SeverityWithLive, string> = {
     live: "text-dp-primary",
     critical: "text-dp-critical",
     warning: "text-dp-medium",
     safe: "text-dp-nonEmergency",
 };
 
-export function EmergencyCard({ id, title, time, status }: EmergencyCardProps) {
-    const Icon = CARD_ICONS[status];
-    const cardColor = CARD_COLOR[status];
+export function EmergencyCard({
+    id,
+    title,
+    time,
+    severity,
+}: EmergencyCardProps) {
+    const Icon = CARD_ICONS[severity];
+    const cardColor = CARD_COLOR[severity];
 
     const { selectedId, handleSelect } = useEmergencyContext();
 
@@ -67,7 +73,7 @@ export function EmergencyCard({ id, title, time, status }: EmergencyCardProps) {
                         cardColor
                     )}
                 >
-                    {status}
+                    {severity}
                 </div>
             </div>
         </div>

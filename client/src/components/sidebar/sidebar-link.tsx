@@ -26,7 +26,7 @@ export function SidebarLink({
             <Button
                 variant={"secondary"}
                 className={cn(
-                    "flex w-full justify-center space-x-2 bg-transparent font-normal",
+                    "flex w-full justify-center space-x-2 overflow-hidden bg-transparent font-normal",
                     isOpen && "justify-start",
                     !isOpen && "w-fit max-w-full",
                     path === item.href && "text-dp-primary"
