@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
+import { EmergencyDetailsPanel } from "@/components/dashboard/emergency-details-panel/emergency-details-panel";
 import { Map } from "@/components/dashboard/map/map";
 import { TranscriptPanel } from "@/components/dashboard/transcript-panel/transcript-panel";
 import DetailsPanel from "@/components/live/DetailsPanel";
@@ -174,16 +175,14 @@ const Page = () => {
 
             {selectedId && data ? (
                 <div className="absolute right-0 z-50 flex h-full">
-                    <DetailsPanel
+                    {/* <DetailsPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                         handleResolve={handleResolve}
-                    />
-
-                    {/* <OldTranscriptPanel
-                        call={selectedId ? data[selectedId] : emptyCall}
-                        selectedId={selectedId || undefined}
-                        handleTransfer={handleTransfer}
                     /> */}
+
+                    <EmergencyDetailsPanel
+                        call={selectedId ? data[selectedId] : emptyCall}
+                    />
 
                     <TranscriptPanel
                         call={selectedId ? data[selectedId] : emptyCall}
