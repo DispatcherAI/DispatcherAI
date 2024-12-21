@@ -6,6 +6,7 @@ import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import { Map } from "@/components/dashboard/map/map";
 import { TranscriptPanel } from "@/components/dashboard/transcript-panel/transcript-panel";
 import DetailsPanel from "@/components/live/DetailsPanel";
+import OldTranscriptPanel from "@/components/live/TranscriptPanel";
 
 // import TranscriptPanel from "@/components/live/TranscriptPanel";
 
@@ -103,13 +104,13 @@ const Page = () => {
         });
     };
 
-    const handleTransfer = (id: string) => {
+    const handleTransfer = (id?: string) => {
         console.log("transfer: ", id);
 
         wss.send(
             JSON.stringify({
                 event: "transfer",
-                id: id,
+                id: id ?? selectedId,
             })
         );
     };
@@ -172,12 +173,13 @@ const Page = () => {
             <AlertsEmergenciesPanel data={data} />
 
             {selectedId && data ? (
-                <div className="absolute right-0 z-50 flex">
+                <div className="absolute right-0 z-50 flex h-full">
                     <DetailsPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                         handleResolve={handleResolve}
                     />
-                    {/* <TranscriptPanel
+
+                    {/* <OldTranscriptPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                         selectedId={selectedId || undefined}
                         handleTransfer={handleTransfer}
@@ -185,7 +187,6 @@ const Page = () => {
 
                     <TranscriptPanel
                         call={selectedId ? data[selectedId] : emptyCall}
-                        selectedId={selectedId || undefined}
                         handleTransfer={handleTransfer}
                     />
                 </div>
