@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
+import { Map } from "@/components/dashboard/map/map";
+import { TranscriptPanel } from "@/components/dashboard/transcript-panel/transcript-panel";
 import DetailsPanel from "@/components/live/DetailsPanel";
-import Map from "@/components/live/map/Map";
-import TranscriptPanel from "@/components/live/TranscriptPanel";
+
+// import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
 
@@ -14,11 +16,13 @@ interface ServerMessage {
     data: Record<string, Call>;
 }
 
+export type Emotion = {
+    emotion: string;
+    intensity: number;
+};
+
 export type Call = {
-    emotions?: {
-        emotion: string;
-        intensity: number;
-    }[];
+    emotions?: Emotion[];
     id: string;
     location_name: string;
     location_coords?: {
@@ -173,6 +177,12 @@ const Page = () => {
                         call={selectedId ? data[selectedId] : emptyCall}
                         handleResolve={handleResolve}
                     />
+                    {/* <TranscriptPanel
+                        call={selectedId ? data[selectedId] : emptyCall}
+                        selectedId={selectedId || undefined}
+                        handleTransfer={handleTransfer}
+                    /> */}
+
                     <TranscriptPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                         selectedId={selectedId || undefined}

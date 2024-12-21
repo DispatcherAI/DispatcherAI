@@ -56,9 +56,9 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
                 zoom: zoom,
                 dragging: true,
                 scrollWheelZoom: false,
-                doubleClickZoom: true,
-                touchZoom: true,
-                boxZoom: true,
+                doubleClickZoom: false,
+                touchZoom: false,
+                boxZoom: false,
                 keyboard: false,
             });
 

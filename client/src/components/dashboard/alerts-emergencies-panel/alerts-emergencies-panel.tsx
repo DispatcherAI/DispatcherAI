@@ -51,7 +51,7 @@ export function AlertsEmergenciesPanel({
     };
 
     return (
-        <div className="z-10 h-full w-[350px] bg-[#1E1E1E]">
+        <div className="z-10 h-full w-[350px] bg-dp-background">
             <Tabs
                 defaultValue="emergencies"
                 className="px-3 pt-1"
