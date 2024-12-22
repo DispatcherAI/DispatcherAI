@@ -170,16 +170,11 @@ const Page = () => {
     }, []);
 
     return (
-        <div className="relative flex h-full justify-between">
+        <div className="relative flex h-full w-full justify-between">
             <AlertsEmergenciesPanel data={data} />
 
             {selectedId && data ? (
                 <div className="absolute right-0 z-50 flex h-full">
-                    {/* <DetailsPanel
-                        call={selectedId ? data[selectedId] : emptyCall}
-                        handleResolve={handleResolve}
-                    /> */}
-
                     <EmergencyDetailsPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                     />
