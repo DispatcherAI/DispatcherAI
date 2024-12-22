@@ -19,6 +19,19 @@ from server.db import update_call, get_call, get_all_calls
 from server.socket_manager import manager
 from server.evals import eval, hume_eval
 from server.geocoding import geocode, street_view
+from server.db_prisma import (
+    get_all_calls, 
+    get_call, 
+    create_call,
+    delete_call, 
+    update_call, 
+    get_call_analytics, 
+    get_call_analytics_for_call, 
+    update_call_analytics, 
+    upsert_call_analytics,
+    update_call_transcript
+)
+
 
 print(os.path.join(os.path.dirname(__file__), ".env"))
 load_dotenv(override=True, dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
@@ -129,12 +142,14 @@ async def handle_register_call(request: Request):
         )
 
 
-# Start a websocket server to exchange text input and output with Retell server. Retell server
-# will send over transcriptions and other information. This server here will be responsible for
-# generating responses with LLM and send back to Retell server.
 @router.websocket("/llm-websocket/{call_id}")
 async def websocket_handler(websocket: WebSocket, call_id: str):
+    """
+    WebSocket to exchange text input/output with Retell server.
+    Spawns background tasks for any heavy/eval logic, so the user doesn't wait.
+    """
     try:
+        db = websocket.app.state.db  # Access the Prisma DB from app state
         await websocket.accept()
         llm_client = LlmClient()
 
@@ -149,104 +164,88 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
         )
         await websocket.send_json(config.__dict__)
 
-        # Send first message to signal ready of server
+        # Signal server readiness
         response_id = 0
         first_event = llm_client.draft_begin_message()
         await websocket.send_json(first_event.__dict__)
-        twilio_sid = None
+
+        # In case we want to overwrite the URL param call_id with the real one from Retell
+        call_id = None
 
         async def handle_message(request_json):
-            nonlocal twilio_sid
+            nonlocal call_id
             nonlocal response_id
 
-            # There are 5 types of interaction_type: call_details, pingpong, update_only, response_required, and reminder_required.
-            # Not all of them need to be handled, only response_required and reminder_required.
-            if request_json["interaction_type"] == "call_details":
+            interaction_type = request_json["interaction_type"]
+
+            if interaction_type == "call_details":
+                # We learn about the call details early
                 print(json.dumps(request_json, indent=2))
                 from_number = request_json["call"]["from_number"]
-                print(from_number)
-                return
-            if request_json["interaction_type"] == "ping_pong":
-                await websocket.send_json(
-                    {
-                        "response_type": "ping_pong",
-                        "timestamp": request_json["timestamp"],
+                call_id = request_json["call"]["call_id"]
+                print("Caller number:", from_number)
+
+                user = await db.user.find_first(where={"phoneNumber": from_number})
+                print("User:", user)
+                await create_call(db, call_id, user.id)
+                if not user:
+                    # Not registered => end call with TTS message
+                    res = {
+                        "response_id": request_json["response_id"] + 1,
+                        "content": "This number is not registered. Please register a free account with this number.",
+                        "content_complete": True,
+                        "end_call": True,
                     }
-                )
+                    await websocket.send_json(res)
+                    
                 return
-            if request_json["interaction_type"] == "update_only":
+
+            elif interaction_type == "ping_pong":
+                # Keep connection alive, typical for Retell
+                await websocket.send_json({
+                    "response_type": "ping_pong",
+                    "timestamp": request_json["timestamp"]
+                })
                 return
-            if (
-                request_json["interaction_type"] == "response_required"
-                or request_json["interaction_type"] == "reminder_required"
-            ):
+
+            elif interaction_type == "update_only":
+                # Update transcript in DB (non-blocking I/O, minimal)
+                await update_call_transcript(db, call_id, json.dumps(request_json))
+                return
+
+            elif interaction_type in ("response_required", "reminder_required"):
                 response_id = request_json["response_id"]
-                request = ResponseRequiredRequest(
+                req_obj = ResponseRequiredRequest(
                     interaction_type=request_json["interaction_type"],
                     response_id=response_id,
                     transcript=request_json["transcript"],
                 )
                 print(
-                    f"""Received interaction_type={request_json['interaction_type']}, response_id={response_id}, last_transcript={request_json['transcript'][-1]['content']}"""
+                    f"Received {interaction_type}, response_id={response_id}, "
+                    f"last_transcript={request_json['transcript'][-1]['content']}"
                 )
 
+                # Draft the LLM response (user hears it immediately)
                 response_completed = True
-                async for event in llm_client.draft_response(request):
+                async for event in llm_client.draft_response(req_obj):
                     await websocket.send_json(event.__dict__)
-                    if request.response_id < response_id:
+                    if req_obj.response_id < response_id:
+                        # A new request started, abandon this one
                         response_completed = False
-                        break  # new response needed, abandon this one
+                        break
 
-                if response_completed:
-                    # Update call data in database
-                    updated_data = {
-                        "id": twilio_sid,
-                        "mode": "retell",
-                        "time": datetime.now().isoformat(),
-                        "transcript": request_json["transcript"],
-                    }
-                    update_call(twilio_sid, updated_data)
+                # If we successfully responded, we do post-processing
+                if response_completed and call_id:
 
-                    # Broadcast updated calls to all connected clients
-                    all_calls = get_all_calls()
-                    await manager.broadcast(
-                        {
-                            "event": "db_response",
-                            "data": all_calls,
-                        }
-                    )
-
-                    # Perform additional evaluations
-                    current_data = str(get_call(twilio_sid))
-                    hume_task = hume_eval(request_json["transcript"][-1]["content"])
-                    eval_task = eval(
-                        request_json["transcript"][-1]["content"], current_data
-                    )
-                    results = await asyncio.gather(hume_task, eval_task)
-
-                    updated_data = {
-                        "emotions": results[0],
-                        **json.loads(results[1]),
-                    }
-
-                    if updated_data.get("location_name"):
-                        res = geocode(updated_data["location_name"])
-                        updated_data["location_coords"] = res[0]["geometry"]["location"]
-                        updated_data["street_view"] = street_view(
-                            updated_data["location_coords"]["lat"],
-                            updated_data["location_coords"]["lng"],
-                        )
-
-                    update_call(twilio_sid, updated_data)
-                    all_calls = get_all_calls()
-                    await manager.broadcast(
-                        {
-                            "event": "db_response",
-                            "data": all_calls,
-                        }
+                    # Offload the heavier tasks (eval, hume_eval, analytics) to a background task
+                    # so we don't block the websocket from receiving more messages
+                    transcript_copy = request_json["transcript"][:]
+                    asyncio.create_task(
+                        run_eval_and_analytics(db, call_id, transcript_copy)
                     )
 
         async for data in websocket.iter_json():
+            # For each incoming message from Retell, handle it in a separate task
             asyncio.create_task(handle_message(data))
 
     except WebSocketDisconnect:
@@ -258,3 +257,80 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
         await websocket.close(1011, "Server error")
     finally:
         print(f"LLM WebSocket connection closed for {call_id}")
+
+# ----------------------------------------------------------
+# A separate async function that does the heavier evaluation
+# and analytics logic without blocking the main handler.
+# ----------------------------------------------------------
+async def run_eval_and_analytics(db, call_id: str, transcript: list):
+    try:
+        if not transcript:
+            print("No transcript, nothing to eval.")
+            return
+        
+        print("Running eval and analytics for call", call_id, "\n")
+
+        # 1) Get current call data (if you need it)
+        #    Assuming get_call is async; if not, wrap in to_thread
+        call_analytics = await get_call_analytics(db, call_id)
+        current_data = {
+            "recommendation": getattr(call_analytics, 'recommendation', ''),
+            "severity": getattr(call_analytics, 'severity', ''),
+            "type": getattr(call_analytics, 'type', ''),
+            "name": getattr(call_analytics, 'name', ''),
+            "title": getattr(call_analytics, 'title', ''),
+            "summary": getattr(call_analytics, 'summary', ''),
+            "location_name": getattr(call_analytics, 'location', '')
+        }
+        current_data_str = json.dumps(current_data)
+        
+        print("Call data", current_data_str, "\n")
+
+        # 2) Evaluate the last user content
+        last_content = transcript[-1]["content"]
+        
+        print("Last content", last_content, "\n")
+        # hume_eval and eval are presumably async; if not, wrap with to_thread
+        hume_task = hume_eval(last_content)
+        eval_task = eval(last_content, current_data_str)
+        results = await asyncio.gather(hume_task, eval_task)
+
+        updated_data = {
+            "emotions": results[0],
+            **results[1],
+        }
+        
+        # 3) Geocode if needed
+        if updated_data.get("location_name"):
+            geo_result = geocode(updated_data["location_name"])
+            if geo_result and len(geo_result) > 0 and "geometry" in geo_result[0]:
+                updated_data["location_coords"] = geo_result[0]["geometry"]["location"]
+                lat = updated_data["location_coords"]["lat"]
+                lng = updated_data["location_coords"]["lng"]
+                updated_data["street_view"] = street_view(lat, lng)    
+        
+
+        # 4) Upsert analytics (one-to-one with call)
+        await upsert_call_analytics(
+            db,
+            call_analytics_id=call_analytics.id,
+            call_id=call_id,
+            updated_data={
+                "severity": updated_data.get("severity"),
+                "summary": updated_data.get("summary"),
+                "sentiment": json.dumps(updated_data.get("emotions", {})),
+                "topics": updated_data.get("topics", []),
+                "location": updated_data.get("location_name"),
+                "latitude": updated_data.get("location_coords", {}).get("lat"),
+                "longitude": updated_data.get("location_coords", {}).get("lng"),
+                "name": updated_data.get("name"),
+                "address": updated_data.get("location_name"),
+                "recommendation": updated_data.get("recommendation"),
+                "streetView": updated_data.get("street_view"),
+            }
+        )
+
+        print(f"[{call_id}] Background eval/analytics completed successfully.")
+
+    except Exception as exc:
+        print(f"Error in background eval for call {call_id} at line {exc.__traceback__.tb_lineno}: {exc}")

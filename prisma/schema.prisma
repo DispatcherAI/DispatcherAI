@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//* define type data
 enum callType {
   Fire
   Medical
@@ -26,56 +25,52 @@ enum statusType {
   Resolved
 }
 
-
-model Call {
-  id            String          @id @default(cuid()) // primary key
-  createdAt     DateTime        @default(now())
-  endedAt       DateTime?
-  inProgress    Boolean?
-  status        statusType
-  userId        String? // foreign key referencing the user
-  user          User?           @relation(fields: [userId], references: [id]) // many-to-one relation
-  CallAnalytics CallAnalytics[]
-  Messages      Message[]
-}
-
-//* define tables
 model User {
-  id          String   @id @default(cuid()) // primary key
+  id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
-  clerkUserId String?  @unique // enforce uniqueness
+  clerkUserId String?  @unique
   phoneNumber String?
-  calls       Call[] // one-to-many relation
   credits     Int      @default(50)
+
+  calls       Call[]
+
+  @@index([phoneNumber])
 }
 
+model Call {
+  id          String        @id @default(cuid())
+  createdAt   DateTime      @default(now())
+  endedAt     DateTime?
+  inProgress  Boolean?
+  status      statusType
+  userId      String?
+  user        User?         @relation(fields: [userId], references: [id])
+  transcript  Json?         // Store entire conversation JSON here
+
+  // Make CallAnalytics a single record, optional or required (your choice)
+  callAnalytics CallAnalytics?
+}
 
 model CallAnalytics {
-  id        String   @id @default(cuid()) // primary key
-  callId    String
-  call      Call     @relation(fields: [callId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id        String         @id @default(cuid())
+  callId    String         @unique  // ensure only one CallAnalytics per Call
+  call      Call?           @relation(fields: [callId], references: [id])
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
   type      callType?
   severity  severityType?
   summary   String?
-  sentiment String?
+  sentiment Json?
   topics    String[]
   location  String?
   latitude  Float?
   longitude Float?
   name      String?
   address   String?
-  object    String?
-}
+  recommendation    String?
+  streetView    String?
 
-model Message {
-  id        String   @id @default(cuid()) // primary key
-  callId    String
-  call      Call     @relation(fields: [callId], references: [id])
-  speaker   String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  @@index([callId])
 }

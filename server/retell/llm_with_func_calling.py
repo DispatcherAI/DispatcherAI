@@ -88,7 +88,7 @@ class LlmClient:
         func_call = {}
         func_arguments = ""
         stream = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",  # Or use a 3.5 model for speed
+            model="gpt-4o-mini",  # Or use a 3.5 model for speed
             messages=prompt,
             stream=True,
             # Step 2: Add the function into your request
