@@ -250,6 +250,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
 
     except WebSocketDisconnect:
         print(f"LLM WebSocket disconnected for {call_id}")
+        await update_call(db, call_id, {"inProgress": False})
     except ConnectionTimeoutError as e:
         print(f"Connection timeout error for {call_id}")
     except Exception as e:

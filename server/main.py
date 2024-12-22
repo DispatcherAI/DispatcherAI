@@ -67,6 +67,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: Optional[str] = No
     if client_id is None:
         await websocket.close(code=4001)
         return
+    
+    db = websocket.app.state.db
 
     # save this client into server memory
     await manager.connect(websocket, client_id)
