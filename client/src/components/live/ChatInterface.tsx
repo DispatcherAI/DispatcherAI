@@ -60,12 +60,10 @@ const ChatInterface = ({ call }: ChatInterfaceProps) => {
                                     )}
                                 >
                                     {message.role === "user" ? (
-                                        null ?? (
-                                            <User
-                                                size={20}
-                                                color="white"
-                                            />
-                                        )
+                                        <User
+                                            size={20}
+                                            color="white"
+                                        />
                                     ) : (
                                         <Bot
                                             size={20}

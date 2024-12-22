@@ -5,5 +5,9 @@ export default function LiveLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return <EmergencyProvider>{children}</EmergencyProvider>;
+    return (
+        <EmergencyProvider>
+            <div className="overflow-hidden">{children}</div>
+        </EmergencyProvider>
+    );
 }

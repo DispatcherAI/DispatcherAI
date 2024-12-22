@@ -1,4 +1,5 @@
 import { Box } from "@/components/data-management/box";
+import { Badge } from "@/components/dispatch/badge";
 import { cn } from "@/lib/utils";
 
 interface TotalCallsCardProps {
@@ -10,11 +11,7 @@ interface TotalCallsCardProps {
 export function TotalCallsCard({ status, label, value }: TotalCallsCardProps) {
     return (
         <Box className="space-y-2 border-dp-outline">
-            <div className="flex-center h-5 w-16 bg-dp-nonEmergency/15 px-2 py-1">
-                <p className="text-xxs font-bold uppercase text-dp-nonEmergency">
-                    {status}
-                </p>
-            </div>
+            <Badge label={status} />
 
             <div className="space-y-2 text-dp-headingText">
                 <p

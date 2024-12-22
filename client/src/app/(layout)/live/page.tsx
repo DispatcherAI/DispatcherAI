@@ -3,8 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { AlertsEmergenciesPanel } from "@/components/dashboard/alerts-emergencies-panel/alerts-emergencies-panel";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
+import { EmergencyDetailsPanel } from "@/components/dashboard/emergency-details-panel/emergency-details-panel";
+import { Map } from "@/components/dashboard/map/map";
+import { TranscriptPanel } from "@/components/dashboard/transcript-panel/transcript-panel";
 import DetailsPanel from "@/components/live/DetailsPanel";
-import TranscriptPanel from "@/components/live/TranscriptPanel";
+import OldTranscriptPanel from "@/components/live/TranscriptPanel";
+
+// import TranscriptPanel from "@/components/live/TranscriptPanel";
 
 import { MESSAGES } from "./messages";
 
@@ -13,11 +18,13 @@ interface ServerMessage {
     data: Record<string, Call>;
 }
 
+export type Emotion = {
+    emotion: string;
+    intensity: number;
+};
+
 export type Call = {
-    emotions?: {
-        emotion: string;
-        intensity: number;
-    }[];
+    emotions?: Emotion[];
     id: string;
     location_name: string;
     location_coords?: {
@@ -98,13 +105,13 @@ const Page = () => {
         });
     };
 
-    const handleTransfer = (id: string) => {
+    const handleTransfer = (id?: string) => {
         console.log("transfer: ", id);
 
         wss.send(
             JSON.stringify({
                 event: "transfer",
-                id: id,
+                id: id ?? selectedId,
             })
         );
     };
@@ -167,23 +174,27 @@ const Page = () => {
             <AlertsEmergenciesPanel data={data} />
 
             {selectedId && data ? (
-                <div className="absolute right-0 z-50 flex">
-                    <DetailsPanel
+                <div className="absolute right-0 z-50 flex h-full">
+                    {/* <DetailsPanel
                         call={selectedId ? data[selectedId] : emptyCall}
                         handleResolve={handleResolve}
+                    /> */}
+
+                    <EmergencyDetailsPanel
+                        call={selectedId ? data[selectedId] : emptyCall}
                     />
+
                     <TranscriptPanel
                         call={selectedId ? data[selectedId] : emptyCall}
-                        selectedId={selectedId || undefined}
                         handleTransfer={handleTransfer}
                     />
                 </div>
             ) : null}
 
-            <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" />
+            {/* <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" /> */}
 
-            {/* <Map
-                center={center}
+            <Map
+                center={{ lat: 37.867989, lng: -122.271507 }}
                 pins={Object.entries(data)
                     .filter(
                         ([_, call]) =>
@@ -198,7 +209,7 @@ const Page = () => {
                             popupHtml: `<b>${call.title}</b><br>Location: ${call.location_name}`,
                         };
                     })}
-            /> */}
+            />
         </div>
     );
 };
