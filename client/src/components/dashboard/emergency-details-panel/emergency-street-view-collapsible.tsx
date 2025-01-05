@@ -1,4 +1,4 @@
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import {
     Collapsible,
     CollapsibleContent,
@@ -6,7 +6,11 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "lucide-react";
 
-export function EmergencyStreetViewCollapsible({ call }: { call: Call }) {
+export function EmergencyStreetViewCollapsible({
+    call,
+}: {
+    call: DispatchCall;
+}) {
     return (
         <Collapsible
             className="flex flex-col space-x-1 space-y-4 px-3 py-3"
@@ -18,9 +22,9 @@ export function EmergencyStreetViewCollapsible({ call }: { call: Call }) {
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-                {call?.street_view ? (
+                {call.callAnalytics.streetView ? (
                     <img
-                        src={`data:image/png;base64, ${call.street_view}`}
+                        src={`data:image/png;base64, ${call.callAnalytics.streetView}`}
                         className="aspect-video w-full border border-dp-hoverCard bg-cover bg-no-repeat drop-shadow-md"
                     />
                 ) : (

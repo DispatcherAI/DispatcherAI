@@ -1,4 +1,4 @@
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import { AlertTab } from "@/components/dashboard/alerts-emergencies-panel/alert/alert-tab";
 import { EmergencyTab } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-tab";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
@@ -38,11 +38,11 @@ const ITEMS = [
     },
 ];
 
-export function AlertsEmergenciesPanel({
-    data,
-}: {
-    data: Record<string, Call>;
-}) {
+interface AlertsEmergenciesPanelProps {
+    data: DispatchCall[];
+}
+
+export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
     const { setSelectedId, filterValue, handleFilterValueChange } =
         useEmergencyContext();
 
@@ -51,7 +51,7 @@ export function AlertsEmergenciesPanel({
     };
 
     return (
-        <div className="z-10 h-[calc(100vh-52px)] w-[350px] bg-dp-background">
+        <div className="z-10 h-[calc(100vh-52px)] w-[350px] min-w-[350px] bg-dp-background">
             <Tabs
                 defaultValue="emergencies"
                 className="px-3 pt-1"

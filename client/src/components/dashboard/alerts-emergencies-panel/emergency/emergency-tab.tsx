@@ -1,10 +1,10 @@
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-stat";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
-export function EmergencyTab({ data }: { data: Record<string, Call> }) {
+export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     return (
         <div className="space-y-3 pb-3">
             <div className="grid grid-cols-3">
@@ -20,16 +20,22 @@ export function EmergencyTab({ data }: { data: Record<string, Call> }) {
                     )}
                     type="scroll"
                 >
-                    {Object.entries(data).map(([id, _call]) => (
-                        <EmergencyCard
-                            key={id}
-                            id={id}
-                            title={"House Fire in Blair Hill"}
-                            time={"10:31 AM"}
-                            severity={"live"}
-                        />
-                    ))}
-                    <EmergencyCard
+                    {data
+                        .sort(
+                            (a, b) =>
+                                new Date(b.createdAt).getTime() -
+                                new Date(a.createdAt).getTime()
+                        )
+                        .map((call) => (
+                            <EmergencyCard
+                                key={call.id}
+                                id={call.id}
+                                title={call.callAnalytics.title ?? "911 Call"} // FIX ME
+                                time={call.callAnalytics?.createdAt}
+                                severity={"live"}
+                            />
+                        ))}
+                    {/* <EmergencyCard
                         key={"foo"}
                         id={"foo"}
                         title={"House Fire in Blair Hill"}
@@ -42,7 +48,7 @@ export function EmergencyTab({ data }: { data: Record<string, Call> }) {
                         title={"House Fire in Blair Hill"}
                         time={"10:31 AM"}
                         severity={"safe"}
-                    />
+                    /> */}
                 </ScrollArea>
             </div>
         </div>

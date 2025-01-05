@@ -1,4 +1,4 @@
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmergencyDetailsCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-details-collapsible";
 import { EmergencyStreetViewCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-street-view-collapsible";
 import { Badge } from "@/components/dispatch/badge";
@@ -11,7 +11,7 @@ import {
 } from "@/components/dispatch/tooltip";
 
 interface EmergencyDetailsPanelProps {
-    call: Call;
+    call: DispatchCall;
 }
 
 export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
@@ -33,7 +33,7 @@ export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
                     <Tooltip delayDuration={1500}>
                         <TooltipTrigger asChild>
                             <h2 className="line-clamp-2 text-left">
-                                {call?.title}
+                                {call.callAnalytics.title ?? "911 Call"}
                             </h2>
                         </TooltipTrigger>
 
@@ -41,7 +41,7 @@ export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
                             side="bottom"
                             align="start"
                         >
-                            {call?.title}
+                            {call.callAnalytics.title ?? "911 Call"}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>

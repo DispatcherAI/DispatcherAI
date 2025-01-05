@@ -1,9 +1,8 @@
-import { Emotion } from "@/app/(layout)/live/page";
-import { Badge } from "@/components/dispatch/badge";
+// import { Badge } from "@/components/dispatch/badge";
 import { Progress } from "@/components/dispatch/progress";
 
 interface EmotionCardProps {
-    emotion: Emotion;
+    emotion: { emotion: string; intensity: number };
 }
 
 export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
@@ -16,7 +15,7 @@ export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
             <div className="flex items-center justify-between">
                 <div className="text-sm text-dp-text">{emotion}</div>
 
-                {/* TODO: implement */}
+                {/* TODO: implement
                 <div className="flex flex-row items-center space-x-2">
                     <p className="text-xxs text-dp-headingText">Confidence:</p>
                     <Badge
@@ -24,7 +23,7 @@ export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
                         className="text-dp-headingText"
                         containerClassName="w-fit bg-dp-outlineNotSelected"
                     />
-                </div>
+                </div> */}
             </div>
 
             <div className="flex flex-row items-center space-x-2">

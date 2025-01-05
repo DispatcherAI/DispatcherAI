@@ -1,4 +1,4 @@
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmotionCard } from "@/components/dashboard/transcript-panel/emotion/emotion-card";
 import { Transcript } from "@/components/dashboard/transcript-panel/transcript/transcript";
 import { Button } from "@/components/dispatch/button";
@@ -11,7 +11,7 @@ import {
 import { CheckCircle2Icon, ChevronDownIcon } from "lucide-react";
 
 interface TranscriptPanelProps {
-    call: Call;
+    call: DispatchCall;
     handleTransfer: (id?: string) => void;
 }
 
@@ -19,8 +19,11 @@ export function TranscriptPanel({
     call,
     handleTransfer,
 }: TranscriptPanelProps) {
-    const emotions = call?.emotions
-        ?.sort((a, b) => b.intensity - a.intensity)
+    const emotions: { emotion: string; intensity: number }[] = call
+        .callAnalytics.sentiment as { emotion: string; intensity: number }[];
+
+    const sortedEmotions = emotions
+        .sort((a, b) => b?.intensity - a?.intensity)
         .slice(0, 2);
 
     return (
@@ -50,7 +53,7 @@ export function TranscriptPanel({
                 </CollapsibleTrigger>
 
                 <CollapsibleContent className="space-y-2">
-                    {emotions?.map((emotion) => (
+                    {sortedEmotions?.map((emotion) => (
                         <EmotionCard emotion={emotion} />
                     ))}
                 </CollapsibleContent>

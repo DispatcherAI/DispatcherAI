@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TranscriptProps {
-    call: Call | undefined;
+    call: DispatchCall;
 }
 
 export function Transcript({ call }: TranscriptProps) {
     const ref = useRef<HTMLDivElement>(null);
+
+    const transcript = (call.transcript as Record<string, object>)
+        ?.transcript as Record<string, string>[];
 
     useEffect(() => {
         const scrollIntoViewInterval = () => {
@@ -35,7 +38,7 @@ export function Transcript({ call }: TranscriptProps) {
                 className="space-y-4 overflow-y-auto"
                 ref={ref}
             >
-                {call?.transcript.map((message, index) => (
+                {transcript.map((message, index) => (
                     <div key={index}>
                         <span className="font-semibold uppercase text-dp-headingText">
                             {message.role === "user"

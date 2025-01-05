@@ -38,10 +38,8 @@ const Header = ({ connected = false }: HeaderProps) => {
                     <div className="pl-1" /* handles the offset width */>
                         <div
                             className={cn(
-                                "h-3 w-3 rounded-full",
-                                connected
-                                    ? "bg-green-500 ring-2 ring-green-500 ring-offset-2"
-                                    : "bg-red-500 ring-2 ring-red-500 ring-offset-2"
+                                "h-3 w-3 rounded-full bg-red-500 ring-2 ring-red-500 ring-offset-2",
+                                connected && "bg-green-500 ring-green-500"
                             )}
                         />
                     </div>

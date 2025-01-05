@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Call } from "@/app/(layout)/live/page";
+import { DispatchCall } from "@/app/(layout)/live/page";
 import {
     Tooltip,
     TooltipContent,
@@ -13,15 +13,16 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "lucide-react";
 
-export function EmergencyDetailsCollapsible({ call }: { call: Call }) {
+export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
     const time = useMemo(
         () =>
             new Date(
-                new Date(call?.time).getTime() - 7 * 60 * 60 * 1000
+                new Date(call?.callAnalytics.createdAt).getTime() -
+                    7 * 60 * 60 * 1000
             ).toLocaleTimeString("en-US", {
                 timeZone: "America/Los_Angeles",
             }),
-        [call.time]
+        [call.callAnalytics.createdAt]
     );
 
     return (
@@ -35,7 +36,7 @@ export function EmergencyDetailsCollapsible({ call }: { call: Call }) {
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-                <div>
+                <div className="space-y-2">
                     <div className="grid grid-cols-2">
                         <div>
                             <p className="font-semibold text-dp-text">Time</p>
@@ -49,7 +50,7 @@ export function EmergencyDetailsCollapsible({ call }: { call: Call }) {
                                     </p>
                                     <TooltipTrigger asChild>
                                         <h2 className="line-clamp-2 text-left text-dp-headingText">
-                                            {call.location_name}
+                                            {call.callAnalytics.address}
                                         </h2>
                                     </TooltipTrigger>
                                 </div>
@@ -57,7 +58,7 @@ export function EmergencyDetailsCollapsible({ call }: { call: Call }) {
                                     side="bottom"
                                     align="start"
                                 >
-                                    {call.location_name}
+                                    {call.callAnalytics.address}
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -66,7 +67,7 @@ export function EmergencyDetailsCollapsible({ call }: { call: Call }) {
                     <div>
                         <p className="font-semibold text-dp-text">Summary</p>
                         <p className="line-clamp-4 text-sm text-dp-headingText">
-                            {call.summary}
+                            {call.callAnalytics.summary}
                         </p>
                     </div>
                 </div>

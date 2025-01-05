@@ -13,7 +13,7 @@ type SeverityWithLive = Severity | "live";
 interface EmergencyCardProps {
     id: string;
     title: string;
-    time: string;
+    time: Date | undefined;
     severity: SeverityWithLive;
 }
 
@@ -42,6 +42,17 @@ export function EmergencyCard({
 
     const { selectedId, handleSelect } = useEmergencyContext();
 
+    const formattedTime = time
+        ? new Date(time).toLocaleDateString("en-US", {
+              year: "2-digit",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+          })
+        : null;
+
     const handleClick = () => {
         handleSelect(id);
     };
@@ -63,7 +74,7 @@ export function EmergencyCard({
                         {title}
                     </p>
                     <p className="line-clamp-1 text-xs font-medium text-dp-text">
-                        {time}
+                        {formattedTime}
                     </p>
                 </div>
 

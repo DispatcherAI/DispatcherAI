@@ -9,8 +9,8 @@ async function createUser(user: User, retries = 0) {
         const dbUser = await db.user.create({
             data: {
                 clerkUserId: user.id,
-                name: user.fullName ?? "",
-                email: user.emailAddresses[0].emailAddress,
+                // name: user.fullName ?? "",
+                // email: user.emailAddresses[0].emailAddress,
             },
         });
 
