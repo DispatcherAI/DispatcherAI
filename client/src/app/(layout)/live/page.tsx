@@ -6,7 +6,8 @@ import { useEmergencyContext } from "@/components/dashboard/emergency-context";
 import { EmergencyDetailsPanel } from "@/components/dashboard/emergency-details-panel/emergency-details-panel";
 import { Map } from "@/components/dashboard/map/map";
 import { TranscriptPanel } from "@/components/dashboard/transcript-panel/transcript-panel";
-import { Call, CallAnalytics } from "@prisma/client";
+import { useAuth } from "@clerk/nextjs";
+import { Call, CallAnalytics, User } from "@prisma/client";
 
 export type DispatchCall = Call & { callAnalytics: CallAnalytics };
 
@@ -80,10 +81,13 @@ export type DispatchCall = Call & { callAnalytics: CallAnalytics };
 const DEFAULT_CENTER = { lat: 37.867989, lng: -122.271507 };
 
 export default function Page() {
+    const { userId } = useAuth();
+
     const websocket = useRef<WebSocket>();
 
     const [_connected, setConnected] = useState(false);
     const [data, setData] = useState<Record<string, DispatchCall>>({});
+    const [user, setUser] = useState<User>();
 
     // const [resolvedIds, setResolvedIds] = useState<string[]>([]);
 
@@ -120,6 +124,19 @@ export default function Page() {
         );
     };
 
+    const fetchUserData = async () => {
+        try {
+            const response = await fetch(`/api/user?clerkUserId=${userId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                setUser(data);
+            }
+        } catch (e: unknown) {
+            console.error(e);
+        }
+    };
+
     useEffect(() => {
         if (!selectedId) {
             setCenter(DEFAULT_CENTER);
@@ -139,8 +156,12 @@ export default function Page() {
     }, [selectedId, data]);
 
     useEffect(() => {
+        fetchUserData();
+    }, [userId]);
+
+    useEffect(() => {
         websocket.current = new WebSocket(
-            "wss://fitting-correctly-lioness.ngrok-free.app/ws?client_id=cm4zfisqo00086736j4qqfd0j"
+            `wss://fitting-correctly-lioness.ngrok-free.app/ws?client_id=${user?.id}`
         );
 
         const wss = websocket.current;
@@ -157,15 +178,11 @@ export default function Page() {
 
             // TODO: check the types
             wss.onmessage = (event: MessageEvent) => {
-                console.log("Received message");
                 const message = JSON.parse(event.data);
-                console.log("message:", message);
                 const data = message.data;
-                console.log("data:", data);
+                console.log("Call Data:", data);
 
                 if (data) {
-                    console.log("Got data");
-
                     // Object.keys(data).forEach((key) => {
                     //     if (resolvedIds?.includes(data[key].id)) {
                     //         data[key].severity = "RESOLVED";
@@ -189,7 +206,11 @@ export default function Page() {
                 setConnected(false);
             };
         };
-    }, []);
+
+        return () => {
+            wss.close();
+        };
+    }, [user]);
 
     return (
         <div className="relative flex h-full w-full justify-between">
@@ -205,8 +226,6 @@ export default function Page() {
                     />
                 </div>
             ) : null}
-
-            {/* <div className="absolute -z-10 h-full max-h-full w-full max-w-full bg-dp-nonEmergency/10" /> */}
 
             <Map
                 center={{ lat: 37.867989, lng: -122.271507 }}

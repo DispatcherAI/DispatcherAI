@@ -8,9 +8,14 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     return (
         <div className="space-y-3 pb-3">
             <div className="grid grid-cols-3">
-                <EmergencyStat />
-                <EmergencyStat />
-                <EmergencyStat />
+                <EmergencyStat
+                    label="Total Calls"
+                    value={String(data.length)}
+                />
+                <EmergencyStat
+                    label="Resolved"
+                    value={"N/A"}
+                />
             </div>
             <div className="h-full">
                 <ScrollArea
@@ -26,15 +31,26 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                                 new Date(b.createdAt).getTime() -
                                 new Date(a.createdAt).getTime()
                         )
-                        .map((call) => (
-                            <EmergencyCard
-                                key={call.id}
-                                id={call.id}
-                                title={call.callAnalytics.title ?? "911 Call"} // FIX ME
-                                time={call.callAnalytics?.createdAt}
-                                severity={"live"}
-                            />
-                        ))}
+                        .map((call) => {
+                            const caSeverity = call.callAnalytics.severity;
+                            const severity =
+                                caSeverity === "Critical" ||
+                                caSeverity === "High"
+                                    ? "critical"
+                                    : "warning";
+
+                            return (
+                                <EmergencyCard
+                                    key={call.id}
+                                    id={call.id}
+                                    title={
+                                        call.callAnalytics.title ?? "911 Call"
+                                    } // FIX ME
+                                    time={call.callAnalytics?.createdAt}
+                                    severity={severity}
+                                />
+                            );
+                        })}
                     {/* <EmergencyCard
                         key={"foo"}
                         id={"foo"}
