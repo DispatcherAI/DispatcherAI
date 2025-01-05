@@ -23,15 +23,21 @@ class DispatchEval(BaseModel):
     summary: str
     location_name: str
     topics: List[str]
+    
+class Message(BaseModel):
+    role: Literal["user", "agent"]
+    content: str
+    
 
 
-async def eval(message: str, current_data: str):
+
+async def eval(transcript: List[Message], current_data: str):
     client = AsyncOpenAI()
     system_message = """
     You are an ai system to evaluate 911 transcripts. You should analyze the calls for their severity, type, name, type, title, summary, topics, and location.
     
     You are given the following data:
-    Last message spoken by the user.
+    The transcript of the call to the current point.
     
     Current data processed from previous evaluations:
     
@@ -55,9 +61,11 @@ async def eval(message: str, current_data: str):
     }
     """
     
+    constructed_content = "\n".join([f"{message['role']}: {message['content']}" for message in transcript])
+    
     # Construct the prompt for the user message + current data
     user_content = (
-        f"User message: {message}\n\n"
+        f"Transcript:\n\n{constructed_content}\n\n"
         f"Current Data:\n\n{current_data}"
     )
     
@@ -87,7 +95,6 @@ async def eval(message: str, current_data: str):
                 {"role": "user", "content": user_content},
             ],
             response_format=DispatchEval,     # Our Pydantic schema
-            prediction=predicted_output,      # Optional predicted output
         )
 
         # The model may refuse (for safety reasons) or produce valid data
@@ -100,6 +107,7 @@ async def eval(message: str, current_data: str):
         else:
             # All good — parse out the typed data
             result: DispatchEval = completion.choices[0].message.parsed
+            print("Eval result", result.model_dump(), "\n")
             return result.model_dump()
 
     except ValidationError as e:

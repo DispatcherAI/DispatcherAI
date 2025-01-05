@@ -187,7 +187,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
 
                 user = await db.user.find_first(where={"phoneNumber": from_number})
                 print("User:", user)
-                await create_call(db, call_id, user.id)
+                
                 if not user:
                     # Not registered => end call with TTS message
                     res = {
@@ -197,7 +197,9 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                         "end_call": True,
                     }
                     await websocket.send_json(res)
+                    return
                     
+                await create_call(db, call_id, user.id)
                 return
 
             elif interaction_type == "ping_pong":
@@ -286,14 +288,12 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
         current_data_str = json.dumps(current_data)
         
         print("Call data", current_data_str, "\n")
-
-        # 2) Evaluate the last user content
         last_content = transcript[-1]["content"]
         
         print("Last content", last_content, "\n")
         # hume_eval and eval are presumably async; if not, wrap with to_thread
         hume_task = hume_eval(last_content)
-        eval_task = eval(last_content, current_data_str)
+        eval_task = eval(transcript, current_data_str)
         results = await asyncio.gather(hume_task, eval_task)
 
         updated_data = {
@@ -309,6 +309,8 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
                 lat = updated_data["location_coords"]["lat"]
                 lng = updated_data["location_coords"]["lng"]
                 updated_data["street_view"] = street_view(lat, lng)    
+                
+        print("Updated data", updated_data, "\n")
         
 
         # 4) Upsert analytics (one-to-one with call)

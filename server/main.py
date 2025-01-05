@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
+from fastapi.encoders import jsonable_encoder
+import json
+import asyncio
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
@@ -78,14 +82,25 @@ async def websocket_endpoint(websocket: WebSocket, client_id: Optional[str] = No
             event = data["event"]
             print(event)
             if event == "get_db":
-                # Retrieve all calls from the database for this specific user_id (client_id)
+                # Send initial calls data
                 all_calls = await get_all_calls(db, client_id)
+                serialized_calls = jsonable_encoder(all_calls)
                 message = {
-                    "event": "db_response",
-                    "data": all_calls,
+                    "event": "db_response", 
+                    "data": serialized_calls,
                 }
-                # Send the calls data back to the client
                 await manager.send_personal_message(message, websocket)
+                
+                # Start periodic updates every 5 seconds
+                while True:
+                    await asyncio.sleep(5)
+                    all_calls = await get_all_calls(db, client_id)
+                    serialized_calls = jsonable_encoder(all_calls)
+                    message = {
+                        "event": "db_response",
+                        "data": serialized_calls,
+                    }
+                    await manager.send_personal_message(message, websocket)
             elif event == "transfer":
                 print("Transferring call...", data)
                 call_id = data["id"]
@@ -97,7 +112,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: Optional[str] = No
         print("Disconnecting...", client_id)
         await manager.disconnect(client_id)
     except Exception as e:
-        print("Error:", str(e))
+        print(f"Error at line {e.__traceback__.tb_lineno}:", str(e))
         await manager.disconnect(client_id)
 
 
