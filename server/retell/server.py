@@ -327,6 +327,7 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
                 "latitude": updated_data.get("location_coords", {}).get("lat"),
                 "longitude": updated_data.get("location_coords", {}).get("lng"),
                 "name": updated_data.get("name"),
+                "title": updated_data.get("title"),
                 "address": updated_data.get("location_name"),
                 "recommendation": updated_data.get("recommendation"),
                 "streetView": updated_data.get("street_view"),

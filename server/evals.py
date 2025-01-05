@@ -43,8 +43,8 @@ async def eval(transcript: List[Message], current_data: str):
     
     Follow these rules:
         If not enough information is provided, set values to empty strings.
-        If no new information is provided, return the current data.
-        If the severity is DISPATCHED, do not change the severity.
+        If no new information is provided, use the current data.
+        The title should be a short description of the call.
         Always have a title, even if its "Not enough information provided"
         The audio transcription is sometimes not perfect, try to make your best guess.
         
@@ -56,7 +56,7 @@ async def eval(transcript: List[Message], current_data: str):
         "name": str,
         "title": str,
         "summary": str,
-        "location_name": str (valid address nearby San Francisco Bay Area)
+        "location_name": str,
         "topics": list[str]
     }
     """

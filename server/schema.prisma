@@ -67,6 +67,7 @@ model CallAnalytics {
   location  String?
   latitude  Float?
   longitude Float?
+  title     String?
   name      String?
   address   String?
   recommendation    String?
