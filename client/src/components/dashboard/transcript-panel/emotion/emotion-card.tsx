@@ -8,7 +8,7 @@ interface EmotionCardProps {
 export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
     const { emotion, intensity } = emotionData;
 
-    const value = 100 * Number(intensity.toFixed(2));
+    const value = Number((100 * Number(intensity.toFixed(2))).toFixed(2));
 
     return (
         <div className="border border-dp-outlineNotSelected p-2">

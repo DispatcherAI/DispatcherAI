@@ -139,15 +139,16 @@ export default function Page() {
 
     useEffect(() => {
         if (!selectedId) {
-            setCenter(DEFAULT_CENTER);
+            // setCenter(DEFAULT_CENTER);
             return;
         }
 
         if (
             !data[selectedId].callAnalytics.latitude ||
             !data[selectedId].callAnalytics.longitude
-        )
+        ) {
             return;
+        }
 
         setCenter({
             lat: data[selectedId].callAnalytics.latitude,
@@ -228,7 +229,7 @@ export default function Page() {
             ) : null}
 
             <Map
-                center={{ lat: 37.867989, lng: -122.271507 }}
+                center={_center}
                 pins={
                     Object.values(data)
                         ?.filter(

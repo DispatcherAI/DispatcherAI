@@ -19,11 +19,11 @@ export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
         <div className="z-10 flex h-fit max-h-[calc(100vh-52px)] w-[300px] flex-col border border-y-0 border-l-0 border-r-dp-outlineNotSelected bg-dp-background">
             <div className="flex shrink-0 justify-between px-3 py-1 text-sm text-dp-text">
                 <p>Emergency Details</p>
-                <Badge
+                {/* <Badge
                     label="Warning"
                     className="text-dp-medium"
                     containerClassName="bg-dp-medium/15"
-                />
+                /> */}
             </div>
 
             <Separator />

@@ -52,6 +52,7 @@ export function Header() {
                             <SelectItem
                                 value="BER"
                                 className="text-xs"
+                                disabled
                             >
                                 Berkeley, CA
                             </SelectItem>

@@ -19,11 +19,13 @@ export function TranscriptPanel({
     call,
     handleTransfer,
 }: TranscriptPanelProps) {
-    const emotions: { emotion: string; intensity: number }[] = call
-        .callAnalytics.sentiment as { emotion: string; intensity: number }[];
+    const emotions: { emotion: string; intensity: number }[] | undefined = call
+        .callAnalytics.sentiment as
+        | { emotion: string; intensity: number }[]
+        | undefined;
 
     const sortedEmotions = emotions
-        .sort((a, b) => b?.intensity - a?.intensity)
+        ?.sort((a, b) => b?.intensity - a?.intensity)
         .slice(0, 2);
 
     return (

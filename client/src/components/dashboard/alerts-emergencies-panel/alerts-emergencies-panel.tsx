@@ -59,7 +59,12 @@ export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
             >
                 <TabsList className="h-fit w-full justify-start border-b border-dp-outlineNotSelected">
                     <TabsTrigger value="emergencies">Emergencies</TabsTrigger>
-                    <TabsTrigger value="alerts">Alerts</TabsTrigger>
+                    <TabsTrigger
+                        value="alerts"
+                        disabled
+                    >
+                        Alerts
+                    </TabsTrigger>
                 </TabsList>
 
                 <div className="flex-between space-x-1 py-2">
