@@ -37,26 +37,25 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
 
     return (
         <div className="space-y-3 pb-3">
-            <div className="grid grid-cols-3">
-                <EmergencyStat
-                    label="Total Calls"
-                    value={String(data.length)}
-                />
-                <EmergencyStat
-                    label="Resolved"
-                    value={"N/A"}
-                />
+            <div className="space-y-2">
+                <div className="grid grid-cols-3">
+                    <EmergencyStat
+                        label="Total Calls"
+                        value={String(data.length)}
+                    />
+                    <EmergencyStat
+                        label="Resolved"
+                        value={"N/A"}
+                    />
+                </div>
+                <Separator />
             </div>
 
-            {filterValue && parsedData.length < data.length ? (
-                <div className="flex-center flex-col space-y-3">
-                    <Separator />
-
-                    <p className="text-xs text-dp-text">
-                        {data.length - parsedData.length} calls are hidden by
-                        filters
-                    </p>
-                </div>
+            {filterValue ? (
+                <p className="text-center text-xs text-dp-text">
+                    {data.length - parsedData.length} calls are hidden by
+                    filters
+                </p>
             ) : null}
 
             <div className="h-full">
