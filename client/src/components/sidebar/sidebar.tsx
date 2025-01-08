@@ -2,6 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import { Separator } from "@/components/dispatch/separator";
+import { SidebarEmergencyWebsocket } from "@/components/sidebar/sidebar-emergency-websocket";
 import { cn } from "@/lib/utils";
 
 import { SidebarAvatar } from "./sidebar-avatar";
@@ -26,7 +27,7 @@ export function Sidebar({ className }: SidebarProps) {
     return (
         <nav
             className={cn(
-                `relative z-50 hidden h-screen border-r-2 border-dp-outlineNotSelected bg-dp-background px-2 pb-4 pt-3 md:block`,
+                `relative z-50 hidden h-screen flex-col border-r-2 border-dp-outlineNotSelected bg-dp-background px-2 pb-4 pt-3 md:flex`,
                 status && "duration-500",
                 isOpen ? "w-52 min-w-52" : "w-[50px] min-w-[50px]",
                 className
@@ -44,6 +45,10 @@ export function Sidebar({ className }: SidebarProps) {
             <Separator className="h-[1px]" />
 
             <SidebarNav />
+
+            <Separator className="h-[1px]" />
+
+            <SidebarEmergencyWebsocket />
         </nav>
     );
 }

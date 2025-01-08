@@ -30,7 +30,7 @@ export function SidebarNav({ setOpen }: SidebarNavProps) {
                 />
             ))}
 
-            <Separator className="h-[1px]" />
+            {/* <Separator className="h-[1px]" /> */}
 
             {/* {NAV_ACCORDIONS.map((item) => (
                 <SidebarAccordion
