@@ -48,7 +48,6 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                         value={"N/A"}
                     />
                 </div>
-                <Separator />
             </div>
 
             {filterValue ? (

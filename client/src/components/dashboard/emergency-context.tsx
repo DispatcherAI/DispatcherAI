@@ -9,6 +9,7 @@ import {
     useRef,
     useState,
 } from "react";
+import { MESSAGES } from "@/app/(layout)/live/messages";
 import { DispatchCall } from "@/app/(layout)/live/page";
 import { Severity } from "@/lib/constants";
 import { useAuth } from "@clerk/nextjs";
@@ -53,7 +54,7 @@ export const EmergencyProvider = ({
 
     const websocket = useRef<WebSocket>();
     const [connected, setConnected] = useState(false);
-    const [data, setData] = useState<Record<string, DispatchCall>>({});
+    const [data, setData] = useState<Record<string, DispatchCall>>(MESSAGES);
 
     // const [resolvedIds, setResolvedIds] = useState<string[]>([]);
 
