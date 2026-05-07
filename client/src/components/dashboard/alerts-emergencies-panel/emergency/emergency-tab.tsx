@@ -23,6 +23,10 @@ function normalizeSeverity(severity: string | null | undefined): Severity {
     return "warning";
 }
 
+function isFinishedCall(call: DispatchCall) {
+    return call.inProgress === false || call.status === "Resolved";
+}
+
 export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     const { filterValue } = useEmergencyContext();
 
@@ -33,21 +37,26 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                 normalizedSeverity: normalizeSeverity(
                     call.callAnalytics.severity
                 ),
+                finished: isFinishedCall(call),
             };
         })
-        .sort(
-            (a, b) =>
+        .sort((a, b) => {
+            if (a.finished !== b.finished) {
+                return a.finished ? 1 : -1;
+            }
+
+            return (
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
-        )
+            );
+        })
         .filter(
             (item) =>
                 filterValue === undefined ||
                 item.normalizedSeverity === filterValue
         );
-    const resolvedCount = data.filter((call) =>
-        call.status?.toLowerCase().includes("resolved")
-    ).length;
+    const finishedCount = data.filter(isFinishedCall).length;
+    const liveCount = data.length - finishedCount;
 
     return (
         <div className="flex h-full min-h-0 flex-col space-y-3 pb-3">
@@ -58,19 +67,12 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                         value={String(data.length)}
                     />
                     <EmergencyStat
-                        label="Resolved"
-                        value={String(resolvedCount)}
+                        label="Live"
+                        value={String(liveCount)}
                     />
                     <EmergencyStat
-                        label="Priority"
-                        value={String(
-                            data.filter(
-                                (call) =>
-                                    normalizeSeverity(
-                                        call.callAnalytics.severity
-                                    ) === "critical"
-                            ).length
-                        )}
+                        label="Finished"
+                        value={String(finishedCount)}
                     />
                 </div>
             </div>
@@ -94,7 +96,9 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                                 id={call.id}
                                 title={call.callAnalytics.title ?? "911 Call"}
                                 time={call.callAnalytics?.createdAt}
+                                endedAt={call.endedAt}
                                 severity={call.normalizedSeverity}
+                                finished={call.finished}
                             />
                         ))
                     ) : (

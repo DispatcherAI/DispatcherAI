@@ -13,14 +13,43 @@ export type DispatchCall = Call & { callAnalytics: CallAnalytics };
 
 const DEFAULT_CENTER = { lat: 37.867989, lng: -122.271507 };
 
+type GeocodedDispatchCall = DispatchCall & {
+    callAnalytics: CallAnalytics & {
+        latitude: number;
+        longitude: number;
+    };
+};
+
+function hasGeocodedLocation(
+    call: DispatchCall | undefined
+): call is GeocodedDispatchCall {
+    const latitude = call?.callAnalytics.latitude;
+    const longitude = call?.callAnalytics.longitude;
+
+    return typeof latitude === "number" && typeof longitude === "number";
+}
+
+function isActiveCall(call: DispatchCall) {
+    return call.inProgress === true || call.status === "Active";
+}
+
+function isFinishedCall(call: DispatchCall) {
+    return call.inProgress === false || call.status === "Resolved";
+}
+
 export default function Page() {
     const { selectedId, data } = useEmergencyContext();
     const calls = Object.values(data);
-    const geocodedCalls = calls.filter(
-        ({ callAnalytics: analytics }) =>
-            analytics?.latitude && analytics?.longitude && analytics?.location
-    );
-    const activeCritical = calls.filter(({ callAnalytics: analytics }) =>
+    const selectedCall = selectedId ? data[selectedId] : undefined;
+    const geocodedCalls = calls.filter(hasGeocodedLocation);
+    const liveCalls = calls.filter((call) => !isFinishedCall(call));
+    const activeGeocodedCall = geocodedCalls.find(isActiveCall);
+    const focusCall = hasGeocodedLocation(selectedCall)
+        ? selectedCall
+        : activeGeocodedCall;
+    const focusLatitude = focusCall?.callAnalytics.latitude;
+    const focusLongitude = focusCall?.callAnalytics.longitude;
+    const activeCritical = liveCalls.filter(({ callAnalytics: analytics }) =>
         ["Critical", "High", "critical"].includes(analytics?.severity ?? "")
     ).length;
 
@@ -45,23 +74,25 @@ export default function Page() {
     // };
 
     useEffect(() => {
-        if (!selectedId) {
-            // setCenter(DEFAULT_CENTER);
-            return;
-        }
-
         if (
-            !data[selectedId].callAnalytics.latitude ||
-            !data[selectedId].callAnalytics.longitude
+            typeof focusLatitude !== "number" ||
+            typeof focusLongitude !== "number"
         ) {
             return;
         }
 
-        setCenter({
-            lat: data[selectedId].callAnalytics.latitude,
-            lng: data[selectedId].callAnalytics.longitude,
-        });
-    }, [selectedId, data]);
+        const nextCenter = {
+            lat: focusLatitude,
+            lng: focusLongitude,
+        };
+
+        setCenter((currentCenter) =>
+            currentCenter.lat === nextCenter.lat &&
+            currentCenter.lng === nextCenter.lng
+                ? currentCenter
+                : nextCenter
+        );
+    }, [focusLatitude, focusLongitude]);
 
     return (
         <div className="relative flex h-full min-h-0 w-full justify-between overflow-hidden">
@@ -70,8 +101,8 @@ export default function Page() {
             <div className="pointer-events-none absolute left-[374px] top-4 z-20 hidden gap-3 xl:flex">
                 {[
                     {
-                        label: "Open calls",
-                        value: calls.length,
+                        label: "Live calls",
+                        value: liveCalls.length,
                         icon: ActivityIcon,
                     },
                     {
@@ -121,7 +152,7 @@ export default function Page() {
                                 analytics.latitude as number,
                                 analytics.longitude as number,
                             ],
-                            popupHtml: `<b>${analytics?.name}</b><br>Location: ${analytics?.location}`,
+                            popupHtml: `<b>${analytics.name || analytics.title || "911 Call"}</b><br>Location: ${analytics.location || analytics.address || "Unknown"}`,
                         };
                     }) ?? []
                 }

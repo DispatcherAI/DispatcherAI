@@ -121,5 +121,5 @@ if __name__ == "__main__":
     # ws://localhost:8000/ws?client_id=123
     uvicorn.run(app, host="127.0.0.1", port=8000)
 
-# Links
-# wss://successful-sari-dispatcherai-4330ee48.koyeb.app/retell/llm-websocket
+# Cloud Run production backend:
+# https://dispatch-815644024160.us-west1.run.app

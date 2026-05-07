@@ -13,11 +13,18 @@ export function getClerkPhoneNumber(user: ClerkUser) {
 }
 
 export function getClerkEmail(user: ClerkUser) {
-    return (
+    const email =
         user.primaryEmailAddress?.emailAddress ??
         user.emailAddresses[0]?.emailAddress ??
-        null
-    );
+        null;
+
+    return normalizeEmailAddress(email);
+}
+
+function normalizeEmailAddress(value: string | null) {
+    const normalizedValue = value?.trim().toLowerCase();
+
+    return normalizedValue || null;
 }
 
 async function getClaimablePhoneNumber(
@@ -39,21 +46,22 @@ async function getClaimablePhoneNumber(
     return value;
 }
 
-async function getClaimableEmail(value: string | null, clerkUserId: string) {
+async function findUserByEmail(value: string | null) {
     if (!value) {
         return null;
     }
 
-    const existingUsers = await db.$queryRaw<
-        { id: string; clerkUserId: string | null }[]
-    >`SELECT "id", "clerkUserId" FROM "User" WHERE "email" = ${value} LIMIT 1`;
+    const existingUsers = await db.$queryRaw<{ id: string }[]>
+        `SELECT "id" FROM "User" WHERE LOWER("email") = ${value} LIMIT 1`;
     const existingUser = existingUsers[0];
 
-    if (existingUser && existingUser.clerkUserId !== clerkUserId) {
+    if (!existingUser) {
         return null;
     }
 
-    return value;
+    return db.user.findUnique({
+        where: { id: existingUser.id },
+    });
 }
 
 async function syncUserEmail(userId: string, email: string | null) {
@@ -64,6 +72,52 @@ async function syncUserEmail(userId: string, email: string | null) {
     await db.$executeRaw`UPDATE "User" SET "email" = ${email} WHERE "id" = ${userId}`;
 }
 
+async function mergeUsersByEmail({
+    canonicalUser,
+    duplicateUser,
+    clerkUserId,
+    phoneNumber,
+}: {
+    canonicalUser: DbUser;
+    duplicateUser: DbUser;
+    clerkUserId: string;
+    phoneNumber: string | null;
+}) {
+    const phoneNumberToKeep =
+        canonicalUser.phoneNumber ?? duplicateUser.phoneNumber ?? phoneNumber;
+
+    return db.$transaction(async (tx) => {
+        await tx.call.updateMany({
+            where: { userId: duplicateUser.id },
+            data: { userId: canonicalUser.id },
+        });
+
+        await tx.user.update({
+            where: { id: duplicateUser.id },
+            data: {
+                clerkUserId: null,
+                phoneNumber: null,
+            },
+        });
+
+        const updatedUser = await tx.user.update({
+            where: { id: canonicalUser.id },
+            data: {
+                clerkUserId,
+                ...(!canonicalUser.phoneNumber && phoneNumberToKeep
+                    ? { phoneNumber: phoneNumberToKeep }
+                    : {}),
+            },
+        });
+
+        await tx.user.delete({
+            where: { id: duplicateUser.id },
+        });
+
+        return updatedUser;
+    });
+}
+
 export async function ensureDbUserForClerkUser(
     user: ClerkUser
 ): Promise<DbUser> {
@@ -71,11 +125,27 @@ export async function ensureDbUserForClerkUser(
         getClerkPhoneNumber(user),
         user.id
     );
-    const clerkEmail = await getClaimableEmail(getClerkEmail(user), user.id);
+    const clerkEmail = getClerkEmail(user);
 
-    const dbUser = await db.user.findUnique({
+    const dbUserByClerkId = await db.user.findUnique({
         where: { clerkUserId: user.id },
     });
+    const dbUserByEmail = await findUserByEmail(clerkEmail);
+
+    if (
+        dbUserByClerkId &&
+        dbUserByEmail &&
+        dbUserByClerkId.id !== dbUserByEmail.id
+    ) {
+        return mergeUsersByEmail({
+            canonicalUser: dbUserByEmail,
+            duplicateUser: dbUserByClerkId,
+            clerkUserId: user.id,
+            phoneNumber: clerkPhoneNumber,
+        });
+    }
+
+    const dbUser = dbUserByEmail ?? dbUserByClerkId;
 
     if (!dbUser) {
         const createdUser = await db.user.create({
@@ -91,16 +161,17 @@ export async function ensureDbUserForClerkUser(
     }
 
     const shouldUpdatePhoneNumber = !dbUser.phoneNumber && clerkPhoneNumber;
-    await syncUserEmail(dbUser.id, clerkEmail);
+    const updatedUser = await db.user.update({
+        where: { id: dbUser.id },
+        data: {
+            clerkUserId: user.id,
+            ...(shouldUpdatePhoneNumber
+                ? { phoneNumber: clerkPhoneNumber }
+                : {}),
+        },
+    });
 
-    if (shouldUpdatePhoneNumber) {
-        return db.user.update({
-            where: { id: dbUser.id },
-            data: {
-                phoneNumber: clerkPhoneNumber,
-            },
-        });
-    }
+    await syncUserEmail(updatedUser.id, clerkEmail);
 
-    return dbUser;
+    return updatedUser;
 }

@@ -4,7 +4,7 @@ import { absoluteUrl } from "@/lib/utils";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 export async function GET() {
-    const { userId } = auth();
+    const { userId } = await auth();
 
     console.log("userId", userId);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 import "leaflet/dist/leaflet.css";
 
@@ -18,6 +18,8 @@ const Pin = L.divIcon({
     iconAnchor: [16, 16],
     popupAnchor: [0, -16],
 });
+
+const INCIDENT_ZOOM = 17;
 
 interface MapPin {
     coordinates: [number, number];
@@ -46,8 +48,6 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
         lat: center.lat + offset.lat,
     };
 
-    const [zoom] = useState(17);
-
     useEffect(() => {
         if (map.current) {
             return;
@@ -56,7 +56,7 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
         //@ts-expect-error trust me bro
         map.current = new L.Map(mapContainer.current, {
             center: L.latLng(adjustedCenter.lat, adjustedCenter.lng),
-            zoom: zoom,
+            zoom: INCIDENT_ZOOM,
             dragging: true,
             scrollWheelZoom: true,
             doubleClickZoom: true,
@@ -76,7 +76,7 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Fly to a new center only when the coordinates actually change, so
+    // Fly to a focused incident only when the coordinates actually change, so
     // unrelated re-renders (e.g. polling that produces a new `pins` reference)
     // don't yank the camera away from wherever the user is exploring.
     useEffect(() => {
@@ -86,7 +86,7 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
 
         map.current.flyTo(
             [adjustedCenter.lat, adjustedCenter.lng],
-            map.current.getZoom(),
+            INCIDENT_ZOOM,
             {
                 animate: true,
                 duration: 1,

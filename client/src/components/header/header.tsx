@@ -3,15 +3,16 @@ import { ConnectionStatus } from "@/components/header/connection-status";
 import { Time } from "@/components/header/time";
 import { WeatherCondition } from "@/components/header/weather-condition";
 import { formatPhoneNumberForDisplay } from "@/lib/phone";
-import { HeadsetIcon, PhoneIcon, RadioTowerIcon } from "lucide-react";
+import { HeadsetIcon, PhoneCallIcon, RadioTowerIcon } from "lucide-react";
 
 interface HeaderProps {
-    phoneNumber: string | null;
+    dispatcherPhoneNumber: string | null;
 }
 
-export function Header({ phoneNumber }: HeaderProps) {
-    const displayPhoneNumber =
-        formatPhoneNumberForDisplay(phoneNumber) || "Phone not set";
+export function Header({ dispatcherPhoneNumber }: HeaderProps) {
+    const displayDispatcherPhoneNumber =
+        formatPhoneNumberForDisplay(dispatcherPhoneNumber) ||
+        "Dispatcher line not set";
 
     return (
         <div className="flex-between relative z-20 h-[52px] w-full flex-row border-b border-white/10 bg-[#080d13]/90 px-4 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl">
@@ -47,14 +48,17 @@ export function Header({ phoneNumber }: HeaderProps) {
                         <ConnectionStatus />
                     </div>
 
-                    <div className="hidden h-8 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 text-xs sm:flex">
-                        <PhoneIcon className="size-3.5 text-dp-primary" />
+                    <div className="hidden h-9 items-center gap-2.5 rounded-2xl border border-dp-primary/25 bg-[linear-gradient(135deg,rgba(105,210,255,0.16),rgba(255,255,255,0.04))] px-3.5 text-xs shadow-[0_0_24px_rgba(105,210,255,0.12)] sm:flex">
+                        <span className="relative flex size-6 items-center justify-center rounded-full bg-dp-primary/15">
+                            <span className="absolute size-2 rounded-full bg-dp-nonEmergency shadow-[0_0_14px_rgba(71,255,133,0.9)]" />
+                            <PhoneCallIcon className="relative size-3.5 text-dp-primary" />
+                        </span>
                         <div className="flex flex-col leading-none">
                             <span className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                                Dispatch line
+                                Dispatcher phone number
                             </span>
                             <span className="mt-1 font-mono text-[11px] text-dp-headingText">
-                                {displayPhoneNumber}
+                                {displayDispatcherPhoneNumber}
                             </span>
                         </div>
                     </div>

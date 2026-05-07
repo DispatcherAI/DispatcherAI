@@ -29,7 +29,15 @@ export function EmergencyStreetViewCollapsible({
                         className="aspect-video w-full rounded-2xl border border-white/10 bg-cover bg-no-repeat object-cover shadow-2xl shadow-black/30"
                     />
                 ) : (
-                    <div className="aspect-video w-full animate-pulse rounded-2xl border border-white/10 bg-white/10 shadow-2xl shadow-black/30 duration-5000" />
+                    <div className="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] px-6 text-center shadow-2xl shadow-black/30">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
+                            Street view pending
+                        </p>
+                        <p className="mt-2 max-w-64 text-xs leading-5 text-dp-text">
+                            Waiting for geocoding to return coordinates and a
+                            Google Street View image.
+                        </p>
+                    </div>
                 )}
             </CollapsibleContent>
         </Collapsible>

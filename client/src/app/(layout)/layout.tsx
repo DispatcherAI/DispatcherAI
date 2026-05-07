@@ -7,6 +7,11 @@ import { Sidebar } from "@/components/sidebar/sidebar";
 import { ensureDbUserForClerkUser } from "@/lib/current-user";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
+const DISPATCHER_PHONE_NUMBER =
+    process.env.NEXT_PUBLIC_RETELL_PHONE_NUMBER ??
+    process.env.RETELL_PHONE_NUMBER ??
+    "+13192504307";
+
 export const metadata: Metadata = {
     title: "Dashboard — DispatcherAI",
     icons: [{ rel: "icon", url: "/favicon.ico" }],
@@ -17,7 +22,7 @@ export default async function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const { userId, redirectToSignIn } = auth();
+    const { userId, redirectToSignIn } = await auth();
 
     if (!userId) {
         return redirectToSignIn({
@@ -45,7 +50,7 @@ export default async function RootLayout({
                 <div className="relative flex h-full min-w-0 flex-1 flex-col overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(105,210,255,0.14),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(250,188,31,0.08),transparent_28%)]" />
                     {/* <Header /> */}
-                    <Header phoneNumber={dbUser.phoneNumber} />
+                    <Header dispatcherPhoneNumber={DISPATCHER_PHONE_NUMBER} />
                     <div className="relative z-10 min-h-0 flex-1">
                         {children}
                     </div>

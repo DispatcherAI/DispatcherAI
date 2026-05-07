@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { type ReactNode, useMemo } from "react";
 import { DispatchCall } from "@/app/(layout)/live/page";
 import {
     Tooltip,
@@ -12,6 +12,33 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "lucide-react";
+
+function AnalyticsDropdown({
+    title,
+    children,
+}: {
+    title: string;
+    children: ReactNode;
+}) {
+    return (
+        <Collapsible
+            className="rounded-2xl border border-white/10 bg-white/[0.035] p-3"
+            defaultOpen
+        >
+            <CollapsibleTrigger className="flex w-full items-center justify-between text-left">
+                <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
+                    {title}
+                </p>
+                <ChevronDownIcon className="size-4 stroke-dp-text" />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-dp-headingText">
+                    {children}
+                </p>
+            </CollapsibleContent>
+        </Collapsible>
+    );
+}
 
 export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
     const time = useMemo(
@@ -72,14 +99,14 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
                         </TooltipProvider>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
-                        <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                            AI Summary
-                        </p>
-                        <p className="mt-2 line-clamp-5 text-sm leading-6 text-dp-headingText">
-                            {call.callAnalytics.summary}
-                        </p>
-                    </div>
+                    <AnalyticsDropdown title="AI Summary">
+                        {call.callAnalytics.summary || "Summary pending"}
+                    </AnalyticsDropdown>
+
+                    <AnalyticsDropdown title="AI Recommendation">
+                        {call.callAnalytics.recommendation ||
+                            "Recommendation pending"}
+                    </AnalyticsDropdown>
                 </div>
             </CollapsibleContent>
         </Collapsible>

@@ -1,4 +1,4 @@
-from prisma import Prisma
+from prisma import Json, Prisma
 
 
 PHONE_CALL_CREDIT_COST = 5
@@ -61,9 +61,9 @@ async def create_call(db: Prisma, call_id: str, userId: str):
     call_data = {
         "id": call_id,
         "inProgress": True,
-        "userId": userId,
+        "user": {"connect": {"id": userId}},
         "status": "Active",
-        "transcript": {"transcript": []},
+        "transcript": Json({"transcript": []}),
     }
 
     existing_call = await db.call.find_unique(where={"id": call_id})
@@ -72,7 +72,7 @@ async def create_call(db: Prisma, call_id: str, userId: str):
             where={"id": call_id},
             data={
                 "inProgress": True,
-                "userId": userId,
+                "user": {"connect": {"id": userId}},
                 "status": "Active",
             },
         )
@@ -89,7 +89,7 @@ async def create_call(db: Prisma, call_id: str, userId: str):
     
     await db.callanalytics.create(
         data={
-            "callId": call_id,
+            "call": {"connect": {"id": call_id}},
         }
     )
 
@@ -112,7 +112,7 @@ async def update_call_transcript(db: Prisma, call_id: str, transcript: list):
     """
     updated_call = await db.call.update(
         where={'id': call_id},
-        data={'transcript': transcript}
+        data={'transcript': Json(transcript)}
     )
     return updated_call
 
@@ -197,18 +197,32 @@ async def upsert_call_analytics(db: Prisma, call_analytics_id: str, call_id: str
       'recommendation': 'Evacuate immediately!'
     }
     """
-    # Create data must include all required fields, including 'id' and 'callId'.
     create_data = {
         'id': call_analytics_id,
-        'callId': call_id,
-        **updated_data
+        'call': {'connect': {'id': call_id}},
+        **updated_data,
+    }
+    update_data = updated_data.copy()
+
+    if 'sentiment' in create_data:
+        create_data['sentiment'] = Json(create_data['sentiment'])
+    if 'sentiment' in update_data:
+        update_data['sentiment'] = Json(update_data['sentiment'])
+    if 'topics' in update_data:
+        update_data['topics'] = {'set': update_data['topics']}
+
+    create_data = {
+        key: value for key, value in create_data.items() if value is not None
+    }
+    update_data = {
+        key: value for key, value in update_data.items() if value is not None
     }
 
     result = await db.callanalytics.upsert(
         where={'id': call_analytics_id},
         data={
             'create': create_data,
-            'update': updated_data
+            'update': update_data
         }
     )
 

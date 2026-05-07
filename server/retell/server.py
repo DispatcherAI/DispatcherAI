@@ -1,10 +1,12 @@
 import json
 import os
 import asyncio
+from datetime import datetime, timezone
+from typing import Optional
 from dotenv import load_dotenv
 from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from concurrent.futures import TimeoutError as ConnectionTimeoutError
 from retell import Retell
 from .custom_types import (
@@ -25,7 +27,8 @@ from server.db_prisma import (
 
 
 load_dotenv(
-    dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"),
+    override=True,
 )
 retell = Retell(api_key=os.environ["RETELL_API_KEY"])
 
@@ -34,6 +37,37 @@ router = APIRouter(
     tags=["retell"],
     responses={404: {"description": "Not found"}},
 )
+
+
+async def mark_call_ended(db, call_id: Optional[str]):
+    if not call_id or call_id == "unknown":
+        print("Skipping call-ended update because call_id is missing.")
+        return
+
+    try:
+        await update_call(
+            db,
+            call_id,
+            {
+                "inProgress": False,
+                "status": "Resolved",
+                "endedAt": datetime.now(timezone.utc),
+            },
+        )
+    except Exception as exc:
+        print(f"[{call_id}] Failed to mark call ended: {type(exc).__name__}: {exc}")
+
+
+def verify_retell_webhook_signature(raw_body: str, signature: str):
+    for secret in (os.getenv("RETELL_WEBHOOK_SECRET"), os.getenv("RETELL_API_KEY")):
+        if not secret:
+            continue
+        try:
+            if retell.verify(raw_body, api_key=secret, signature=signature):
+                return True
+        except Exception as exc:
+            print(f"Retell signature verify raised {type(exc).__name__}: {exc}")
+    return False
 
 
 def get_user_phone_candidates(call: dict) -> list[str]:
@@ -93,28 +127,25 @@ async def find_registered_user_for_call(db, call: dict):
 @router.post("/webhook")
 async def handle_webhook(request: Request):
     try:
-        post_data = await request.json()
-        valid_signature = retell.verify(
-            json.dumps(post_data, separators=(",", ":")),
-            api_key=str(os.environ["RETELL_API_KEY"]),
-            signature=str(request.headers.get("X-Retell-Signature")),
+        raw_body = (await request.body()).decode("utf-8")
+        signature = str(request.headers.get("X-Retell-Signature") or "")
+        valid_signature = verify_retell_webhook_signature(
+            raw_body,
+            signature,
         )
+        post_data = json.loads(raw_body)
+        event = post_data.get("event", "unknown")
+        call = post_data.get("call") or post_data.get("data") or {}
+        call_id = call.get("call_id", "unknown")
+
         if not valid_signature:
-            print(
-                "Received Unauthorized",
-                post_data["event"],
-                post_data["data"]["call_id"],
-            )
+            print("Received Unauthorized", event, call_id)
             return JSONResponse(status_code=401, content={"message": "Unauthorized"})
-        if post_data["event"] == "call_started":
-            print("Call started event", post_data["data"]["call_id"])
-        elif post_data["event"] == "call_ended":
-            print("Call ended event", post_data["data"]["call_id"])
-        elif post_data["event"] == "call_analyzed":
-            print("Call analyzed event", post_data["data"]["call_id"])
-        else:
-            print("Unknown event", post_data["event"])
-        return JSONResponse(status_code=200, content={"received": True})
+        if event == "call_ended":
+            await mark_call_ended(request.app.state.db, call_id)
+        elif event not in {"call_started", "call_analyzed"}:
+            print("Unknown event", event)
+        return Response(status_code=204)
     except Exception as err:
         print(f"Error in webhook: {err}")
         return JSONResponse(
@@ -133,7 +164,6 @@ async def handle_register_call(request: Request):
             audio_encoding="s16le",
             sample_rate=post_data["sample_rate"],
         )
-        print(f"Call response: {call_response}")
         return JSONResponse(status_code=200, content=jsonable_encoder(call_response))
     except Exception as err:
         print(f"Error in register call: {err}")
@@ -171,7 +201,6 @@ async def handle_create_phone_call(request: Request):
             call_kwargs["metadata"] = metadata
 
         call_response = retell.call.create_phone_call(**call_kwargs)
-        print(f"Phone call response: {call_response}")
         return JSONResponse(status_code=200, content=jsonable_encoder(call_response))
     except Exception as err:
         print(f"Error in create phone call: {err}")
@@ -187,6 +216,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
     Spawns background tasks for any heavy/eval logic, so the user doesn't wait.
     """
     call_created = False
+    call_ended_marked = False
     try:
         db = websocket.app.state.db  # Access the Prisma DB from app state
         await websocket.accept()
@@ -211,29 +241,27 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
         # In case we want to overwrite the URL param call_id with the real one from Retell
         call_id = None
         call_created = False
+        call_ended_marked = False
 
         async def handle_message(request_json):
             nonlocal call_id
             nonlocal call_created
+            nonlocal call_ended_marked
             nonlocal response_id
 
             interaction_type = request_json["interaction_type"]
 
             if interaction_type == "call_details":
                 # We learn about the call details early
-                print(json.dumps(request_json, indent=2))
                 call = request_json["call"]
                 call_id = call["call_id"]
-                user_phone_candidates = get_user_phone_candidates(call)
-                print("User phone candidates:", user_phone_candidates)
 
                 user = await find_registered_user_for_call(db, call)
-                print("User:", user)
                 
                 if not user:
                     # Not registered => end call with TTS message
                     res = {
-                        "response_id": request_json["response_id"] + 1,
+                        "response_id": request_json.get("response_id", response_id) + 1,
                         "content": "This number is not registered. Please register a free account with this number.",
                         "content_complete": True,
                         "end_call": True,
@@ -246,7 +274,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                     charged_user = await charge_phone_call_credits(db, user.id)
                     if not charged_user:
                         res = {
-                            "response_id": request_json["response_id"] + 1,
+                            "response_id": request_json.get("response_id", response_id) + 1,
                             "content": "No credits remaining. Please add credits to receive phone calls.",
                             "content_complete": True,
                             "end_call": True,
@@ -283,11 +311,6 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                     response_id=response_id,
                     transcript=request_json["transcript"],
                 )
-                print(
-                    f"Received {interaction_type}, response_id={response_id}, "
-                    f"last_transcript={request_json['transcript'][-1]['content']}"
-                )
-
                 # Draft the LLM response (user hears it immediately)
                 response_completed = True
                 async for event in llm_client.draft_response(req_obj):
@@ -312,16 +335,17 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
             asyncio.create_task(handle_message(data))
 
     except WebSocketDisconnect:
-        print(f"LLM WebSocket disconnected for {call_id}")
         if call_created and call_id:
-            await update_call(db, call_id, {"inProgress": False})
+            await mark_call_ended(db, call_id)
+            call_ended_marked = True
     except ConnectionTimeoutError as e:
         print(f"Connection timeout error for {call_id}")
     except Exception as e:
         print(f"Error in LLM WebSocket: {e} for {call_id}")
         await websocket.close(1011, "Server error")
     finally:
-        print(f"LLM WebSocket connection closed for {call_id}")
+        if call_created and call_id and not call_ended_marked:
+            await mark_call_ended(db, call_id)
 
 # ----------------------------------------------------------
 # A separate async function that does the heavier evaluation
@@ -333,8 +357,6 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
             print("No transcript, nothing to eval.")
             return
         
-        print("Running eval and analytics for call", call_id, "\n")
-
         # 1) Get current call data (if you need it)
         #    Assuming get_call is async; if not, wrap in to_thread
         call_analytics = await get_call_analytics(db, call_id)
@@ -349,10 +371,7 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
         }
         current_data_str = json.dumps(current_data)
         
-        print("Call data", current_data_str, "\n")
         last_content = transcript[-1]["content"]
-        
-        print("Last content", last_content, "\n")
         # Keep analytics on OpenAI so the Retell path only depends on Retell + OpenAI.
         emotion_task = emotion_eval(last_content)
         eval_task = eval(transcript, current_data_str)
@@ -365,7 +384,29 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
             **eval_data,
         }
 
-        print("Updated data", updated_data, "\n")
+        location_name = updated_data.get("location_name")
+        google_api_key_present = bool(os.getenv("GOOGLE_API_KEY"))
+        if location_name and google_api_key_present:
+            try:
+                from server.geocoding import geocode, street_view
+
+                geocode_result = geocode(location_name)
+                if geocode_result:
+                    updated_data["location_coords"] = geocode_result[0]["geometry"][
+                        "location"
+                    ]
+                    updated_data["street_view"] = street_view(
+                        updated_data["location_coords"]["lat"],
+                        updated_data["location_coords"]["lng"],
+                    )
+                else:
+                    print(f"[{call_id}] No geocode result for {location_name!r}")
+            except Exception as exc:
+                print(f"[{call_id}] Geocoding/street view failed: {type(exc).__name__}: {exc}")
+        elif location_name:
+            print(f"[{call_id}] Skipping geocoding/street view: GOOGLE_API_KEY is not set")
+        else:
+            print(f"[{call_id}] Skipping geocoding/street view: no location_name from eval")
         
 
         # 4) Upsert analytics (one-to-one with call)
@@ -389,8 +430,6 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
                 "streetView": updated_data.get("street_view"),
             }
         )
-
-        print(f"[{call_id}] Background eval/analytics completed successfully.")
 
     except Exception as exc:
         print(f"Error in background eval for call {call_id} at line {exc.__traceback__.tb_lineno}: {exc}")

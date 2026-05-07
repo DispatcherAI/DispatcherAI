@@ -2,6 +2,7 @@ fastapi==0.111.0
 googlemaps==4.10.0
 h2==4.1.0
 httptools==0.6.1
+httpx==0.28.1
 hume>=0.8,<1
 importlib-metadata==7.2.0
 importlib-resources==6.4.0
@@ -9,13 +10,13 @@ ipykernel==6.29.4
 itsdangerous==2.2.0
 jaraco.collections==5.1.0
 jsonpath-python==1.0.6
-openai>=2.2.0,<3
+openai==2.35.1
 pickleshare==0.7.5
 pip-chill==1.0.3
 prisma==0.15.0
 pydantic-extra-types==2.8.2
 pydantic-settings==2.3.3
-retell-sdk==3.18.0
+retell-sdk==5.31.0
 tomli==2.0.1
 uvloop==0.19.0
 watchfiles==0.22.0

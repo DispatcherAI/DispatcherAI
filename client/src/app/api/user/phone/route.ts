@@ -22,18 +22,18 @@ export async function PATCH(request: NextRequest) {
             );
         }
 
+        const dbUser = await ensureDbUserForClerkUser(clerkUser);
         const existingUser = await db.user.findFirst({
             where: { phoneNumber: normalizedPhoneNumber },
         });
 
-        if (existingUser && existingUser.clerkUserId !== clerkUser.id) {
+        if (existingUser && existingUser.id !== dbUser.id) {
             return NextResponse.json(
                 { error: "That phone number is already registered." },
                 { status: 409 }
             );
         }
 
-        const dbUser = await ensureDbUserForClerkUser(clerkUser);
         const updatedUser = await db.user.update({
             where: { id: dbUser.id },
             data: { phoneNumber: normalizedPhoneNumber },

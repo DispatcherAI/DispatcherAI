@@ -7,15 +7,15 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { ArrowLeftIcon, RadioTowerIcon, ShieldCheckIcon } from "lucide-react";
 
 interface SettingsPageProps {
-    searchParams?: {
+    searchParams?: Promise<{
         required?: string;
-    };
+    }>;
 }
 
 export default async function SettingsPage({
     searchParams,
 }: SettingsPageProps) {
-    const { userId, redirectToSignIn } = auth();
+    const { userId, redirectToSignIn } = await auth();
 
     if (!userId) {
         return redirectToSignIn({
@@ -30,8 +30,9 @@ export default async function SettingsPage({
     }
 
     const dbUser = await ensureDbUserForClerkUser(clerkUser);
+    const resolvedSearchParams = await searchParams;
     const isPhoneRequired =
-        searchParams?.required === "phone" && !dbUser.phoneNumber;
+        resolvedSearchParams?.required === "phone" && !dbUser.phoneNumber;
 
     return (
         <div className="min-h-screen overflow-hidden bg-[#070b10] text-dp-headingText">
