@@ -24,33 +24,41 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
             }),
         [call.callAnalytics.createdAt]
     );
+    const location =
+        call.callAnalytics.address ||
+        call.callAnalytics.location ||
+        "Location pending";
 
     return (
         <Collapsible
-            className="flex flex-col space-x-1 space-y-4 px-3 py-3"
+            className="flex flex-col space-y-4 px-4 py-4"
             defaultOpen
         >
-            <CollapsibleTrigger className="flex justify-between text-left text-sm font-semibold uppercase text-dp-headingText">
+            <CollapsibleTrigger className="flex justify-between text-left text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
                 <p className="">Emergency Details</p>
-                <ChevronDownIcon className="stroke-dp-hoverCard" />
+                <ChevronDownIcon className="size-4 stroke-dp-text" />
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-                <div className="space-y-2">
-                    <div className="grid grid-cols-2">
-                        <div>
-                            <p className="font-semibold text-dp-text">Time</p>
-                            <p className="text-dp-headingText">{time}</p>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+                            <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
+                                Time
+                            </p>
+                            <p className="mt-1 font-mono text-sm text-dp-headingText">
+                                {time}
+                            </p>
                         </div>
                         <TooltipProvider>
                             <Tooltip delayDuration={1500}>
-                                <div>
-                                    <p className="font-semibold text-dp-text">
+                                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+                                    <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
                                         Location
                                     </p>
                                     <TooltipTrigger asChild>
-                                        <h2 className="line-clamp-2 text-left text-dp-headingText">
-                                            {call.callAnalytics.address}
+                                        <h2 className="mt-1 line-clamp-2 text-left text-sm text-dp-headingText">
+                                            {location}
                                         </h2>
                                     </TooltipTrigger>
                                 </div>
@@ -58,15 +66,17 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
                                     side="bottom"
                                     align="start"
                                 >
-                                    {call.callAnalytics.address}
+                                    {location}
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
                     </div>
 
-                    <div>
-                        <p className="font-semibold text-dp-text">Summary</p>
-                        <p className="line-clamp-4 text-sm text-dp-headingText">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+                        <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
+                            AI Summary
+                        </p>
+                        <p className="mt-2 line-clamp-5 text-sm leading-6 text-dp-headingText">
                             {call.callAnalytics.summary}
                         </p>
                     </div>

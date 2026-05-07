@@ -30,12 +30,11 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   clerkUserId String?  @unique
-  phoneNumber String?
+  email       String?  @unique
+  phoneNumber String?  @unique
   credits     Int      @default(50)
 
   calls Call[]
-
-  @@index([phoneNumber])
 }
 
 model Call {
@@ -62,7 +61,7 @@ model CallAnalytics {
   type           callType?
   severity       severityType?
   summary        String?
-  sentiment      Json[]
+  sentiment      Json?
   topics         String[]
   location       String?
   latitude       Float?

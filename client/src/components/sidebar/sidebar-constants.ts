@@ -1,10 +1,9 @@
 import {
+    BarChart3Icon,
     BookmarkIcon,
     BookOpenCheck,
-    BoxesIcon,
-    FolderIcon,
     LayoutDashboard,
-    RotateCcwIcon,
+    RadioTowerIcon,
     SettingsIcon,
     type LucideIcon,
 } from "lucide-react";
@@ -28,28 +27,19 @@ export const NAV_LINKS: NavLinkItem[] = [
         href: "/live",
     },
     {
-        title: "Incident Management",
-        icon: BoxesIcon,
-        href: "/",
-        disabled: true,
-    },
-    {
-        title: "Data Management",
-        icon: FolderIcon,
+        title: "Analytics",
+        icon: BarChart3Icon,
         href: "/data-management",
-        disabled: true,
-    },
-    {
-        title: "Call History",
-        icon: RotateCcwIcon,
-        href: "/",
-        disabled: true,
     },
     {
         title: "Settings",
         icon: SettingsIcon,
+        href: "/settings",
+    },
+    {
+        title: "Command Center",
+        icon: RadioTowerIcon,
         href: "/",
-        disabled: true,
     },
 ];
 

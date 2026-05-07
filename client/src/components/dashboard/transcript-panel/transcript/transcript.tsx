@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { DispatchCall } from "@/app/(layout)/live/page";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface TranscriptProps {
     call: DispatchCall;
@@ -32,22 +33,30 @@ export function Transcript({ call }: TranscriptProps) {
     return (
         <ScrollArea
             type="scroll"
-            className="flex grow flex-col text-dp-text"
+            className="flex h-full grow flex-col text-dp-text"
         >
             <div
-                className="space-y-4 overflow-y-auto"
+                className="space-y-3 overflow-y-auto"
                 ref={ref}
             >
-                {transcript.map((message, index) => (
-                    <div key={index}>
-                        <span className="font-semibold uppercase text-dp-headingText">
+                {transcript?.map((message, index) => (
+                    <div
+                        key={index}
+                        className={cn(
+                            "rounded-2xl border p-3",
+                            message.role === "user"
+                                ? "border-amber-300/20 bg-amber-300/[0.08]"
+                                : "border-dp-primary/20 bg-dp-primary/[0.08]"
+                        )}
+                    >
+                        <p className="mb-1 text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
                             {message.role === "user"
                                 ? "Caller"
                                 : "AI Dispatcher"}
-                            :
-                        </span>
-                        &nbsp;
-                        <span>{message.content}</span>
+                        </p>
+                        <p className="text-sm leading-6 text-dp-headingText">
+                            {message.content}
+                        </p>
                     </div>
                 ))}
             </div>

@@ -1,24 +1,22 @@
+import os
 from dotenv import load_dotenv
-load_dotenv()  # take environment variables from .env.
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+load_dotenv()  # Also support a repo-root .env when running from root.
 
 from fastapi.encoders import jsonable_encoder
-import json
 import asyncio
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, File, UploadFile
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import uvicorn
 from server.socket_manager import manager
 from server.retell.server import router as retell_router
-from server.hume.agent import router as hume_router
-from server.retell.twilio_server import TwilioClient
 from contextlib import asynccontextmanager
 
 # Import the necessary function from the db module
 from server.db_prisma import (
-    get_all_calls, 
-    get_call
+    get_all_calls,
 )
 
 from prisma import Prisma
@@ -39,10 +37,8 @@ async def lifespan(app: FastAPI):
     await db.disconnect()
     print("Disconnected from db")
 app = FastAPI(lifespan=lifespan)
-client = TwilioClient()
 
 app.include_router(retell_router)
-app.include_router(hume_router)
 
 origins = ["*"]
 
@@ -102,11 +98,15 @@ async def websocket_endpoint(websocket: WebSocket, client_id: Optional[str] = No
                     }
                     await manager.send_personal_message(message, websocket)
             elif event == "transfer":
-                print("Transferring call...", data)
-                call_id = data["id"]
-                call = await get_call(db, call_id)
-                if call and call.get("mode") == "retell":
-                    client.transfer_call(call["id"], "+14085858267")
+                # Retell-managed numbers handle transfers through the Retell agent's
+                # Transfer Call tool, not through this backend.
+                await manager.send_personal_message(
+                    {
+                        "event": "transfer_unavailable",
+                        "message": "Configure transfer behavior in the Retell agent.",
+                    },
+                    websocket,
+                )
 
     except WebSocketDisconnect:
         print("Disconnecting...", client_id)

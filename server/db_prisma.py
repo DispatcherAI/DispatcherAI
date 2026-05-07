@@ -1,6 +1,7 @@
-import uuid
 from prisma import Prisma
-import json
+
+
+PHONE_CALL_CREDIT_COST = 5
 
 # ----- Call Accessors -----
 
@@ -31,6 +32,22 @@ async def get_call(db: Prisma, call_id: str):
     )
 
 
+async def charge_phone_call_credits(db: Prisma, user_id: str):
+    """
+    Deduct the fixed credit cost for a phone call.
+    Returns the updated user when credits are available, otherwise None.
+    """
+    user = await db.user.find_unique(where={"id": user_id})
+
+    if not user or user.credits < PHONE_CALL_CREDIT_COST:
+        return None
+
+    return await db.user.update(
+        where={"id": user_id},
+        data={"credits": {"decrement": PHONE_CALL_CREDIT_COST}},
+    )
+
+
 async def create_call(db: Prisma, call_id: str, userId: str):
     """
     Create a new call record.
@@ -40,18 +57,35 @@ async def create_call(db: Prisma, call_id: str, userId: str):
         call_id (str): Call ID
     """
     print("Creating call", call_id, userId)
-    
-    await db.call.create(
-        data={
-            "id": call_id,
-            "inProgress": True,
-            "userId": userId,
-            "status": "Active",
-            "transcript": json.dumps([]),
-        }
-    )
+
+    call_data = {
+        "id": call_id,
+        "inProgress": True,
+        "userId": userId,
+        "status": "Active",
+        "transcript": {"transcript": []},
+    }
+
+    existing_call = await db.call.find_unique(where={"id": call_id})
+    if existing_call:
+        await db.call.update(
+            where={"id": call_id},
+            data={
+                "inProgress": True,
+                "userId": userId,
+                "status": "Active",
+            },
+        )
+    else:
+        await db.call.create(data=call_data)
     
     print("Creating call analytics", call_id)
+
+    existing_analytics = await db.callanalytics.find_unique(
+        where={"callId": call_id}
+    )
+    if existing_analytics:
+        return
     
     await db.callanalytics.create(
         data={

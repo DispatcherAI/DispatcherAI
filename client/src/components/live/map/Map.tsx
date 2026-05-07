@@ -9,14 +9,14 @@ import { cn } from "@/lib/utils";
 import { MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 import L from "leaflet";
 
-import PinBlack from "../../../../public/pin_black.png";
 import styles from "./map.module.css";
 
-const Pin = new L.Icon({
-    iconUrl: PinBlack.src,
-    iconSize: [32, 32], // size of the icon
-    iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
-    popupAnchor: [0, -32], // point from which the popup should open relative to the iconAnchor
+const Pin = L.divIcon({
+    className: "dispatch-map-pin",
+    html: `<span class="dispatch-map-pin__outer"><span class="dispatch-map-pin__inner"></span></span>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
 });
 
 interface MapPin {
@@ -49,30 +49,41 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
     const [zoom] = useState(17);
 
     useEffect(() => {
-        if (!map.current) {
-            //@ts-expect-error trust me bro
-            map.current = new L.Map(mapContainer.current, {
-                center: L.latLng(adjustedCenter.lat, adjustedCenter.lng),
-                zoom: zoom,
-                dragging: true,
-                scrollWheelZoom: false,
-                doubleClickZoom: false,
-                touchZoom: false,
-                boxZoom: false,
-                keyboard: false,
-            });
-
-            // Create a MapTiler Layer inside Leaflet
-            const mtLayer = new MaptilerLayer({
-                // Get your free API key at https://cloud.maptiler.com
-                apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
-                style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_API_KEY}`,
-            });
-
-            mtLayer.addTo(map.current);
+        if (map.current) {
+            return;
         }
 
-        // Update map center when center prop changes
+        //@ts-expect-error trust me bro
+        map.current = new L.Map(mapContainer.current, {
+            center: L.latLng(adjustedCenter.lat, adjustedCenter.lng),
+            zoom: zoom,
+            dragging: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            touchZoom: true,
+            boxZoom: true,
+            keyboard: true,
+        });
+
+        const mtLayer = new MaptilerLayer({
+            apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
+            style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_API_KEY}`,
+        });
+
+        mtLayer.addTo(map.current);
+        // Intentionally only run on mount; the map instance is created once and
+        // subsequent center/pin updates are handled by the effects below.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Fly to a new center only when the coordinates actually change, so
+    // unrelated re-renders (e.g. polling that produces a new `pins` reference)
+    // don't yank the camera away from wherever the user is exploring.
+    useEffect(() => {
+        if (!map.current) {
+            return;
+        }
+
         map.current.flyTo(
             [adjustedCenter.lat, adjustedCenter.lng],
             map.current.getZoom(),
@@ -81,21 +92,25 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
                 duration: 1,
             }
         );
+    }, [adjustedCenter.lat, adjustedCenter.lng]);
 
-        // Clear existing markers
+    useEffect(() => {
+        if (!map.current) {
+            return;
+        }
+
         map.current.eachLayer((layer) => {
             if (layer instanceof L.Marker) {
                 map.current!.removeLayer(layer);
             }
         });
 
-        // Add pins to the map
         pins.forEach((pin) => {
             L.marker(pin.coordinates, { icon: Pin })
                 .addTo(map.current!)
                 .bindPopup(pin.popupHtml);
         });
-    }, [adjustedCenter.lng, adjustedCenter.lat, zoom, pins]);
+    }, [pins]);
 
     return (
         <div className={cn(styles.mapWrap, className)}>

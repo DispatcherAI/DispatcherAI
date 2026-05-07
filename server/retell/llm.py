@@ -7,9 +7,6 @@ from .custom_types import (
     Utterance,
 )
 
-from langchain_core.messages import HumanMessage
-from langchain_mistralai.chat_models import ChatMistralAI
-
 begin_sentence = "9-1-1, what's your emergency?"
 from server.prompts import SYSTEM_PROMPT
 
@@ -20,7 +17,6 @@ class LlmClient:
             # organization=os.environ["OPENAI_ORGANIZATION_ID"],
             api_key=os.environ["OPENAI_API_KEY"],
         )
-        # self.mistral = ChatMistralAI(api_key=os.environ["MISTRAL_API_KEY"])
 
     def draft_begin_message(self):
         response = ResponseResponse(
@@ -50,6 +46,13 @@ class LlmClient:
         transcript_messages = self.convert_transcript_to_openai_messages(
             request.transcript
         )
+        if transcript_messages:
+            prompt.append(
+                {
+                    "role": "system",
+                    "content": "The caller has already started describing the emergency. Do not repeat the opening greeting; ask the next most important dispatch question or give immediate safety guidance.",
+                }
+            )
         for message in transcript_messages:
             prompt.append(message)
 

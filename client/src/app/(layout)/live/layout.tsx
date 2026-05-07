@@ -3,5 +3,5 @@ export default function LiveLayout({
 }: {
     children: React.ReactNode;
 }) {
-    return <div className="overflow-hidden">{children}</div>;
+    return <div className="h-full min-h-0 overflow-hidden">{children}</div>;
 }

@@ -3,48 +3,89 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from fastapi import APIRouter, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from concurrent.futures import TimeoutError as ConnectionTimeoutError
-from twilio.twiml.voice_response import VoiceResponse
 from retell import Retell
 from .custom_types import (
     ConfigResponse,
     ResponseRequiredRequest,
 )
-from .twilio_server import TwilioClient
 from .llm import LlmClient  # or use .llm_with_func_calling
-import uuid
-from datetime import datetime
-from server.db import update_call, get_call, get_all_calls
-from server.socket_manager import manager
-from server.evals import eval, hume_eval
-from server.geocoding import geocode, street_view
+from server.evals import emotion_eval, eval
+from server.phone_numbers import normalize_phone_number
 from server.db_prisma import (
-    get_all_calls, 
-    get_call, 
+    charge_phone_call_credits,
     create_call,
-    delete_call, 
     update_call, 
     get_call_analytics, 
-    get_call_analytics_for_call, 
-    update_call_analytics, 
     upsert_call_analytics,
     update_call_transcript
 )
 
 
-print(os.path.join(os.path.dirname(__file__), ".env"))
-load_dotenv(override=True, dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+load_dotenv(
+    dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+)
 retell = Retell(api_key=os.environ["RETELL_API_KEY"])
-
-# Custom Twilio if you want to use your own Twilio API Key
-twilio_client = TwilioClient()
 
 router = APIRouter(
     prefix="/retell",
     tags=["retell"],
     responses={404: {"description": "Not found"}},
 )
+
+
+def get_user_phone_candidates(call: dict) -> list[str]:
+    """Return likely registered-user phone numbers from a Retell call payload."""
+    from_number = normalize_phone_number(call.get("from_number"))
+    to_number = normalize_phone_number(call.get("to_number"))
+    retell_number = normalize_phone_number(os.getenv("RETELL_PHONE_NUMBER"))
+    direction = str(
+        call.get("direction")
+        or call.get("call_direction")
+        or call.get("call_type")
+        or ""
+    ).lower()
+
+    is_outbound = "outbound" in direction or (
+        bool(retell_number) and from_number == retell_number
+    )
+    preferred_numbers = (
+        [to_number, from_number] if is_outbound else [from_number, to_number]
+    )
+
+    candidates = []
+    for phone_number in preferred_numbers:
+        if not phone_number or phone_number == retell_number:
+            continue
+        if phone_number not in candidates:
+            candidates.append(phone_number)
+
+    return candidates
+
+
+async def find_registered_user_for_call(db, call: dict):
+    metadata = call.get("metadata") or {}
+    user_id = metadata.get("user_id") or metadata.get("userId")
+    clerk_user_id = metadata.get("clerkUserId") or metadata.get("clerk_user_id")
+
+    if user_id:
+        user = await db.user.find_unique(where={"id": user_id})
+        if user:
+            return user
+
+    if clerk_user_id:
+        user = await db.user.find_unique(where={"clerkUserId": clerk_user_id})
+        if user:
+            return user
+
+    for phone_number in get_user_phone_candidates(call):
+        user = await db.user.find_unique(where={"phoneNumber": phone_number})
+        if user:
+            return user
+
+    return None
 
 
 # Handle webhook from Retell server. This is used to receive events from Retell server.
@@ -80,48 +121,8 @@ async def handle_webhook(request: Request):
             status_code=500, content={"message": "Internal Server Error"}
         )
 
-# Twilio voice webhook. This will be called whenever there is an incoming or outgoing call.
-# Register call with Retell at this stage and pass in returned call_id to Retell.
-@router.post("/twilio-voice-webhook/{agent_id_path}")
-async def handle_twilio_voice_webhook(request: Request, agent_id_path: str):
-    try:
-        # Check if it is machine
-        post_data = await request.form()
-        if "AnsweredBy" in post_data and post_data["AnsweredBy"] == "machine_start":
-            twilio_client.end_call(post_data["CallSid"])
-            return PlainTextResponse("")
-        elif "AnsweredBy" in post_data:
-            return PlainTextResponse("")
-
-        call_response = retell.call.register(
-            agent_id=agent_id_path,
-            audio_websocket_protocol="twilio",
-            audio_encoding="mulaw",
-            sample_rate=8000,  # Sample rate has to be 8000 for Twilio
-            from_number=post_data["From"],
-            to_number=post_data["To"],
-            metadata={
-                "twilio_call_sid": post_data["CallSid"],
-            },
-        )
-        print(f"Call response: {call_response}")
-
-        response = VoiceResponse()
-        start = response.connect()
-        start.stream(
-            url=f"wss://api.retellai.com/audio-websocket/{call_response.call_id}"
-        )
-        return PlainTextResponse(str(response), media_type="text/xml")
-    except Exception as err:
-        print(f"Error in twilio voice webhook: {err}")
-        return JSONResponse(
-            status_code=500, content={"message": "Internal Server Error"}
-        )
-
 
 # Only used for web call frontend to register call so that frontend don't need api key.
-# If you are using Retell through phone call, you don't need this API. Because
-# this.twilioClient.ListenTwilioVoiceWebhook() will include register-call in its function.
 @router.post("/register-call-on-your-server")
 async def handle_register_call(request: Request):
     try:
@@ -130,13 +131,50 @@ async def handle_register_call(request: Request):
             agent_id=post_data["agent_id"],
             audio_websocket_protocol="web",
             audio_encoding="s16le",
-            sample_rate=post_data[
-                "sample_rate"
-            ],  # Sample rate has to be 8000 for Twilio
+            sample_rate=post_data["sample_rate"],
         )
         print(f"Call response: {call_response}")
+        return JSONResponse(status_code=200, content=jsonable_encoder(call_response))
     except Exception as err:
         print(f"Error in register call: {err}")
+        return JSONResponse(
+            status_code=500, content={"message": "Internal Server Error"}
+        )
+
+
+@router.post("/create-phone-call")
+async def handle_create_phone_call(request: Request):
+    try:
+        post_data = await request.json()
+        from_number = post_data.get("from_number") or os.environ["RETELL_PHONE_NUMBER"]
+        to_number = post_data["to_number"]
+        agent_id = post_data.get("agent_id") or os.getenv("RETELL_AGENT_ID")
+
+        call_kwargs = {
+            "from_number": from_number,
+            "to_number": to_number,
+        }
+        if agent_id:
+            call_kwargs["override_agent_id"] = agent_id
+        if post_data.get("retell_llm_dynamic_variables"):
+            call_kwargs["retell_llm_dynamic_variables"] = post_data[
+                "retell_llm_dynamic_variables"
+            ]
+        metadata = post_data.get("metadata") or {}
+        user_id = post_data.get("user_id") or post_data.get("userId")
+        clerk_user_id = post_data.get("clerkUserId") or post_data.get("clerk_user_id")
+        if user_id:
+            metadata["user_id"] = user_id
+        if clerk_user_id:
+            metadata["clerkUserId"] = clerk_user_id
+        if metadata:
+            call_kwargs["metadata"] = metadata
+
+        call_response = retell.call.create_phone_call(**call_kwargs)
+        print(f"Phone call response: {call_response}")
+        return JSONResponse(status_code=200, content=jsonable_encoder(call_response))
+    except Exception as err:
+        print(f"Error in create phone call: {err}")
         return JSONResponse(
             status_code=500, content={"message": "Internal Server Error"}
         )
@@ -148,6 +186,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
     WebSocket to exchange text input/output with Retell server.
     Spawns background tasks for any heavy/eval logic, so the user doesn't wait.
     """
+    call_created = False
     try:
         db = websocket.app.state.db  # Access the Prisma DB from app state
         await websocket.accept()
@@ -171,9 +210,11 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
 
         # In case we want to overwrite the URL param call_id with the real one from Retell
         call_id = None
+        call_created = False
 
         async def handle_message(request_json):
             nonlocal call_id
+            nonlocal call_created
             nonlocal response_id
 
             interaction_type = request_json["interaction_type"]
@@ -181,11 +222,12 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
             if interaction_type == "call_details":
                 # We learn about the call details early
                 print(json.dumps(request_json, indent=2))
-                from_number = request_json["call"]["from_number"]
-                call_id = request_json["call"]["call_id"]
-                print("Caller number:", from_number)
+                call = request_json["call"]
+                call_id = call["call_id"]
+                user_phone_candidates = get_user_phone_candidates(call)
+                print("User phone candidates:", user_phone_candidates)
 
-                user = await db.user.find_first(where={"phoneNumber": from_number})
+                user = await find_registered_user_for_call(db, call)
                 print("User:", user)
                 
                 if not user:
@@ -198,8 +240,22 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                     }
                     await websocket.send_json(res)
                     return
+
+                existing_call = await db.call.find_unique(where={"id": call_id})
+                if not existing_call:
+                    charged_user = await charge_phone_call_credits(db, user.id)
+                    if not charged_user:
+                        res = {
+                            "response_id": request_json["response_id"] + 1,
+                            "content": "No credits remaining. Please add credits to receive phone calls.",
+                            "content_complete": True,
+                            "end_call": True,
+                        }
+                        await websocket.send_json(res)
+                        return
                     
                 await create_call(db, call_id, user.id)
+                call_created = True
                 return
 
             elif interaction_type == "ping_pong":
@@ -212,7 +268,12 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
 
             elif interaction_type == "update_only":
                 # Update transcript in DB (non-blocking I/O, minimal)
-                await update_call_transcript(db, call_id, json.dumps(request_json))
+                if call_id:
+                    await update_call_transcript(
+                        db,
+                        call_id,
+                        {"transcript": request_json.get("transcript", [])},
+                    )
                 return
 
             elif interaction_type in ("response_required", "reminder_required"):
@@ -239,7 +300,7 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
                 # If we successfully responded, we do post-processing
                 if response_completed and call_id:
 
-                    # Offload the heavier tasks (eval, hume_eval, analytics) to a background task
+                    # Offload the heavier eval/analytics work to a background task
                     # so we don't block the websocket from receiving more messages
                     transcript_copy = request_json["transcript"][:]
                     asyncio.create_task(
@@ -252,7 +313,8 @@ async def websocket_handler(websocket: WebSocket, call_id: str):
 
     except WebSocketDisconnect:
         print(f"LLM WebSocket disconnected for {call_id}")
-        await update_call(db, call_id, {"inProgress": False})
+        if call_created and call_id:
+            await update_call(db, call_id, {"inProgress": False})
     except ConnectionTimeoutError as e:
         print(f"Connection timeout error for {call_id}")
     except Exception as e:
@@ -291,25 +353,18 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
         last_content = transcript[-1]["content"]
         
         print("Last content", last_content, "\n")
-        # hume_eval and eval are presumably async; if not, wrap with to_thread
-        hume_task = hume_eval(last_content)
+        # Keep analytics on OpenAI so the Retell path only depends on Retell + OpenAI.
+        emotion_task = emotion_eval(last_content)
         eval_task = eval(transcript, current_data_str)
-        results = await asyncio.gather(hume_task, eval_task)
+        results = await asyncio.gather(emotion_task, eval_task)
+        emotions = results[0] if isinstance(results[0], list) else []
+        eval_data = results[1] if isinstance(results[1], dict) else {}
 
         updated_data = {
-            "emotions": results[0],
-            **results[1],
+            "emotions": emotions,
+            **eval_data,
         }
-        
-        # 3) Geocode if needed
-        if updated_data.get("location_name"):
-            geo_result = geocode(updated_data["location_name"])
-            if geo_result and len(geo_result) > 0 and "geometry" in geo_result[0]:
-                updated_data["location_coords"] = geo_result[0]["geometry"]["location"]
-                lat = updated_data["location_coords"]["lat"]
-                lng = updated_data["location_coords"]["lng"]
-                updated_data["street_view"] = street_view(lat, lng)    
-                
+
         print("Updated data", updated_data, "\n")
         
 
@@ -319,9 +374,10 @@ async def run_eval_and_analytics(db, call_id: str, transcript: list):
             call_analytics_id=call_analytics.id,
             call_id=call_id,
             updated_data={
-                "severity": updated_data.get("severity"),
+                "type": updated_data.get("type") or None,
+                "severity": updated_data.get("severity") or None,
                 "summary": updated_data.get("summary"),
-                "sentiment": json.dumps(updated_data.get("emotions", {})),
+                "sentiment": updated_data.get("emotions", []),
                 "topics": updated_data.get("topics", []),
                 "location": updated_data.get("location_name"),
                 "latitude": updated_data.get("location_coords", {}).get("lat"),

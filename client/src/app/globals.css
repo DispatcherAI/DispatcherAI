@@ -70,8 +70,14 @@
     * {
         @apply min-w-0 border-border;
     }
+    html {
+        scroll-behavior: smooth;
+    }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-[#070b10] text-foreground;
+    }
+    ::selection {
+        @apply bg-dp-primary text-dp-background;
     }
 }
 

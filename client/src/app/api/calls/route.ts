@@ -4,13 +4,20 @@ import { db } from "@/db";
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url); // parses the URL to get the search parameters
     const callID = searchParams.get("id");
+    const userId = searchParams.get("userId");
 
     try {
         if (callID) {
             // Fetch specific call by ID
-            const call = await db.call.findUnique({
-                where: { id: callID },
-                include: { User: true },
+            const call = await db.call.findFirst({
+                where: {
+                    id: callID,
+                    ...(userId ? { userId } : {}),
+                },
+                include: {
+                    callAnalytics: true,
+                    user: true,
+                },
             });
 
             if (!call) {
@@ -22,9 +29,16 @@ export async function GET(request: NextRequest) {
 
             return NextResponse.json(call, { status: 200 });
         } else {
-            // Fetch all calls if no callID is provided
+            // Fetch scoped dashboard calls when userId is provided.
             const calls = await db.call.findMany({
-                include: { User: true },
+                where: userId ? { userId } : undefined,
+                include: {
+                    callAnalytics: true,
+                    user: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
             });
             return NextResponse.json(calls, { status: 200 });
         }
@@ -55,12 +69,25 @@ export async function POST(request: NextRequest) {
 
         const newCall = await db.call.create({
             data: {
-                type,
-                severity,
                 status,
                 userId: user.id, // associate the call with the user
+                callAnalytics:
+                    type || severity
+                        ? {
+                              create: {
+                                  type,
+                                  severity,
+                              },
+                          }
+                        : undefined,
+            },
+            include: {
+                callAnalytics: true,
+                user: true,
             },
         });
+
+        return NextResponse.json(newCall, { status: 201 });
     } catch (error) {
         console.error("Error creating call:", error);
         return NextResponse.json(

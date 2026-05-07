@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { CallProps } from "@/app/(layout)/live/page";
 import { cn } from "@/lib/utils";
 import { Bot, User } from "lucide-react";
 
 import { ScrollArea } from "../ui/scroll-area";
 
-interface ChatInterfaceProps extends CallProps {}
+interface ChatInterfaceProps {
+    call?: {
+        transcript: { role: string; content: string }[];
+    };
+    selectedId?: string;
+}
 
 const ChatInterface = ({ call }: ChatInterfaceProps) => {
     const ref = useRef<HTMLDivElement>(null);

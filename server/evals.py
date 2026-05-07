@@ -1,23 +1,23 @@
+import os
 import dotenv
 
 dotenv.load_dotenv()
 from openai import AsyncOpenAI
 
-import os
-import websockets
-import json
-from pydantic import ValidationError, BaseModel
+from pydantic import BaseModel, ConfigDict, ValidationError
 from typing import Literal, List
 
-websocket_url = f"wss://api.hume.ai/v0/stream/models"
+OPENAI_ANALYTICS_MODEL = "gpt-5-mini"
+OPENAI_MINIMAL_REASONING = {"effort": "minimal"}
 
-HUME_API_KEY = os.getenv("HUME_API_KEY")
 
 # Using the pydantic model defined above
 class DispatchEval(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     recommendation: str
-    severity: Literal["Low", "Medium", "High", "Critical"]
-    type: Literal["Fire", "Medical", "Police"]
+    severity: Literal["", "Low", "Medium", "High", "Critical"]
+    type: Literal["", "Fire", "Medical", "Police"]
     name: str
     title: str
     summary: str
@@ -28,6 +28,34 @@ class Message(BaseModel):
     role: Literal["user", "agent"]
     content: str
     
+
+class EmotionScore(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    emotion: str
+    intensity: float
+
+
+class EmotionEval(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    emotions: List[EmotionScore]
+
+
+def _text_format(model: type[BaseModel], name: str):
+    return {
+        "type": "json_schema",
+        "name": name,
+        "schema": model.model_json_schema(),
+        "strict": True,
+    }
+
+
+def _message_field(message, field: str):
+    if isinstance(message, dict):
+        return message.get(field, "")
+    return getattr(message, field, "")
+
 
 
 
@@ -61,54 +89,34 @@ async def eval(transcript: List[Message], current_data: str):
     }
     """
     
-    constructed_content = "\n".join([f"{message['role']}: {message['content']}" for message in transcript])
+    constructed_content = "\n".join(
+        [
+            f"{_message_field(message, 'role')}: {_message_field(message, 'content')}"
+            for message in transcript
+        ]
+    )
     
     # Construct the prompt for the user message + current data
     user_content = (
         f"Transcript:\n\n{constructed_content}\n\n"
         f"Current Data:\n\n{current_data}"
     )
-    
-    predicted_output = {
-        "type": "content",
-        "content": """
-{
-  "recommendation": "",
-  "severity": "",
-  "type": "",
-  "name": "",
-  "title": "",
-  "summary": "",
-  "location_name": "",
-  "topics": []
-}
-""".strip()
-    }
 
 
     try:
-        # Make the request with structured outputs
-        completion = await client.beta.chat.completions.parse(
-            model="gpt-4o",  # or another GPT-4o model snapshot with structured outputs
-            messages=[
+        response = await client.responses.create(
+            model=OPENAI_ANALYTICS_MODEL,
+            input=[
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": user_content},
             ],
-            response_format=DispatchEval,     # Our Pydantic schema
+            reasoning=OPENAI_MINIMAL_REASONING,
+            text={"format": _text_format(DispatchEval, "dispatch_eval")},
         )
 
-        # The model may refuse (for safety reasons) or produce valid data
-        if completion.choices[0].message.refusal:
-            # Model gave us a refusal
-            return {
-                "error": "Request was refused for safety reasons.",
-                "refusal": completion.choices[0].message.refusal
-            }
-        else:
-            # All good — parse out the typed data
-            result: DispatchEval = completion.choices[0].message.parsed
-            print("Eval result", result.model_dump(), "\n")
-            return result.model_dump()
+        result = DispatchEval.model_validate_json(response.output_text)
+        print("Eval result", result.model_dump(), "\n")
+        return result.model_dump()
 
     except ValidationError as e:
         # The model returned JSON that failed Pydantic validation
@@ -137,41 +145,57 @@ interesting_emotions = [
 ]
 
 
-async def hume_eval(message: str):
-    async with websockets.connect(
-        websocket_url, extra_headers={"X-Hume-Api-Key": HUME_API_KEY}
-    ) as websocket:
-        await websocket.send(
-            json.dumps({"data": message, "models": {"language": {}}, "raw_text": True})
+async def emotion_eval(message: str):
+    """Score the latest utterance for dispatch-relevant emotions.
+
+    Prefers Hume's Expression Measurement language model when ``HUME_API_KEY``
+    is configured — that's the integration the project was originally built
+    around. Falls back to the OpenAI scorer when Hume is unavailable so local
+    dev still works without a Hume key.
+    """
+    if os.getenv("HUME_API_KEY"):
+        try:
+            from server.hume_emotions import hume_language_emotion
+
+            return await hume_language_emotion(message)
+        except Exception as exc:
+            print(
+                f"[emotion_eval] Hume scoring failed, falling back to OpenAI: {exc!r}"
+            )
+
+    return await _openai_emotion_eval(message)
+
+
+async def _openai_emotion_eval(message: str):
+    client = AsyncOpenAI()
+    system_message = f"""
+    Analyze the latest caller message from a 911 dispatch transcript.
+
+    Return up to three emotions that are most useful for dispatch triage. Use only
+    these emotion names: {", ".join(interesting_emotions)}.
+
+    Intensity must be a number from 0 to 1. If there is no useful emotional signal,
+    return an empty emotions list.
+    """
+
+    try:
+        response = await client.responses.create(
+            model=OPENAI_ANALYTICS_MODEL,
+            input=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": message},
+            ],
+            reasoning=OPENAI_MINIMAL_REASONING,
+            text={"format": _text_format(EmotionEval, "emotion_eval")},
         )
-        data = await websocket.recv()
-        response_data = json.loads(data)
-        emotions_data = response_data.get("language", {}).get("predictions", [])
-        emotion_scores = {}
-        total_words = len(emotions_data)
+        result = EmotionEval.model_validate_json(response.output_text)
+        return [emotion.model_dump() for emotion in result.emotions]
+    except Exception as e:
+        return {
+            "error": "An unexpected error occurred.",
+            "details": str(e),
+        }
 
-        for word_data in emotions_data:
-            word_emotions = word_data.get("emotions", [])
-            for emotion in word_emotions:
-                if emotion["name"].lower() in interesting_emotions:
-                    if emotion["name"] in emotion_scores:
-                        emotion_scores[emotion["name"]] += emotion["score"]
-                    else:
-                        emotion_scores[emotion["name"]] = emotion["score"]
 
-        # Calculating average scores
-        for emotion in emotion_scores:
-            emotion_scores[emotion] /= total_words
-
-        # Sorting and selecting the top three emotions for the entire text chunk
-        top_three_overall_emotions = sorted(
-            emotion_scores.items(), key=lambda item: item[1], reverse=True
-        )[:3]
-
-        # Format the result according to the specified structure
-        formatted_result = [
-            {"emotion": emotion, "intensity": score}
-            for emotion, score in top_three_overall_emotions
-        ]
-
-        return formatted_result
+async def hume_eval(message: str):
+    return await emotion_eval(message)

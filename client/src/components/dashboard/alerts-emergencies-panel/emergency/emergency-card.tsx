@@ -58,35 +58,39 @@ export function EmergencyCard({
     };
 
     return (
-        <div
+        <button
+            type="button"
             className={cn(
-                "flex cursor-pointer space-x-2 border-t border-dp-outlineNotSelected bg-dp-background px-2 py-3",
-                "hover:bg-dp-backgroundHover",
-                selectedId === id && "bg-dp-card hover:bg-dp-card"
+                "flex w-full cursor-pointer space-x-3 rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3 text-left transition duration-200",
+                "hover:-translate-y-0.5 hover:border-dp-primary/25 hover:bg-dp-primary/10",
+                selectedId === id &&
+                    "border-dp-primary/40 bg-dp-primary/15 shadow-[0_0_32px_rgba(105,210,255,0.12)]"
             )}
             onClick={handleClick}
         >
-            <Icon className={cn("my-auto size-5 min-w-5", cardColor)} />
+            <div className="my-auto flex size-9 min-w-9 items-center justify-center rounded-xl border border-white/10 bg-[#070b10]/80">
+                <Icon className={cn("size-5", cardColor)} />
+            </div>
 
             <div className="flex-between grow">
                 <div>
                     <p className="line-clamp-1 text-sm font-semibold text-dp-headingText">
                         {title}
                     </p>
-                    <p className="line-clamp-1 text-xs font-medium text-dp-text">
+                    <p className="line-clamp-1 font-mono text-xxs font-medium uppercase tracking-[0.12em] text-dp-text">
                         {formattedTime}
                     </p>
                 </div>
 
                 <div
                     className={cn(
-                        "mb-auto min-w-fit items-center px-2 text-xs font-medium uppercase leading-5",
+                        "border-current/20 bg-current/10 mb-auto min-w-fit rounded-full border px-2 py-0.5 text-xxs font-semibold uppercase leading-5 tracking-[0.16em]",
                         cardColor
                     )}
                 >
                     {severity}
                 </div>
             </div>
-        </div>
+        </button>
     );
 }

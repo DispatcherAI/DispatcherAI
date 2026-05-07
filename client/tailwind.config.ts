@@ -128,6 +128,10 @@ const config = {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
             },
+            fontFamily: {
+                sans: ["var(--font-sans)", "ui-sans-serif", "system-ui"],
+                mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+            },
             transitionDuration: {
                 "5000": "5000ms",
             },

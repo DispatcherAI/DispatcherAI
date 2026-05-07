@@ -68,6 +68,7 @@
         "prettier": "^3.3.2",
         "prettier-plugin-tailwindcss": "^0.6.8",
         "prisma": "^5.19.1",
+        "react-grab": "^0.1.33",
         "tailwind": "^4.0.0",
         "tailwindcss": "^3.4.12",
         "tailwindcss-bg-patterns": "^0.3.0",

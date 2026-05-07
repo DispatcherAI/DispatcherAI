@@ -27,9 +27,9 @@ export function Sidebar({ className }: SidebarProps) {
     return (
         <nav
             className={cn(
-                `relative z-50 hidden h-screen flex-col border-r-2 border-dp-outlineNotSelected bg-dp-background px-2 pb-4 pt-3 md:flex`,
+                `relative z-50 hidden h-screen flex-col border-r border-white/10 bg-[#060a0f]/95 px-2 pb-4 pt-3 shadow-[18px_0_50px_rgba(0,0,0,0.32)] backdrop-blur-xl md:flex`,
                 status && "duration-500",
-                isOpen ? "w-52 min-w-52" : "w-[50px] min-w-[50px]",
+                isOpen ? "w-60 min-w-60" : "w-[58px] min-w-[58px]",
                 className
             )}
         >
@@ -38,15 +38,15 @@ export function Sidebar({ className }: SidebarProps) {
                 handleToggle={handleToggle}
             />
 
-            <Separator className="mt-2 h-[1px]" />
+            <Separator className="mt-2 h-[1px] bg-white/10" />
 
             <SidebarAvatar isOpen={isOpen} />
 
-            <Separator className="h-[1px]" />
+            <Separator className="h-[1px] bg-white/10" />
 
             <SidebarNav />
 
-            <Separator className="h-[1px]" />
+            <Separator className="mt-auto h-[1px] bg-white/10" />
 
             <SidebarEmergencyWebsocket />
         </nav>

@@ -4,3 +4,14 @@ __pycache__/
 .vercel
 .venv
 .idea
+
+# dependencies / build artifacts
+node_modules/
+**/node_modules/
+
+# playwright mcp artifacts
+.playwright-mcp/
+
+# debug screenshots at repo root
+/dispatcher-live-*.png
+/live-layout-*.png

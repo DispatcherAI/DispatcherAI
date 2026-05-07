@@ -13,22 +13,23 @@ export function EmergencyStreetViewCollapsible({
 }) {
     return (
         <Collapsible
-            className="flex flex-col space-x-1 space-y-4 px-3 py-3"
+            className="flex flex-col space-y-4 px-4 py-4"
             defaultOpen
         >
-            <CollapsibleTrigger className="flex justify-between text-left text-sm font-semibold uppercase text-dp-headingText">
+            <CollapsibleTrigger className="flex justify-between text-left text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
                 <p className="">Street View</p>
-                <ChevronDownIcon className="stroke-dp-hoverCard" />
+                <ChevronDownIcon className="size-4 stroke-dp-text" />
             </CollapsibleTrigger>
 
             <CollapsibleContent>
                 {call.callAnalytics.streetView ? (
                     <img
-                        src={`data:image/png;base64, ${call.callAnalytics.streetView}`}
-                        className="aspect-video w-full border border-dp-hoverCard bg-cover bg-no-repeat drop-shadow-md"
+                        src={`data:image/jpeg;base64,${call.callAnalytics.streetView}`}
+                        alt="Incident street view"
+                        className="aspect-video w-full rounded-2xl border border-white/10 bg-cover bg-no-repeat object-cover shadow-2xl shadow-black/30"
                     />
                 ) : (
-                    <div className="aspect-video w-full animate-pulse border border-dp-hoverCard bg-gray-500 drop-shadow-md duration-5000" />
+                    <div className="aspect-video w-full animate-pulse rounded-2xl border border-white/10 bg-white/10 shadow-2xl shadow-black/30 duration-5000" />
                 )}
             </CollapsibleContent>
         </Collapsible>

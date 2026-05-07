@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { CallProps } from "@/app/(layout)/live/page";
 import { cn } from "@/lib/utils";
 import { HEADER_HEIGHT } from "@/root/tailwind.config";
 import { motion } from "framer-motion";
 import {
     ArrowLeftRightIcon,
     CheckCircle2Icon,
-    HeadsetIcon,
-    Loader2Icon,
+    ShieldAlertIcon,
 } from "lucide-react";
 
 import { Button } from "../ui/button";
@@ -15,17 +13,26 @@ import { Separator } from "../ui/separator";
 import ChatInterface from "./ChatInterface";
 import EmotionCard from "./EmotionCard";
 
-interface TranscriptPanelProps extends CallProps {
-    handleTransfer: (id: string) => void;
-}
+type LegacyTranscriptMessage = {
+    role: string;
+    content: string;
+};
+
+type LegacyCall = {
+    emotions?: { emotion: string; intensity: number }[];
+    transcript: LegacyTranscriptMessage[];
+};
+
+type TranscriptPanelProps = {
+    call?: LegacyCall;
+    selectedId: string;
+};
 
 const TranscriptPanel = ({
     call,
     selectedId,
-    handleTransfer,
 }: TranscriptPanelProps) => {
-    const [transferred, setTransferred] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [showTransferPreview, setShowTransferPreview] = useState(false);
 
     const emotions = call?.emotions?.sort((a, b) =>
         a.intensity < b.intensity ? 1 : -1
@@ -35,15 +42,6 @@ const TranscriptPanel = ({
         return null;
     }
 
-    const doTransfer = (id: string) => {
-        handleTransfer(id);
-        setLoading(true);
-
-        setTimeout(() => {
-            setTransferred(true);
-            setLoading(false);
-        }, 1000);
-    };
     return (
         <motion.div
             initial={{ x: "100%" }}
@@ -51,8 +49,7 @@ const TranscriptPanel = ({
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className={cn(
-                `fixed right-0 top-[${HEADER_HEIGHT}px] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] w-[400px] overflow-y-auto bg-white shadow-lg`,
-                transferred && "brightness-90"
+                `fixed right-0 top-[${HEADER_HEIGHT}px] min-h-[calc(100dvh-${HEADER_HEIGHT}px)] w-[400px] overflow-y-auto bg-white shadow-lg`
             )}
         >
             <p className="px-2 py-[6px]">Live Transcript</p>
@@ -60,26 +57,12 @@ const TranscriptPanel = ({
 
             <div className="mb-3 space-y-4 p-2 pb-3">
                 <div className="flex items-center space-x-1">
-                    {transferred ? (
-                        <HeadsetIcon
-                            className="text-blue-500"
-                            size={24}
-                        />
-                    ) : (
-                        <CheckCircle2Icon
-                            className="text-green-500"
-                            size={24}
-                        />
-                    )}
-                    <p
-                        className={cn(
-                            "text-md font-semibold",
-                            transferred ? "text-blue-500" : "text-green-500"
-                        )}
-                    >
-                        {transferred
-                            ? "Human Operator Connected"
-                            : "AI Operator Connected"}
+                    <CheckCircle2Icon
+                        className="text-green-500"
+                        size={24}
+                    />
+                    <p className="text-md font-semibold text-green-500">
+                        AI Operator Connected
                     </p>
                 </div>
 
@@ -124,26 +107,37 @@ const TranscriptPanel = ({
                         selectedId={selectedId}
                     />
 
-                    {transferred ? (
-                        <Button
-                            variant={"outline"}
-                            className="pointer-events-none w-full space-x-2 border-2 border-blue-500 text-black"
+                    <Button
+                        type="button"
+                        aria-controls="legacy-transfer-preview"
+                        aria-disabled="true"
+                        aria-expanded={showTransferPreview}
+                        title="Transfer is disabled in this demo. Click to preview the handoff flow."
+                        onClick={() =>
+                            setShowTransferPreview((isVisible) => !isVisible)
+                        }
+                        className="w-full cursor-help space-x-2 border border-amber-500/30 bg-amber-500/10 text-amber-700 hover:bg-amber-500/20"
+                    >
+                        <ArrowLeftRightIcon /> <p>Transfer Unavailable</p>
+                    </Button>
+
+                    {showTransferPreview ? (
+                        <div
+                            id="legacy-transfer-preview"
+                            className="rounded-lg border border-amber-500/30 bg-amber-50 p-3 text-xs leading-5 text-amber-950"
                         >
-                            <HeadsetIcon /> <p>Transferred to Human Operator</p>
-                        </Button>
-                    ) : loading ? (
-                        <Button className="w-full space-x-2 bg-green-500 text-white hover:bg-green-500/80">
-                            <Loader2Icon className="animate-spin" />
-                            <p>Transferring...</p>
-                        </Button>
-                    ) : (
-                        <Button
-                            onClick={() => doTransfer(call.id)}
-                            className="w-full space-x-2 bg-green-500 text-white hover:bg-green-500/80"
-                        >
-                            <ArrowLeftRightIcon /> <p>Transfer</p>
-                        </Button>
-                    )}
+                            <div className="mb-1 flex items-center gap-2 font-semibold uppercase tracking-[0.14em] text-amber-700">
+                                <ShieldAlertIcon className="size-4" />
+                                Transfer preview
+                            </div>
+                            <p>
+                                In production, this would hand the transcript,
+                                caller location, severity, and AI summary to a
+                                human dispatcher. This demo does not initiate an
+                                outbound call or operator handoff.
+                            </p>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </motion.div>

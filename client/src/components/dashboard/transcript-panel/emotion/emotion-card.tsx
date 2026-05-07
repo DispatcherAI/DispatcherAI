@@ -11,27 +11,20 @@ export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
     const value = Number((100 * Number(intensity.toFixed(2))).toFixed(2));
 
     return (
-        <div className="border border-dp-outlineNotSelected p-2">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
             <div className="flex items-center justify-between">
-                <div className="text-sm text-dp-text">{emotion}</div>
-
-                {/* TODO: implement
-                <div className="flex flex-row items-center space-x-2">
-                    <p className="text-xxs text-dp-headingText">Confidence:</p>
-                    <Badge
-                        label={`${value}%`}
-                        className="text-dp-headingText"
-                        containerClassName="w-fit bg-dp-outlineNotSelected"
-                    />
-                </div> */}
+                <div className="text-sm font-medium text-dp-headingText">
+                    {emotion}
+                </div>
+                <div className="font-mono text-xs text-dp-primary">
+                    {value}%
+                </div>
             </div>
 
-            <div className="flex flex-row items-center space-x-2">
-                <p className="text-sm font-medium text-dp-text">{value}%</p>
-
+            <div className="mt-3 flex flex-row items-center space-x-2">
                 <Progress
                     value={value}
-                    className="h-2 rounded-none"
+                    className="h-2 rounded-full bg-white/10"
                 />
             </div>
         </div>

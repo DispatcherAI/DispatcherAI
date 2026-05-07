@@ -1,7 +1,6 @@
 import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmergencyDetailsCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-details-collapsible";
 import { EmergencyStreetViewCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-street-view-collapsible";
-import { Badge } from "@/components/dispatch/badge";
 import { Separator } from "@/components/dispatch/separator";
 import {
     Tooltip,
@@ -16,19 +15,16 @@ interface EmergencyDetailsPanelProps {
 
 export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
     return (
-        <div className="z-10 flex h-fit max-h-[calc(100vh-52px)] w-[300px] flex-col border border-y-0 border-l-0 border-r-dp-outlineNotSelected bg-dp-background">
-            <div className="flex shrink-0 justify-between px-3 py-1 text-sm text-dp-text">
-                <p>Emergency Details</p>
-                {/* <Badge
-                    label="Warning"
-                    className="text-dp-medium"
-                    containerClassName="bg-dp-medium/15"
-                /> */}
+        <div className="z-10 flex h-full max-h-full w-[320px] flex-col border border-y-0 border-l-0 border-r-white/10 bg-[#080d13]/95 backdrop-blur-xl">
+            <div className="flex shrink-0 justify-between px-4 py-3 text-sm text-dp-text">
+                <p className="text-xxs font-semibold uppercase tracking-[0.22em]">
+                    Emergency Details
+                </p>
             </div>
 
-            <Separator />
+            <Separator className="bg-white/10" />
 
-            <div className="px-3 py-3 text-lg font-semibold text-dp-headingText">
+            <div className="px-4 py-4 text-xl font-semibold tracking-[-0.03em] text-dp-headingText">
                 <TooltipProvider>
                     <Tooltip delayDuration={1500}>
                         <TooltipTrigger asChild>
@@ -47,11 +43,11 @@ export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
                 </TooltipProvider>
             </div>
 
-            <Separator />
+            <Separator className="bg-white/10" />
 
             <EmergencyStreetViewCollapsible call={call} />
 
-            <Separator />
+            <Separator className="bg-white/10" />
 
             <EmergencyDetailsCollapsible call={call} />
         </div>

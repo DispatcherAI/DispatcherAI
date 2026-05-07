@@ -17,7 +17,7 @@ import {
     TabsTrigger,
 } from "@/components/dispatch/tabs";
 import { cn } from "@/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { FileCheck2Icon, RadioTowerIcon, SearchIcon } from "lucide-react";
 
 const ITEMS = [
     {
@@ -51,13 +51,30 @@ export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
     };
 
     return (
-        <div className="z-10 h-[calc(100vh-52px)] w-[350px] min-w-[350px] bg-dp-background">
+        <div className="z-10 flex h-full min-h-0 w-[370px] min-w-[370px] flex-col border-r border-white/10 bg-[#080d13]/95 shadow-[18px_0_55px_rgba(0,0,0,0.28)] backdrop-blur-xl">
             <Tabs
                 defaultValue="emergencies"
-                className="px-3 pt-1"
+                className="flex min-h-0 flex-1 flex-col px-3 pt-3"
                 onValueChange={handleTabValueChange}
             >
-                <TabsList className="h-fit w-full justify-start border-b border-dp-outlineNotSelected">
+                <div className="mb-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <p className="text-xxs font-semibold uppercase tracking-[0.24em] text-dp-primary">
+                                Queue
+                            </p>
+                            <h2 className="mt-1 text-lg font-semibold tracking-[-0.03em] text-dp-headingText">
+                                Active incidents
+                            </h2>
+                        </div>
+                        <div className="flex items-center gap-1.5 rounded-full border border-dp-nonEmergency/20 bg-dp-nonEmergency/10 px-2 py-1 text-xxs font-semibold uppercase tracking-[0.18em] text-dp-nonEmergency">
+                            <RadioTowerIcon className="size-3" />
+                            Live
+                        </div>
+                    </div>
+                </div>
+
+                <TabsList className="h-fit w-full justify-start rounded-xl border border-white/10 bg-white/[0.035] p-1">
                     <TabsTrigger value="emergencies">Emergencies</TabsTrigger>
                     <TabsTrigger
                         value="alerts"
@@ -71,8 +88,8 @@ export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
                     <Input
                         startIcon={SearchIcon}
                         placeholder="Search a location..."
-                        className="h-7 text-xs"
-                        startIconClassName="text-dp-inputText size-3"
+                        className="h-8 border-white/10 bg-white/[0.04] text-xs"
+                        startIconClassName="text-dp-primary size-3"
                         startIconPadding="pl-5"
                     />
 
@@ -82,7 +99,7 @@ export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
                     >
                         <SelectTrigger
                             className={cn(
-                                "h-7 w-20 min-w-20 max-w-20 overflow-hidden text-ellipsis whitespace-nowrap p-2 text-left text-xs",
+                                "h-8 w-24 min-w-24 max-w-24 overflow-hidden text-ellipsis whitespace-nowrap border-white/10 bg-white/[0.04] p-2 text-left text-xs",
                                 "focus:ring-1 focus:ring-offset-0",
                                 "[&>span]:block [&>span]:overflow-hidden [&>span]:text-ellipsis"
                             )}
@@ -103,13 +120,37 @@ export function AlertsEmergenciesPanel({ data }: AlertsEmergenciesPanelProps) {
                     </Select>
                 </div>
 
-                <TabsContent value="emergencies">
+                <TabsContent
+                    value="emergencies"
+                    className="min-h-0 flex-1"
+                >
                     <EmergencyTab data={data} />
                 </TabsContent>
-                <TabsContent value="alerts">
+                <TabsContent
+                    value="alerts"
+                    className="min-h-0 flex-1"
+                >
                     <AlertTab />
                 </TabsContent>
             </Tabs>
+
+            <div className="m-3 mt-auto rounded-2xl border border-dp-primary/20 bg-dp-primary/[0.08] p-3">
+                <div className="flex items-start gap-3">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-dp-primary/15 text-dp-primary">
+                        <FileCheck2Icon className="size-4" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-semibold text-dp-headingText">
+                            Demo script
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-dp-text">
+                            Select the active bridge incident, review the AI
+                            summary, then preview the transfer handoff from the
+                            transcript panel.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

@@ -39,17 +39,17 @@ const CONDITIONS: Condition[] = [
 
 export function WeatherCondition() {
     return (
-        <div className="text-fill-dp-text my-auto flex min-w-fit space-x-3 text-dp-text">
+        <div className="text-fill-dp-text my-auto hidden min-w-fit space-x-2 text-dp-text lg:flex">
             {CONDITIONS.map(
                 (
                     item,
                     index // FIX ME
                 ) => (
                     <div
-                        className="flex space-x-1 text-sm"
+                        className="flex items-center space-x-1 rounded-full border border-white/10 bg-white/[0.035] px-2 py-1 text-xs"
                         key={index}
                     >
-                        <item.icon className="my-auto h-5 w-5" />
+                        <item.icon className="my-auto h-3.5 w-3.5 text-dp-primary" />
                         <p>{item.label}</p>
                     </div>
                 )

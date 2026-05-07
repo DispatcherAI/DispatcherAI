@@ -2,27 +2,38 @@ import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmergencyCard } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-card";
 import { EmergencyStat } from "@/components/dashboard/alerts-emergencies-panel/emergency/emergency-stat";
 import { useEmergencyContext } from "@/components/dashboard/emergency-context";
-import { Separator } from "@/components/dispatch/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Severity } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { InboxIcon } from "lucide-react";
+
+function normalizeSeverity(severity: string | null | undefined): Severity {
+    if (
+        severity === "Critical" ||
+        severity === "High" ||
+        severity === "critical"
+    ) {
+        return "critical";
+    }
+
+    if (severity === "safe") {
+        return "safe";
+    }
+
+    return "warning";
+}
 
 export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     const { filterValue } = useEmergencyContext();
 
     const parsedData = data
         .map((call) => {
-            const caSeverity = call.callAnalytics.severity;
-            const severity =
-                caSeverity === "Critical" || caSeverity === "High"
-                    ? "critical"
-                    : "warning";
-
-            // ! FIX ME
-            //@ts-expect-error type-casting due to type mismatch between Severity Enum and frontend
-            call.callAnalytics.severity = severity;
-
-            return call;
+            return {
+                ...call,
+                normalizedSeverity: normalizeSeverity(
+                    call.callAnalytics.severity
+                ),
+            };
         })
         .sort(
             (a, b) =>
@@ -32,20 +43,34 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
         .filter(
             (item) =>
                 filterValue === undefined ||
-                (item.callAnalytics.severity as Severity) === filterValue
+                item.normalizedSeverity === filterValue
         );
+    const resolvedCount = data.filter((call) =>
+        call.status?.toLowerCase().includes("resolved")
+    ).length;
 
     return (
-        <div className="space-y-3 pb-3">
-            <div className="space-y-2">
-                <div className="grid grid-cols-3">
+        <div className="flex h-full min-h-0 flex-col space-y-3 pb-3">
+            <div className="shrink-0 space-y-2">
+                <div className="grid grid-cols-3 rounded-2xl border border-white/10 bg-white/[0.035]">
                     <EmergencyStat
                         label="Total Calls"
                         value={String(data.length)}
                     />
                     <EmergencyStat
                         label="Resolved"
-                        value={"N/A"}
+                        value={String(resolvedCount)}
+                    />
+                    <EmergencyStat
+                        label="Priority"
+                        value={String(
+                            data.filter(
+                                (call) =>
+                                    normalizeSeverity(
+                                        call.callAnalytics.severity
+                                    ) === "critical"
+                            ).length
+                        )}
                     />
                 </div>
             </div>
@@ -57,37 +82,32 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                 </p>
             ) : null}
 
-            <div className="h-full">
+            <div className="min-h-0 flex-1">
                 <ScrollArea
-                    className={cn(
-                        "flex flex-col overflow-y-auto",
-                        "max-h-[calc(100vh-162px)]" // this is bad code, but it sizes the scroll area correctly
-                    )}
+                    className={cn("flex h-full flex-col overflow-y-auto pr-1")}
                     type="scroll"
                 >
-                    {parsedData.map((call) => (
-                        <EmergencyCard
-                            key={call.id}
-                            id={call.id}
-                            title={call.callAnalytics.title ?? "911 Call"} // FIX ME
-                            time={call.callAnalytics?.createdAt}
-                            severity={call.callAnalytics?.severity as Severity}
-                        />
-                    ))}
-                    {/* <EmergencyCard
-                        key={"foo"}
-                        id={"foo"}
-                        title={"House Fire in Blair Hill"}
-                        time={"10:31 AM"}
-                        severity={"warning"}
-                    />
-                    <EmergencyCard
-                        key={"bar"}
-                        id={"bar"}
-                        title={"House Fire in Blair Hill"}
-                        time={"10:31 AM"}
-                        severity={"safe"}
-                    /> */}
+                    {parsedData.length ? (
+                        parsedData.map((call) => (
+                            <EmergencyCard
+                                key={call.id}
+                                id={call.id}
+                                title={call.callAnalytics.title ?? "911 Call"}
+                                time={call.callAnalytics?.createdAt}
+                                severity={call.normalizedSeverity}
+                            />
+                        ))
+                    ) : (
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-6 text-center">
+                            <InboxIcon className="mx-auto mb-3 size-6 text-dp-primary" />
+                            <p className="font-medium text-dp-headingText">
+                                No incidents match this filter
+                            </p>
+                            <p className="mt-1 text-xs text-dp-text">
+                                Clear the severity filter to restore the queue.
+                            </p>
+                        </div>
+                    )}
                 </ScrollArea>
             </div>
         </div>

@@ -30,47 +30,46 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   clerkUserId String?  @unique
-  phoneNumber String?
+  email       String?  @unique
+  phoneNumber String?  @unique
   credits     Int      @default(50)
 
-  calls       Call[]
-
-  @@index([phoneNumber])
+  calls Call[]
 }
 
 model Call {
-  id          String        @id @default(cuid())
-  createdAt   DateTime      @default(now())
-  endedAt     DateTime?
-  inProgress  Boolean?
-  status      statusType
-  userId      String?
-  user        User?         @relation(fields: [userId], references: [id])
-  transcript  Json?         // Store entire conversation JSON here
+  id         String     @id @default(cuid())
+  createdAt  DateTime   @default(now())
+  endedAt    DateTime?
+  inProgress Boolean?
+  status     statusType
+  userId     String?
+  user       User?      @relation(fields: [userId], references: [id])
+  transcript Json? // Store entire conversation JSON here
 
   // Make CallAnalytics a single record, optional or required (your choice)
   callAnalytics CallAnalytics?
 }
 
 model CallAnalytics {
-  id        String         @id @default(cuid())
-  callId    String         @unique  // ensure only one CallAnalytics per Call
-  call      Call?           @relation(fields: [callId], references: [id])
+  id     String @id @default(cuid())
+  callId String @unique // ensure only one CallAnalytics per Call
+  call   Call?  @relation(fields: [callId], references: [id])
 
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now()) @updatedAt
-  type      callType?
-  severity  severityType?
-  summary   String?
-  sentiment Json?
-  topics    String[]
-  location  String?
-  latitude  Float?
-  longitude Float?
-  name      String?
-  address   String?
-  recommendation    String?
-  streetView    String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+  type           callType?
+  severity       severityType?
+  summary        String?
+  sentiment      Json?
+  topics         String[]
+  location       String?
+  latitude       Float?
+  longitude      Float?
+  name           String?
+  address        String?
+  recommendation String?
+  streetView     String?
 
   @@index([callId])
 }
