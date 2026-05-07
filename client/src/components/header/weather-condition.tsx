@@ -1,4 +1,4 @@
-// placeholder until weather APIs are hooked up
+// Placeholder until weather APIs are hooked up.
 
 import {
     CloudFogIcon,
@@ -15,45 +15,28 @@ type Condition = {
 };
 
 const CONDITIONS: Condition[] = [
-    {
-        icon: SunIcon,
-        label: "75°",
-    },
-    {
-        icon: WindIcon,
-        label: "3mph",
-    },
-    {
-        icon: CloudRainIcon,
-        label: '0.1" in 2hrs',
-    },
-    {
-        icon: CloudFogIcon,
-        label: "2 humid°",
-    },
-    {
-        icon: EyeIcon,
-        label: "12mi visible",
-    },
+    { icon: SunIcon, label: "75°F" },
+    { icon: WindIcon, label: "3 mph" },
+    { icon: CloudRainIcon, label: '0.1"' },
+    { icon: CloudFogIcon, label: "Hum 42%" },
+    { icon: EyeIcon, label: "12 mi" },
 ];
 
 export function WeatherCondition() {
     return (
-        <div className="text-fill-dp-text my-auto hidden min-w-fit space-x-2 text-dp-text lg:flex">
-            {CONDITIONS.map(
-                (
-                    item,
-                    index // FIX ME
-                ) => (
-                    <div
-                        className="flex items-center space-x-1 rounded-full border border-white/10 bg-white/[0.035] px-2 py-1 text-xs"
+        <div className="hidden items-center gap-3 lg:flex">
+            <span className="text-xs text-white/45">San Francisco</span>
+            <div className="flex items-center gap-3 text-xs text-white/60">
+                {CONDITIONS.map((item, index) => (
+                    <span
                         key={index}
+                        className="inline-flex items-center gap-1.5"
                     >
-                        <item.icon className="my-auto h-3.5 w-3.5 text-dp-primary" />
-                        <p>{item.label}</p>
-                    </div>
-                )
-            )}
+                        <item.icon className="size-3 text-white/45" />
+                        {item.label}
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }

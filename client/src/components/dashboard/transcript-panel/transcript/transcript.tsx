@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { DispatchCall } from "@/app/(layout)/live/page";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { HeadphonesIcon, RadioTowerIcon } from "lucide-react";
 
 interface TranscriptProps {
     call: DispatchCall;
@@ -33,32 +34,38 @@ export function Transcript({ call }: TranscriptProps) {
     return (
         <ScrollArea
             type="scroll"
-            className="flex h-full grow flex-col text-dp-text"
+            className="flex h-full grow flex-col"
         >
             <div
-                className="space-y-3 overflow-y-auto"
+                className="space-y-2 overflow-y-auto pr-1"
                 ref={ref}
             >
-                {transcript?.map((message, index) => (
-                    <div
-                        key={index}
-                        className={cn(
-                            "rounded-2xl border p-3",
-                            message.role === "user"
-                                ? "border-amber-300/20 bg-amber-300/[0.08]"
-                                : "border-dp-primary/20 bg-dp-primary/[0.08]"
-                        )}
-                    >
-                        <p className="mb-1 text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                            {message.role === "user"
-                                ? "Caller"
-                                : "AI Dispatcher"}
-                        </p>
-                        <p className="text-sm leading-6 text-dp-headingText">
-                            {message.content}
-                        </p>
-                    </div>
-                ))}
+                {transcript?.map((message, index) => {
+                    const isAgent = message.role !== "user";
+                    return (
+                        <div
+                            key={index}
+                            className="rounded-[4px] border border-white/10 bg-white/[0.02] p-2.5"
+                        >
+                            <p
+                                className={cn(
+                                    "mb-1 flex items-center gap-1.5 text-xs font-medium",
+                                    isAgent ? "text-phosphor" : "text-white/65",
+                                )}
+                            >
+                                {isAgent ? (
+                                    <HeadphonesIcon className="size-3" />
+                                ) : (
+                                    <RadioTowerIcon className="size-3" />
+                                )}
+                                {isAgent ? "AI Dispatcher" : "Caller"}
+                            </p>
+                            <p className="text-[13px] leading-5 text-white/85">
+                                {message.content}
+                            </p>
+                        </div>
+                    );
+                })}
             </div>
         </ScrollArea>
     );

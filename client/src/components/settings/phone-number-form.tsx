@@ -21,14 +21,14 @@ export function PhoneNumberForm({
     const [phoneNumber, setPhoneNumber] = useState(
         initialPhoneNumber
             ? formatPhoneNumberForDisplay(initialPhoneNumber)
-            : ""
+            : "",
     );
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
     const normalizedPreview = useMemo(
         () => normalizePhoneNumber(phoneNumber),
-        [phoneNumber]
+        [phoneNumber],
     );
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -39,9 +39,7 @@ export function PhoneNumberForm({
         try {
             const response = await fetch("/api/user/phone", {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ phoneNumber }),
             });
             const data = await response.json();
@@ -79,7 +77,7 @@ export function PhoneNumberForm({
             <div className="space-y-2">
                 <label
                     htmlFor="phone-number"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-dp-headingText"
+                    className="font-mono text-[10px] uppercase tracking-ribbon text-white/55"
                 >
                     Dispatch phone number
                 </label>
@@ -92,38 +90,38 @@ export function PhoneNumberForm({
                     onChange={(event) => setPhoneNumber(event.target.value)}
                     placeholder="+1 (415) 555-0184"
                     startIcon={PhoneIcon}
-                    className="h-12 border-white/10 bg-white/[0.03] text-base"
+                    className="h-12 border-white/10 bg-white/[0.02] font-mono text-base tracking-[0.04em] text-white"
                     disabled={isSaving}
                     required
                 />
-                <p className="text-xs leading-5 text-dp-text">
+                <p className="text-xs leading-5 text-white/55">
                     Incoming Retell calls are routed by matching their caller
                     number to this stored number.
                 </p>
             </div>
 
             {normalizedPreview ? (
-                <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 font-mono text-xs text-dp-primary">
+                <div className="rounded-[3px] border border-sodium/30 bg-sodium/[0.05] px-4 py-3 font-mono text-[11px] tracking-[0.04em] text-sodium">
                     Stored as {normalizedPreview}
                 </div>
             ) : null}
 
             {error ? (
-                <div className="rounded-xl border border-dp-critical/30 bg-dp-critical/10 px-4 py-3 text-sm text-dp-critical">
+                <div className="rounded-[3px] border border-signal/40 bg-signal/[0.06] px-4 py-3 text-sm text-signal">
                     {error}
                 </div>
             ) : null}
 
             <Button
                 type="submit"
-                className="h-11 w-full rounded-xl text-sm"
+                className="h-11 w-full rounded-[3px] bg-sodium font-mono text-[11px] uppercase tracking-console text-ink hover:bg-sodium-soft"
                 disabled={isSaving}
             >
-                <SaveIcon className="mr-2 size-4" />
+                <SaveIcon className="mr-2 size-3.5" />
                 {isSaving
-                    ? "Saving..."
+                    ? "Saving…"
                     : isRequired
-                      ? "Save and open live dispatch"
+                      ? "Save and open live console"
                       : "Save phone number"}
             </Button>
         </form>

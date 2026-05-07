@@ -1,73 +1,76 @@
 "use client";
 
 import Link from "next/link";
+import { DossierMark } from "@/components/brand/DossierMark";
+import { AwardBlock } from "@/components/case-study/AwardBlock";
+import { CockpitPreview } from "@/components/case-study/CockpitPreview";
+import { DemoVideo } from "@/components/case-study/DemoVideo";
+import { Footnotes } from "@/components/case-study/Footnotes";
+import { HeroRibbon } from "@/components/case-study/HeroRibbon";
+import { ModelCard } from "@/components/case-study/ModelCard";
+import { SectionHeading } from "@/components/case-study/SectionHeading";
+import { SystemDiagram } from "@/components/case-study/SystemDiagram";
+import { TeamCard } from "@/components/case-study/TeamCard";
 import { Button } from "@/components/ui/button";
 import { SignInButton, useAuth, UserButton } from "@clerk/nextjs";
 import {
-    Activity,
     ArrowRight,
-    BrainCircuit,
-    CheckCircle2,
-    Clock3,
-    Gauge,
-    Headphones,
-    MapPin,
-    RadioTower,
-    ShieldAlert,
-    Siren,
+    BookOpen,
+    GitBranch,
+    Layers,
+    PlayCircle,
     Sparkles,
-    Workflow,
 } from "lucide-react";
 
-const outcomeStats = [
-    { label: "Calls triaged", value: "146", tone: "text-cyan-200" },
-    { label: "Avg. pickup", value: "0:05", tone: "text-emerald-200" },
-    { label: "Active units", value: "24", tone: "text-amber-200" },
-];
-
-const features = [
+const problemStats = [
     {
-        icon: BrainCircuit,
-        title: "AI intake that keeps callers talking",
-        copy: "The operator asks calm follow-ups, extracts location and risk, and keeps the transcript ready for human review.",
+        value: "60s+",
+        label: "Average 911 wait time during peak demand in major US cities, per dispatcher field reports.",
     },
     {
-        icon: MapPin,
-        title: "Live geospatial context",
-        copy: "Incidents appear with severity, caller summary, street context, and recommended dispatch posture in one view.",
+        value: "50%",
+        label: "Of calls reportedly involve information that could be triaged or pre-filled before a human picks up.",
     },
     {
-        icon: Workflow,
-        title: "Human transfer preview",
-        copy: "The demo shows how a dispatcher handoff would package the AI-generated context trail without initiating a live transfer.",
+        value: "1",
+        label: "Human dispatcher per call — protected. The AI fills wait time, never replaces final authority.",
     },
 ];
 
-const workflow = [
-    "Caller reaches DispatchAI instantly",
-    "AI extracts location, severity, and caller emotion",
-    "Operator reviews the live incident package",
-    "Units receive a concise, verified handoff",
+const tradeoffs = [
+    {
+        title: "Dataset is small.",
+        body: "The public training snapshot has 518 transcripts. We ship the model and the dataset openly so it can be audited and grown — not as a finished product.",
+    },
+    {
+        title: "Bias is real.",
+        body: "Accents, dialects, and cultural variation in distress aren't represented uniformly in 518 transcripts or in Hume's emotion model. Any production deployment requires demographic-stratified evals first.",
+    },
+    {
+        title: "Humans dispatch.",
+        body: "The system is explicitly assist-only. Recommendations carry a confidence score; the dispatcher accepts, edits, or rejects. No outbound dispatch is initiated by the AI.",
+    },
+    {
+        title: "Procurement is hard.",
+        body: "PSAPs need NENA / CJIS / SOC 2 alignment, integrations with legacy CAD and i3 NG911, and 6–18 month sales cycles. The hackathon build was deliberately scoped as a credible prototype, not a shipping product.",
+    },
 ];
 
-const incidents = [
+const productHighlights = [
     {
-        title: "Earthquake injuries",
-        location: "Golden Gate Bridge",
-        severity: "Critical",
-        time: "00:11",
+        icon: Layers,
+        title: "Real-time call cockpit",
+        body: "Incident queue, severity-coded map pins, live transcript, caller emotion, and street view assembled from a single FastAPI orchestrator.",
     },
     {
-        title: "Medical distress",
-        location: "Mission District",
-        severity: "High",
-        time: "02:42",
+        icon: BookOpen,
+        title: "Empathy as a first-class signal",
+        body: "Hume EVI emotion telemetry feeds the LLM context window so the agent's wording calibrates to the caller's distress, not just their words.",
     },
     {
-        title: "Smoke report",
-        location: "SoMa",
-        severity: "Monitor",
-        time: "04:18",
+        icon: GitBranch,
+        title: "Human-in-the-loop by construction",
+        body: "Every action surfaces with provenance and confidence. Transfer is gated to a human dispatcher; the AI never closes the loop alone.",
     },
 ];
 
@@ -75,115 +78,83 @@ export default function Home() {
     const { isSignedIn } = useAuth();
 
     return (
-        <div className="min-h-screen overflow-hidden bg-[#070b10] text-slate-50">
-            <div className="pointer-events-none fixed inset-0 opacity-70">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,0.22),transparent_32%),radial-gradient(circle_at_78%_2%,rgba(245,158,11,0.18),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.92),rgba(2,6,23,0.98))]" />
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_82%)]" />
+        <div className="relative min-h-screen overflow-x-hidden bg-ink text-white">
+            {/* Atmospheric background */}
+            <div
+                aria-hidden
+                className="pointer-events-none fixed inset-0 z-0"
+            >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_8%,rgba(244,176,31,0.10),transparent_38%),radial-gradient(circle_at_82%_-2%,rgba(255,59,48,0.10),transparent_36%),linear-gradient(180deg,#0a0b0d_0%,#06070a_60%,#0a0b0d_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(180deg,black,transparent_85%)]" />
             </div>
 
-            <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#070b10]/80 backdrop-blur-xl">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                    <Link
-                        href="/"
-                        className="group flex items-center gap-3"
-                    >
-                        <span className="relative flex size-10 items-center justify-center overflow-hidden rounded-2xl border border-cyan-300/30 bg-cyan-300/10 shadow-[0_0_40px_rgba(34,211,238,0.22)]">
-                            <Siren className="size-5 text-cyan-200" />
-                            <span className="absolute inset-x-2 bottom-1 h-px bg-cyan-200/70" />
-                        </span>
-                        <span>
-                            <span className="block text-sm font-semibold uppercase tracking-[0.28em] text-white">
-                                DispatcherAI
-                            </span>
-                            <span className="block text-xs text-slate-400">
-                                Emergency response cockpit
-                            </span>
-                        </span>
-                    </Link>
-
-                    <div className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-                        <a
-                            href="#features"
-                            className="transition hover:text-white"
-                        >
-                            Features
-                        </a>
-                        <a
-                            href="#workflow"
-                            className="transition hover:text-white"
-                        >
-                            Flow
-                        </a>
-                        <Link
-                            href="/data-management"
-                            className="transition hover:text-white"
-                            prefetch={false}
-                        >
-                            Analytics
-                        </Link>
-                    </div>
-
-                    <div className="flex items-center gap-2">
+            <HeroRibbon
+                rightSlot={
+                    <div className="flex shrink-0 items-center gap-2">
                         {isSignedIn ? (
                             <UserButton />
                         ) : (
                             <SignInButton>
-                                <Button
-                                    variant="outline"
-                                    className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex"
-                                >
-                                    Log in
-                                </Button>
+                                <button className="hidden h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[3px] border border-white/15 bg-white/[0.04] px-3 font-mono text-[10px] uppercase tracking-console text-white transition hover:border-white/30 hover:bg-white/[0.08] sm:inline-flex">
+                                    Sign in
+                                </button>
                             </SignInButton>
                         )}
-
                         <Button
                             asChild
-                            className="bg-cyan-200 text-slate-950 hover:bg-cyan-100"
+                            className="h-8 shrink-0 whitespace-nowrap rounded-[3px] bg-sodium px-3.5 font-mono text-[10px] uppercase tracking-console text-ink hover:bg-sodium-soft"
                         >
                             <Link
                                 href="/live"
                                 prefetch={false}
                             >
-                                Try demo
-                                <ArrowRight className="ml-2 size-4" />
+                                <span className="hidden lg:inline">
+                                    Open live console
+                                </span>
+                                <span className="lg:hidden">Open console</span>
+                                <ArrowRight className="ml-1.5 size-3.5" />
                             </Link>
                         </Button>
                     </div>
-                </div>
-            </nav>
+                }
+            />
 
             <main className="relative z-10">
-                <section className="mx-auto grid max-w-7xl gap-12 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:pb-28 lg:pt-24">
-                    <div className="flex flex-col justify-center">
-                        <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-amber-100">
-                            <RadioTower className="size-3.5" />
-                            Live demo ready
-                        </div>
-
-                        <h1 className="max-w-4xl text-balance text-5xl font-semibold tracking-[-0.06em] text-white sm:text-6xl lg:text-7xl">
-                            The calmest voice in the first ten seconds of an
-                            emergency.
-                        </h1>
-
-                        <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                            DispatcherAI gives callers an immediate response,
-                            gathers the facts that matter, and packages every
-                            incident for a human dispatcher in a live operations
-                            cockpit.
+                {/* HERO */}
+                <section className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium text-white/55">
+                            Case study &middot; June 2024
                         </p>
 
-                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                        <h1 className="mt-5 max-w-3xl font-display text-[44px] font-medium leading-[1.02] tracking-[-0.025em] text-white sm:text-[56px] lg:text-[64px] xl:text-[68px]">
+                            An empathetic AI that{" "}
+                            <span className="display-italic text-sodium-soft">
+                                holds the line
+                            </span>{" "}
+                            in the first ten seconds of an emergency.
+                        </h1>
+
+                        <p className="mt-7 max-w-xl text-base leading-7 text-white/65 sm:text-lg sm:leading-8">
+                            DispatchAI answers 911 calls instantly, calibrates
+                            its tone to the caller&apos;s emotion, extracts
+                            location and severity in real time, and packages
+                            every incident for a human dispatcher in a live
+                            operator console. Built in 36 hours at the UC
+                            Berkeley AI Hackathon &mdash; and it won.
+                        </p>
+
+                        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                             <Button
                                 asChild
                                 size="lg"
-                                className="h-12 bg-cyan-200 px-6 text-base text-slate-950 hover:bg-cyan-100"
+                                className="h-12 rounded-[4px] bg-sodium px-6 text-base font-semibold text-ink hover:bg-sodium-soft"
                             >
                                 <Link
                                     href="/live"
                                     prefetch={false}
                                 >
-                                    Open live dispatch
+                                    Open live console
                                     <ArrowRight className="ml-2 size-4" />
                                 </Link>
                             </Button>
@@ -191,241 +162,98 @@ export default function Home() {
                                 asChild
                                 size="lg"
                                 variant="outline"
-                                className="h-12 border-white/15 bg-white/5 px-6 text-base text-white hover:bg-white/10"
+                                className="h-12 rounded-[4px] border-white/15 bg-white/[0.03] px-6 text-base text-white hover:border-white/30 hover:bg-white/[0.06]"
                             >
-                                <Link
-                                    href="/data-management"
-                                    prefetch={false}
-                                >
-                                    View analytics
-                                </Link>
+                                <a href="#preview">
+                                    <PlayCircle className="mr-2 size-4 text-sodium" />
+                                    Tour the console
+                                </a>
                             </Button>
                         </div>
 
-                        <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
-                            {outcomeStats.map((stat) => (
+                        <dl className="mt-10 grid max-w-xl grid-cols-3 gap-4">
+                            {[
+                                {
+                                    k: "Award",
+                                    v: "Grand Prize",
+                                    s: "UC Berkeley AI Hackathon",
+                                },
+                                {
+                                    k: "Field",
+                                    v: "1 / 293",
+                                    s: "of 930 builders",
+                                },
+                                {
+                                    k: "Outcome",
+                                    v: "$25K + Pad-13",
+                                    s: "SkyDeck Fund",
+                                },
+                            ].map((s) => (
                                 <div
-                                    key={stat.label}
-                                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 shadow-2xl shadow-black/20"
+                                    key={s.k}
+                                    className="border-l border-white/10 pl-4"
                                 >
-                                    <p
-                                        className={`font-mono text-2xl font-semibold ${stat.tone}`}
-                                    >
-                                        {stat.value}
-                                    </p>
-                                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
-                                        {stat.label}
-                                    </p>
+                                    <dt className="text-xs text-white/45">
+                                        {s.k}
+                                    </dt>
+                                    <dd className="mt-1.5 text-xl font-medium text-white">
+                                        {s.v}
+                                    </dd>
+                                    <dd className="mt-0.5 text-xs text-white/45">
+                                        {s.s}
+                                    </dd>
                                 </div>
                             ))}
-                        </div>
+                        </dl>
                     </div>
 
+                    {/* Hero side — panel feedback / build stats */}
                     <div className="relative">
-                        <div className="absolute -inset-6 rounded-[2rem] bg-cyan-300/10 blur-3xl" />
-                        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#0c121a]/95 shadow-2xl shadow-black/50">
-                            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-                                <div>
-                                    <p className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                                        Live dispatch
-                                    </p>
-                                    <p className="text-sm font-semibold text-white">
-                                        San Francisco emergency grid
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-200">
-                                    <span className="size-2 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.9)]" />
-                                    LIVE
-                                </div>
+                        <div className="panel-raised relative overflow-hidden rounded-[6px]">
+                            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+                                <span className="text-xs font-medium text-white/55">
+                                    Panel feedback
+                                </span>
+                                <span className="text-xs text-white/40">
+                                    June 23, 2024
+                                </span>
                             </div>
-
-                            <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
-                                <div className="border-b border-white/10 p-4 lg:border-b-0 lg:border-r">
-                                    <div className="mb-4 flex items-center justify-between">
-                                        <p className="text-sm font-semibold text-white">
-                                            Incident queue
-                                        </p>
-                                        <span className="rounded-full bg-cyan-300/10 px-2 py-1 font-mono text-xs text-cyan-200">
-                                            3 open
-                                        </span>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {incidents.map((incident, index) => (
-                                            <div
-                                                key={incident.title}
-                                                className={`rounded-2xl border p-4 ${
-                                                    index === 0
-                                                        ? "border-amber-300/35 bg-amber-300/10"
-                                                        : "border-white/10 bg-white/[0.035]"
-                                                }`}
-                                            >
-                                                <div className="flex items-start justify-between gap-4">
-                                                    <div>
-                                                        <p className="text-sm font-semibold text-white">
-                                                            {incident.title}
-                                                        </p>
-                                                        <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-400">
-                                                            <MapPin className="size-3.5" />
-                                                            {incident.location}
-                                                        </p>
-                                                    </div>
-                                                    <span className="font-mono text-xs text-slate-400">
-                                                        {incident.time}
-                                                    </span>
-                                                </div>
-                                                <div className="mt-3 flex items-center gap-2 text-xs">
-                                                    <ShieldAlert className="size-4 text-amber-200" />
-                                                    <span className="uppercase tracking-[0.18em] text-amber-100">
-                                                        {incident.severity}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="p-4">
-                                    <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] p-4">
-                                        <div className="flex items-center gap-3">
-                                            <span className="flex size-10 items-center justify-center rounded-full bg-cyan-200 text-slate-950">
-                                                <Headphones className="size-5" />
-                                            </span>
-                                            <div>
-                                                <p className="text-sm font-semibold text-white">
-                                                    AI operator connected
-                                                </p>
-                                                <p className="text-xs text-cyan-100/70">
-                                                    Caller stabilized, location
-                                                    confirmed
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-4 space-y-3">
-                                        {[
-                                            [
-                                                "Caller",
-                                                "There was a quake. People are hurt on the bridge.",
-                                            ],
-                                            [
-                                                "AI Dispatcher",
-                                                "I have your location. Stay away from traffic lanes. Help is being routed now.",
-                                            ],
-                                            [
-                                                "AI Dispatcher",
-                                                "Are there fires, water hazards, or anyone unconscious near you?",
-                                            ],
-                                        ].map(([role, message]) => (
-                                            <div
-                                                key={message}
-                                                className="rounded-2xl border border-white/10 bg-white/[0.035] p-4"
-                                            >
-                                                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                                                    {role}
-                                                </p>
-                                                <p className="text-sm leading-6 text-slate-200">
-                                                    {message}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-4 grid grid-cols-2 gap-3">
-                                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                                            <Gauge className="mb-3 size-5 text-emerald-200" />
-                                            <p className="font-mono text-2xl text-white">
-                                                91%
-                                            </p>
-                                            <p className="text-xs text-slate-500">
-                                                Context confidence
-                                            </p>
-                                        </div>
-                                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                                            <Clock3 className="mb-3 size-5 text-amber-200" />
-                                            <p className="font-mono text-2xl text-white">
-                                                18s
-                                            </p>
-                                            <p className="text-xs text-slate-500">
-                                                Time to package
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id="features"
-                    className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
-                >
-                    <div className="max-w-3xl">
-                        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200">
-                            What the demo shows
-                        </p>
-                        <h2 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
-                            Built for the messy middle between panic and
-                            dispatch.
-                        </h2>
-                    </div>
-
-                    <div className="mt-10 grid gap-4 md:grid-cols-3">
-                        {features.map((feature) => (
-                            <div
-                                key={feature.title}
-                                className="group rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-6 transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 hover:bg-cyan-200/[0.06]"
-                            >
-                                <feature.icon className="size-7 text-cyan-200" />
-                                <h3 className="mt-8 text-xl font-semibold tracking-[-0.02em] text-white">
-                                    {feature.title}
-                                </h3>
-                                <p className="mt-3 text-sm leading-6 text-slate-400">
-                                    {feature.copy}
+                            <blockquote className="px-7 py-8">
+                                <p className="font-display text-2xl leading-[1.35] text-white sm:text-[26px]">
+                                    Empathetic, technically deep, and the
+                                    judges felt the demo could plausibly help
+                                    real dispatchers tomorrow morning. That
+                                    combination is what won the room.
                                 </p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                <section
-                    id="workflow"
-                    className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
-                >
-                    <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035]">
-                        <div className="grid gap-8 p-6 md:grid-cols-[0.8fr_1.2fr] md:p-10">
-                            <div>
-                                <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
-                                    <Activity className="size-3.5 text-emerald-200" />
-                                    Operator flow
-                                </div>
-                                <h2 className="mt-6 text-4xl font-semibold tracking-[-0.04em] text-white">
-                                    A better handoff, not a black box.
-                                </h2>
-                                <p className="mt-4 text-sm leading-6 text-slate-400">
-                                    The demo highlights the handoff that
-                                    matters: AI keeps the caller engaged while
-                                    the human operator gets a clean incident
-                                    card, transcript, and confidence signals.
-                                </p>
-                            </div>
-
-                            <div className="grid gap-3">
-                                {workflow.map((step, index) => (
-                                    <div
-                                        key={step}
-                                        className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#070b10]/70 p-4"
-                                    >
-                                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-cyan-200/20 bg-cyan-200/10 font-mono text-sm text-cyan-100">
-                                            0{index + 1}
-                                        </span>
-                                        <p className="font-medium text-slate-100">
-                                            {step}
+                                <footer className="mt-6 flex items-center gap-3">
+                                    <DossierMark
+                                        size="sm"
+                                        showWordmark={false}
+                                    />
+                                    <div>
+                                        <p className="text-sm text-white/80">
+                                            Cal Hacks &middot; Berkeley
+                                            SkyDeck &middot; Intel
                                         </p>
-                                        {index === workflow.length - 1 ? (
-                                            <CheckCircle2 className="ml-auto size-5 text-emerald-200" />
-                                        ) : null}
+                                        <p className="text-xs text-white/45">
+                                            UC Berkeley AI Hackathon panel
+                                        </p>
+                                    </div>
+                                </footer>
+                            </blockquote>
+                            <div className="grid grid-cols-3 divide-x divide-white/8 border-t border-white/10">
+                                {[
+                                    { l: "Built in", v: "36 h" },
+                                    { l: "Stack lines", v: "≈ 6.4k" },
+                                    { l: "Open source", v: "Model + data" },
+                                ].map((s) => (
+                                    <div key={s.l} className="px-5 py-4">
+                                        <p className="text-xs text-white/45">
+                                            {s.l}
+                                        </p>
+                                        <p className="mt-1 text-lg font-medium text-white">
+                                            {s.v}
+                                        </p>
                                     </div>
                                 ))}
                             </div>
@@ -433,39 +261,352 @@ export default function Home() {
                     </div>
                 </section>
 
-                <section className="mx-auto max-w-7xl px-4 pb-24 pt-12 sm:px-6 lg:px-8">
-                    <div className="rounded-[2rem] border border-amber-300/20 bg-amber-300/[0.08] p-8 text-center sm:p-12">
-                        <Sparkles className="mx-auto mb-5 size-8 text-amber-100" />
-                        <h2 className="mx-auto max-w-3xl text-balance text-4xl font-semibold tracking-[-0.04em] text-white">
-                            Run the demo as a dispatcher, then inspect the
-                            analytics like a commander.
-                        </h2>
-                        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                            <Button
-                                asChild
-                                size="lg"
-                                className="h-12 bg-amber-200 px-6 text-base text-slate-950 hover:bg-amber-100"
+                {/* AWARD */}
+                <section
+                    id="award"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="01"
+                        eyebrow="The win"
+                        title={
+                            <>
+                                Grand Prize, Best Use of Intel AI &mdash; and a
+                                Pad-13 Golden Ticket.
+                            </>
+                        }
+                        deck="At the UC Berkeley AI Hackathon (June 22–23, 2024), DispatchAI took the room. 930 builders, 293 submissions, organized by Cal Hacks and Berkeley SkyDeck."
+                    />
+                    <div className="mt-12">
+                        <AwardBlock />
+                    </div>
+                </section>
+
+                {/* PROBLEM */}
+                <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+                    <SectionHeading
+                        index="02"
+                        eyebrow="The problem"
+                        title={
+                            <>
+                                The first ten seconds of a call decide
+                                everything &mdash; and the line is often
+                                empty.
+                            </>
+                        }
+                        deck="Peak-load 911 centres routinely run minute-plus pickup queues. The agent in distress hears hold music. The dispatcher, two callers in, has no context. We wanted to fill that gap without removing the human from the chain."
+                    />
+                    <div className="mt-10 grid gap-px overflow-hidden rounded-[4px] border border-white/12 bg-white/10 sm:grid-cols-3">
+                        {problemStats.map((s) => (
+                            <div
+                                key={s.value}
+                                className="bg-ink-panel p-7"
                             >
-                                <Link
-                                    href="/live"
-                                    prefetch={false}
-                                >
-                                    Launch demo
-                                </Link>
-                            </Button>
-                            <Button
-                                asChild
-                                size="lg"
-                                variant="outline"
-                                className="h-12 border-white/15 bg-white/5 px-6 text-base text-white hover:bg-white/10"
+                                <p className="font-display text-5xl font-medium text-white">
+                                    {s.value}
+                                </p>
+                                <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
+                                    {s.label}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-10 grid gap-6 lg:grid-cols-3">
+                        {productHighlights.map((p) => (
+                            <article
+                                key={p.title}
+                                className="panel rounded-[4px] p-6"
                             >
-                                <Link
-                                    href="/data-management"
-                                    prefetch={false}
+                                <p.icon
+                                    className="size-5 text-white/55"
+                                    strokeWidth={1.5}
+                                />
+                                <h3 className="mt-5 font-display text-xl text-white">
+                                    {p.title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-6 text-white/60">
+                                    {p.body}
+                                </p>
+                            </article>
+                        ))}
+                    </div>
+                </section>
+
+                {/* DEMO */}
+                <section
+                    id="demo"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="03"
+                        eyebrow="The artifact"
+                        title={
+                            <>
+                                A 911 call answered, triaged, and handed to a
+                                human &mdash; in one minute.
+                            </>
+                        }
+                        deck="Watch the submission video the team showed the panel. Same flow, same UI, same model — recorded the morning of judging."
+                    />
+                    <div className="mt-12">
+                        <DemoVideo />
+                    </div>
+                </section>
+
+                {/* SYSTEM */}
+                <section
+                    id="system"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="04"
+                        eyebrow="The system"
+                        title={
+                            <>
+                                Telephony, voice agent, emotion, inference,
+                                operator &mdash; all wired through one FastAPI
+                                orchestrator.
+                            </>
+                        }
+                        deck="The voice loop is real-time. The model loop is async with confidence scores. The operator surface is a Next.js cockpit polling /api/calls every 5 seconds and merging server state with the active session."
+                    />
+                    <div className="mt-12">
+                        <SystemDiagram />
+                    </div>
+                </section>
+
+                {/* MODEL */}
+                <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+                    <SectionHeading
+                        index="05"
+                        eyebrow="The model"
+                        title={
+                            <>
+                                A LoRA-tuned Mistral-7B, accelerated 10x on
+                                Intel Dev Cloud.
+                            </>
+                        }
+                        deck="The team curated 911 call transcripts, fine-tuned with PEFT/LoRA, and ran inference on an Intel Data Center GPU Max 1100 using the Intel Extension for PyTorch. Both the model and a public snapshot of the dataset are open-sourced under MIT."
+                    />
+                    <div className="mt-12">
+                        <ModelCard />
+                    </div>
+                </section>
+
+                {/* PREVIEW */}
+                <section
+                    id="preview"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="06"
+                        eyebrow="The interface"
+                        title={
+                            <>
+                                The operator console &mdash; deliberately
+                                dense, deliberately calm.
+                            </>
+                        }
+                        deck="A non-interactive replica below renders against the same seeded incidents the live system uses for demo onboarding. Click an incident on the left to see the dossier, transcript and emotion update."
+                    />
+                    <div className="mt-12">
+                        <CockpitPreview />
+                    </div>
+
+                    <div className="mt-8 flex flex-col items-start gap-3 rounded-[4px] border border-sodium/30 bg-sodium/[0.05] p-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-4">
+                            <Sparkles className="size-5 text-sodium" />
+                            <div>
+                                <p className="font-display text-lg leading-tight text-white">
+                                    Want the real thing?
+                                </p>
+                                <p className="text-sm text-white/65">
+                                    The live console wires up Clerk auth, the
+                                    Retell voice loop, and Cloud Run polling.
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            asChild
+                            className="h-11 rounded-[4px] bg-sodium px-5 text-sm font-semibold text-ink hover:bg-sodium-soft"
+                        >
+                            <Link
+                                href="/live"
+                                prefetch={false}
+                            >
+                                Open live console
+                                <ArrowRight className="ml-2 size-4" />
+                            </Link>
+                        </Button>
+                    </div>
+                </section>
+
+                {/* TEAM */}
+                <section
+                    id="team"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="07"
+                        eyebrow="The team"
+                        title={<>Four builders. Two days. One operator console.</>}
+                        deck="Roles and contributions reproduced from the team's submission and follow-up posts. This portfolio belongs to one of the four — flagged below."
+                    />
+                    <div className="mt-12">
+                        <TeamCard />
+                    </div>
+                </section>
+
+                {/* TRADEOFFS */}
+                <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+                    <SectionHeading
+                        index="08"
+                        eyebrow="Tradeoffs &amp; honest limits"
+                        title={
+                            <>
+                                What this build is honest about &mdash; and
+                                what it isn&apos;t pretending to be.
+                            </>
+                        }
+                        deck="Public-safety AI without an explicit limits page is a red flag. Here are the four most relevant ones."
+                    />
+                    <div className="mt-10 grid gap-px overflow-hidden rounded-[4px] border border-white/12 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+                        {tradeoffs.map((t) => (
+                            <article
+                                key={t.title}
+                                className="bg-ink-panel p-7"
+                            >
+                                <p className="text-xs font-medium text-signal/85">
+                                    Caveat
+                                </p>
+                                <h3 className="mt-3 font-display text-xl text-white">
+                                    {t.title}
+                                </h3>
+                                <p className="mt-3 text-sm leading-6 text-white/65">
+                                    {t.body}
+                                </p>
+                            </article>
+                        ))}
+                    </div>
+                </section>
+
+                {/* SOURCES */}
+                <section
+                    id="sources"
+                    className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20"
+                >
+                    <SectionHeading
+                        index="09"
+                        eyebrow="Notes &amp; sources"
+                        title={
+                            <>
+                                Every claim on this page is traceable to a
+                                public artifact.
+                            </>
+                        }
+                        deck="GitHub, Devpost, Hugging Face, YouTube, Figma, and the original Vercel deployment. Recruiters &mdash; click through; nothing is hand-waved."
+                    />
+                    <div className="mt-10">
+                        <Footnotes />
+                    </div>
+                </section>
+
+                {/* CLOSER */}
+                <section className="mx-auto max-w-7xl px-4 pb-32 pt-12 sm:px-6 lg:px-8">
+                    <div className="grid gap-px overflow-hidden rounded-[6px] border border-white/12 bg-white/10 lg:grid-cols-[1.1fr_0.9fr]">
+                        <div className="bg-ink-panel p-8 sm:p-10">
+                            <p className="text-sm font-medium text-white/55">
+                                Try it
+                            </p>
+                            <h3 className="mt-4 font-display text-3xl leading-tight text-white sm:text-4xl">
+                                Step into the live console as a dispatcher.
+                            </h3>
+                            <p className="mt-4 max-w-md text-sm leading-6 text-white/65">
+                                Sign in (Clerk), add a phone number for the
+                                Retell voice agent to call, and the cockpit
+                                opens with the seeded incidents merged into
+                                live polling.
+                            </p>
+                            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="h-12 rounded-[4px] bg-sodium px-6 text-base font-semibold text-ink hover:bg-sodium-soft"
                                 >
-                                    Open analytics
-                                </Link>
-                            </Button>
+                                    <Link
+                                        href="/live"
+                                        prefetch={false}
+                                    >
+                                        Open live console
+                                        <ArrowRight className="ml-2 size-4" />
+                                    </Link>
+                                </Button>
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    variant="outline"
+                                    className="h-12 rounded-[4px] border-white/15 bg-white/[0.03] px-6 text-base text-white hover:border-white/30 hover:bg-white/[0.06]"
+                                >
+                                    <a
+                                        href="https://www.youtube.com/watch?v=hdpdgxrilQM"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <PlayCircle className="mr-2 size-4 text-white/70" />
+                                        Watch the original demo
+                                    </a>
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="bg-ink-panel p-8 sm:p-10">
+                            <p className="text-sm font-medium text-white/55">
+                                Sources
+                            </p>
+                            <ul className="mt-5 space-y-3.5 text-sm">
+                                {[
+                                    {
+                                        l: "Repo",
+                                        h: "https://github.com/IdkwhatImD0ing/DispatchAI",
+                                        n: "IdkwhatImD0ing/DispatchAI",
+                                    },
+                                    {
+                                        l: "Submission",
+                                        h: "https://devpost.com/software/dispatch-ai",
+                                        n: "Devpost submission",
+                                    },
+                                    {
+                                        l: "Model",
+                                        h: "https://huggingface.co/spikecodes/ai-911-operator",
+                                        n: "spikecodes/ai-911-operator",
+                                    },
+                                    {
+                                        l: "Data",
+                                        h: "https://huggingface.co/datasets/spikecodes/911-call-transcripts",
+                                        n: "spikecodes/911-call-transcripts",
+                                    },
+                                ].map((s) => (
+                                    <li
+                                        key={s.l}
+                                        className="flex items-baseline gap-3"
+                                    >
+                                        <span className="w-24 shrink-0 text-xs text-white/45">
+                                            {s.l}
+                                        </span>
+                                        <a
+                                            className="text-white/85 underline decoration-white/15 underline-offset-4 transition hover:text-white hover:decoration-white/40"
+                                            href={s.h}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {s.n}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                            <p className="mt-7 border-t border-white/10 pt-5 text-xs text-white/45">
+                                This portfolio cut maintained by Bill Zhang
+                                &middot; Original build summer 2024
+                            </p>
                         </div>
                     </div>
                 </section>

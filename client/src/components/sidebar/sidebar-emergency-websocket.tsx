@@ -25,7 +25,7 @@ export function SidebarEmergencyWebsocket() {
 
     const label =
         pollingStatus === "live"
-            ? "Live database polling"
+            ? "Live polling — /api/calls every 5s"
             : pollingStatus === "idle"
               ? "Polling paused until activity"
               : pollingStatus === "paused"
@@ -33,34 +33,49 @@ export function SidebarEmergencyWebsocket() {
                 : pollingStatus === "expired"
                   ? "Refresh required to resume live updates"
                   : pollingStatus === "error"
-                    ? "Database polling error"
-                    : "Loading database polling";
+                    ? "Polling error — click to retry"
+                    : "Connecting to dispatch network…";
 
     return (
-        <div className="flex items-end justify-center pt-4">
+        <div className="flex items-center justify-center">
             <TooltipProvider>
-                <Tooltip delayDuration={2500}>
+                <Tooltip delayDuration={400}>
                     <TooltipTrigger asChild>
-                        <div
-                            className={cn(
-                                "size-3 animate-pulse cursor-pointer rounded-full border border-yellow-200/30 bg-yellow-500 shadow-[0_0_18px_rgba(234,179,8,0.55)]",
-                                connected
-                                    ? "cursor-default border-green-200/30 bg-green-500 shadow-[0_0_18px_rgba(34,197,94,0.65)]"
-                                    : null,
-                                pollingStatus === "error" ||
-                                    pollingStatus === "expired"
-                                    ? "border-red-200/30 bg-red-500 shadow-[0_0_18px_rgba(239,68,68,0.65)]"
-                                    : null
-                            )}
+                        <button
+                            type="button"
+                            aria-label={label}
                             onClick={handleClickRetry}
-                        />
+                            className={cn(
+                                "relative inline-flex size-3 cursor-default items-center justify-center rounded-full",
+                                connected
+                                    ? "text-phosphor"
+                                    : pollingStatus === "error" ||
+                                        pollingStatus === "expired"
+                                      ? "text-signal cursor-pointer"
+                                      : "text-white/55",
+                            )}
+                        >
+                            <span
+                                className={cn(
+                                    "block size-2 rounded-full",
+                                    connected
+                                        ? "bg-phosphor"
+                                        : pollingStatus === "error" ||
+                                            pollingStatus === "expired"
+                                          ? "bg-signal"
+                                          : "bg-white/55",
+                                )}
+                            />
+                            {connected ? (
+                                <span
+                                    aria-hidden
+                                    className="absolute inset-0 animate-ping rounded-full border border-phosphor/40"
+                                />
+                            ) : null}
+                        </button>
                     </TooltipTrigger>
 
-                    <TooltipContent
-                        side="right"
-                        align="center"
-                        className="w-auto"
-                    >
+                    <TooltipContent side="right" align="center" className="w-auto">
                         {label}
                     </TooltipContent>
                 </Tooltip>

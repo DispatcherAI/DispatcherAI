@@ -22,17 +22,15 @@ function AnalyticsDropdown({
 }) {
     return (
         <Collapsible
-            className="rounded-2xl border border-white/10 bg-white/[0.035] p-3"
+            className="rounded-[3px] border border-white/10 bg-white/[0.02] p-3"
             defaultOpen
         >
             <CollapsibleTrigger className="flex w-full items-center justify-between text-left">
-                <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                    {title}
-                </p>
-                <ChevronDownIcon className="size-4 stroke-dp-text" />
+                <p className="text-xs font-medium text-white/65">{title}</p>
+                <ChevronDownIcon className="size-3.5 stroke-white/45" />
             </CollapsibleTrigger>
             <CollapsibleContent>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-dp-headingText">
+                <p className="mt-2 whitespace-pre-wrap text-[13px] leading-6 text-white/80">
                     {children}
                 </p>
             </CollapsibleContent>
@@ -45,11 +43,11 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
         () =>
             new Date(
                 new Date(call?.callAnalytics.createdAt).getTime() -
-                    7 * 60 * 60 * 1000
+                    7 * 60 * 60 * 1000,
             ).toLocaleTimeString("en-US", {
                 timeZone: "America/Los_Angeles",
             }),
-        [call.callAnalytics.createdAt]
+        [call.callAnalytics.createdAt],
     );
     const location =
         call.callAnalytics.address ||
@@ -58,33 +56,31 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
 
     return (
         <Collapsible
-            className="flex flex-col space-y-4 px-4 py-4"
+            className="flex flex-col space-y-3 px-4 py-4"
             defaultOpen
         >
-            <CollapsibleTrigger className="flex justify-between text-left text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
-                <p className="">Emergency Details</p>
-                <ChevronDownIcon className="size-4 stroke-dp-text" />
+            <CollapsibleTrigger className="flex justify-between text-left text-sm font-medium text-white/65">
+                <p>Field details</p>
+                <ChevronDownIcon className="size-3.5 stroke-white/45" />
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
-                            <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                                Time
-                            </p>
-                            <p className="mt-1 font-mono text-sm text-dp-headingText">
+                <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-[3px] border border-white/10 bg-white/[0.02] p-3">
+                            <p className="text-xs text-white/45">Time</p>
+                            <p className="mt-1 font-mono text-[12px] tabular-nums text-white">
                                 {time}
                             </p>
                         </div>
                         <TooltipProvider>
                             <Tooltip delayDuration={1500}>
-                                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
-                                    <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
+                                <div className="rounded-[3px] border border-white/10 bg-white/[0.02] p-3">
+                                    <p className="text-xs text-white/45">
                                         Location
                                     </p>
                                     <TooltipTrigger asChild>
-                                        <h2 className="mt-1 line-clamp-2 text-left text-sm text-dp-headingText">
+                                        <h2 className="mt-1 line-clamp-2 text-left text-[12px] leading-snug text-white">
                                             {location}
                                         </h2>
                                     </TooltipTrigger>
@@ -99,11 +95,11 @@ export function EmergencyDetailsCollapsible({ call }: { call: DispatchCall }) {
                         </TooltipProvider>
                     </div>
 
-                    <AnalyticsDropdown title="AI Summary">
+                    <AnalyticsDropdown title="AI summary">
                         {call.callAnalytics.summary || "Summary pending"}
                     </AnalyticsDropdown>
 
-                    <AnalyticsDropdown title="AI Recommendation">
+                    <AnalyticsDropdown title="AI recommendation">
                         {call.callAnalytics.recommendation ||
                             "Recommendation pending"}
                     </AnalyticsDropdown>

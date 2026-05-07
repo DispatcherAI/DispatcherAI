@@ -1,7 +1,6 @@
 import { DispatchCall } from "@/app/(layout)/live/page";
 import { EmergencyDetailsCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-details-collapsible";
 import { EmergencyStreetViewCollapsible } from "@/components/dashboard/emergency-details-panel/emergency-street-view-collapsible";
-import { Separator } from "@/components/dispatch/separator";
 import {
     Tooltip,
     TooltipContent,
@@ -15,56 +14,58 @@ interface EmergencyDetailsPanelProps {
     call: DispatchCall;
 }
 
+const SEVERITY_TONE: Record<string, { chip: string; bar: string }> = {
+    Critical: { chip: "border-signal/40 bg-signal/[0.06] text-signal", bar: "bg-signal" },
+    High: { chip: "border-signal/40 bg-signal/[0.06] text-signal", bar: "bg-signal" },
+    Medium: { chip: "border-sodium/40 bg-sodium/[0.06] text-sodium", bar: "bg-sodium" },
+    Low: { chip: "border-phosphor/40 bg-phosphor/[0.06] text-phosphor", bar: "bg-phosphor" },
+};
+
+function severityTone(s: string | null | undefined) {
+    if (!s) return SEVERITY_TONE.Medium;
+    const cap = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+    return SEVERITY_TONE[cap] ?? SEVERITY_TONE.Medium;
+}
+
 export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
     const finished = call.inProgress === false || call.status === "Resolved";
     const StatusIcon = finished ? CheckCircle2Icon : RadioTowerIcon;
     const statusTime = call.endedAt ?? call.createdAt;
-    const formattedStatusTime = new Date(statusTime).toLocaleDateString(
-        "en-US",
-        {
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        }
-    );
+    const formattedStatusTime = new Date(statusTime).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+    const tone = severityTone(call.callAnalytics.severity);
 
     return (
         <div
             className={cn(
-                "z-10 flex h-full max-h-full w-[320px] flex-col border border-y-0 border-l-0 backdrop-blur-xl",
-                finished
-                    ? "border-r-dp-nonEmergency/15 bg-[#050907]/95"
-                    : "border-r-dp-primary/25 bg-[#080d13]/95"
+                "z-10 flex h-full max-h-full w-[308px] flex-col border border-y-0 border-l-0 border-r-white/8 bg-ink-deep/95 backdrop-blur-md xl:w-[332px]",
             )}
         >
-            <div className="flex shrink-0 justify-between px-4 py-3 text-sm text-dp-text">
-                <p className="text-xxs font-semibold uppercase tracking-[0.22em]">
-                    Emergency Details
-                </p>
+            <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-4 py-3">
+                <p className="text-sm font-medium text-white/75">Details</p>
+                <span className="text-xs text-white/40">
+                    {finished ? "Closed" : "Open"}
+                </span>
             </div>
-
-            <Separator className="bg-white/10" />
 
             <div className="space-y-4 px-4 py-4">
                 <div
                     className={cn(
-                        "rounded-2xl border px-3 py-2",
+                        "flex items-center gap-2 rounded-full border px-3 py-1 text-xs",
                         finished
-                            ? "border-dp-nonEmergency/20 bg-dp-nonEmergency/10 text-dp-nonEmergency"
-                            : "border-dp-primary/30 bg-[radial-gradient(circle_at_top_left,rgba(105,210,255,0.18),transparent_46%),rgba(105,210,255,0.08)] text-dp-primary shadow-[0_0_28px_rgba(105,210,255,0.14)]"
+                            ? "border-white/12 bg-white/[0.02] text-white/65"
+                            : "border-phosphor/25 bg-phosphor/[0.05] text-phosphor",
                     )}
                 >
-                    <div className="flex items-center gap-2">
-                        <StatusIcon className="size-4" />
-                        <p className="text-xxs font-semibold uppercase tracking-[0.2em]">
-                            {finished ? "Finished" : "Live incident"}
-                        </p>
-                    </div>
-                    <p className="mt-1 font-mono text-xxs uppercase tracking-[0.12em] text-dp-text">
-                        {finished ? "Closed" : "Started"} ·{" "}
+                    <StatusIcon className="size-3" />
+                    <span>{finished ? "Finished" : "Live"}</span>
+                    <span className="ml-auto font-mono tabular-nums text-white/50">
                         {formattedStatusTime}
-                    </p>
+                    </span>
                 </div>
 
                 <TooltipProvider>
@@ -72,31 +73,43 @@ export function EmergencyDetailsPanel({ call }: EmergencyDetailsPanelProps) {
                         <TooltipTrigger asChild>
                             <h2
                                 className={cn(
-                                    "line-clamp-2 text-left text-xl font-semibold tracking-[-0.03em]",
-                                    finished
-                                        ? "text-dp-text"
-                                        : "text-dp-headingText"
+                                    "line-clamp-3 text-left text-[20px] font-medium leading-tight tracking-[-0.01em]",
+                                    finished ? "text-white/75" : "text-white",
                                 )}
                             >
                                 {call.callAnalytics.title ?? "911 Call"}
                             </h2>
                         </TooltipTrigger>
-
-                        <TooltipContent
-                            side="bottom"
-                            align="start"
-                        >
+                        <TooltipContent side="bottom" align="start">
                             {call.callAnalytics.title ?? "911 Call"}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+
+                <div className="flex flex-wrap gap-1.5">
+                    {call.callAnalytics.severity ? (
+                        <span
+                            className={cn(
+                                "rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide",
+                                tone.chip,
+                            )}
+                        >
+                            {call.callAnalytics.severity}
+                        </span>
+                    ) : null}
+                    {call.callAnalytics.type ? (
+                        <span className="rounded-full border border-white/12 px-2 py-0.5 text-[10px] text-white/60">
+                            {call.callAnalytics.type}
+                        </span>
+                    ) : null}
+                </div>
             </div>
 
-            <Separator className="bg-white/10" />
+            <div className="h-px w-full bg-white/8" />
 
             <EmergencyStreetViewCollapsible call={call} />
 
-            <Separator className="bg-white/10" />
+            <div className="h-px w-full bg-white/8" />
 
             <EmergencyDetailsCollapsible call={call} />
         </div>

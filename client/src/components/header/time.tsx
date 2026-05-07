@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-
-import { Skeleton } from "../ui/skeleton";
 
 interface TimeProps {
     className?: string;
@@ -13,36 +12,32 @@ const FORMATTER = new Intl.DateTimeFormat("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: true,
+    hour12: false,
 });
 
 export function Time({ className }: TimeProps) {
     const [time, setTime] = useState<string | undefined>();
 
     useEffect(() => {
-        const updateTime = () => {
-            const now = new Date();
-            setTime(FORMATTER.format(now));
-        };
+        const updateTime = () => setTime(FORMATTER.format(new Date()));
 
         updateTime();
-
         const intervalId = setInterval(updateTime, 1000);
-
         return () => clearInterval(intervalId);
     }, []);
 
     if (!time) {
         return (
             <Skeleton
-                className={cn(className, "rounded-none bg-dp-hoverCard")}
+                className={cn("rounded-none bg-white/5", className)}
             />
         );
     }
 
     return (
-        <div className="h-fit">
-            <p className={cn("uppercase", className)}>{time} PST</p>
-        </div>
+        <span className={cn(className)}>
+            {time}
+            <span className="ml-1.5 text-white/40">PT</span>
+        </span>
     );
 }

@@ -13,27 +13,28 @@ export function EmergencyStreetViewCollapsible({
 }) {
     return (
         <Collapsible
-            className="flex flex-col space-y-4 px-4 py-4"
+            className="flex flex-col space-y-3 px-4 py-4"
             defaultOpen
         >
-            <CollapsibleTrigger className="flex justify-between text-left text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
-                <p className="">Street View</p>
-                <ChevronDownIcon className="size-4 stroke-dp-text" />
+            <CollapsibleTrigger className="flex justify-between text-left text-sm font-medium text-white/65">
+                <p>Street view</p>
+                <ChevronDownIcon className="size-3.5 stroke-white/45" />
             </CollapsibleTrigger>
 
             <CollapsibleContent>
                 {call.callAnalytics.streetView ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                         src={`data:image/jpeg;base64,${call.callAnalytics.streetView}`}
                         alt="Incident street view"
-                        className="aspect-video w-full rounded-2xl border border-white/10 bg-cover bg-no-repeat object-cover shadow-2xl shadow-black/30"
+                        className="aspect-video w-full rounded-[3px] border border-white/10 object-cover"
                     />
                 ) : (
-                    <div className="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.035] px-6 text-center shadow-2xl shadow-black/30">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-dp-headingText">
+                    <div className="flex aspect-video w-full flex-col items-center justify-center rounded-[3px] border border-white/10 bg-white/[0.02] px-6 text-center">
+                        <p className="text-xs font-medium text-white/65">
                             Street view pending
                         </p>
-                        <p className="mt-2 max-w-64 text-xs leading-5 text-dp-text">
+                        <p className="mt-2 max-w-64 text-xs leading-5 text-white/55">
                             Waiting for geocoding to return coordinates and a
                             Google Street View image.
                         </p>

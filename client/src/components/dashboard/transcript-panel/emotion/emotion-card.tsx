@@ -1,30 +1,27 @@
-// import { Badge } from "@/components/dispatch/badge";
-import { Progress } from "@/components/dispatch/progress";
-
 interface EmotionCardProps {
     emotion: { emotion: string; intensity: number };
 }
 
 export function EmotionCard({ emotion: emotionData }: EmotionCardProps) {
     const { emotion, intensity } = emotionData;
-
-    const value = Number((100 * Number(intensity.toFixed(2))).toFixed(2));
+    const value = Number((100 * Number(intensity.toFixed(2))).toFixed(0));
+    const isHigh = value >= 50;
 
     return (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
-            <div className="flex items-center justify-between">
-                <div className="text-sm font-medium text-dp-headingText">
-                    {emotion}
-                </div>
-                <div className="font-mono text-xs text-dp-primary">
+        <div className="rounded-[4px] border border-white/10 bg-white/[0.02] p-3">
+            <div className="flex items-baseline justify-between">
+                <p className="text-sm font-medium text-white">{emotion}</p>
+                <p className="font-mono text-xs tabular-nums text-white/65">
                     {value}%
-                </div>
+                </p>
             </div>
 
-            <div className="mt-3 flex flex-row items-center space-x-2">
-                <Progress
-                    value={value}
-                    className="h-2 rounded-full bg-white/10"
+            <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/8">
+                <div
+                    className={
+                        isHigh ? "h-full bg-signal" : "h-full bg-white/55"
+                    }
+                    style={{ width: `${Math.min(100, value)}%` }}
                 />
             </div>
         </div>

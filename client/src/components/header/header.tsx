@@ -1,9 +1,8 @@
-import { Separator } from "@/components/dispatch/separator";
 import { ConnectionStatus } from "@/components/header/connection-status";
 import { Time } from "@/components/header/time";
 import { WeatherCondition } from "@/components/header/weather-condition";
 import { formatPhoneNumberForDisplay } from "@/lib/phone";
-import { HeadsetIcon, PhoneCallIcon, RadioTowerIcon } from "lucide-react";
+import { PhoneCallIcon, RadioTowerIcon } from "lucide-react";
 
 interface HeaderProps {
     dispatcherPhoneNumber: string | null;
@@ -15,55 +14,40 @@ export function Header({ dispatcherPhoneNumber }: HeaderProps) {
         "Dispatcher line not set";
 
     return (
-        <div className="flex-between relative z-20 h-[52px] w-full flex-row border-b border-white/10 bg-[#080d13]/90 px-4 py-3 shadow-[0_12px_40px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-            <div className="flex items-center space-x-3">
-                <div className="flex size-8 items-center justify-center rounded-xl border border-dp-primary/20 bg-dp-primary/10">
-                    <HeadsetIcon className="h-4 text-dp-primary" />
-                </div>
-
-                <div>
-                    <div className="my-auto flex text-xs font-semibold uppercase tracking-[0.24em] text-dp-headingText">
-                        Emergency Dashboard
-                    </div>
-                    <div className="hidden items-center gap-1 text-xxs uppercase tracking-[0.2em] text-dp-text sm:flex">
-                        <RadioTowerIcon className="size-3 text-dp-nonEmergency" />
-                        AI triage network
-                    </div>
-                </div>
+        <header className="relative z-20 flex h-header w-full items-stretch border-b border-white/8 bg-ink-deep/95">
+            <div className="flex items-center gap-3 border-r border-white/8 px-4">
+                <RadioTowerIcon className="size-4 text-white/55" />
+                <span className="text-sm font-medium text-white">
+                    Live Dispatch
+                </span>
+                <span className="hidden items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.03] px-2 py-0.5 text-xs text-white/65 md:inline-flex">
+                    <span className="size-1.5 rounded-full bg-white/55" />
+                    Demo build
+                </span>
             </div>
 
-            <div className="flex max-h-full flex-row items-center">
+            <div className="flex flex-1 items-center px-4">
                 <WeatherCondition />
+            </div>
 
-                <div className="mx-3 my-auto hidden h-6 sm:block">
-                    <Separator
-                        orientation="vertical"
-                        className="w-[1px] bg-white/10"
-                    />
+            <div className="flex items-stretch divide-x divide-white/8 border-l border-white/8">
+                <div className="flex items-center gap-3 px-4">
+                    <Time className="hidden min-w-[96px] text-right font-mono text-xs tabular-nums text-white/70 sm:block" />
+                    <ConnectionStatus />
                 </div>
 
-                <div className="flex min-w-fit flex-row space-x-3">
-                    <div className="my-auto flex h-fit min-w-fit items-center justify-center space-x-2">
-                        <Time className="hidden min-w-[100px] text-right font-mono text-xs text-dp-text sm:block" />
-                        <ConnectionStatus />
-                    </div>
-
-                    <div className="hidden h-9 items-center gap-2.5 rounded-2xl border border-dp-primary/25 bg-[linear-gradient(135deg,rgba(105,210,255,0.16),rgba(255,255,255,0.04))] px-3.5 text-xs shadow-[0_0_24px_rgba(105,210,255,0.12)] sm:flex">
-                        <span className="relative flex size-6 items-center justify-center rounded-full bg-dp-primary/15">
-                            <span className="absolute size-2 rounded-full bg-dp-nonEmergency shadow-[0_0_14px_rgba(71,255,133,0.9)]" />
-                            <PhoneCallIcon className="relative size-3.5 text-dp-primary" />
+                <div className="hidden items-center gap-2.5 px-4 sm:flex">
+                    <PhoneCallIcon className="size-3.5 text-white/55" />
+                    <div className="flex flex-col leading-none">
+                        <span className="text-xs text-white/50">
+                            Dispatcher
                         </span>
-                        <div className="flex flex-col leading-none">
-                            <span className="text-xxs font-semibold uppercase tracking-[0.18em] text-dp-text">
-                                Dispatcher phone number
-                            </span>
-                            <span className="mt-1 font-mono text-[11px] text-dp-headingText">
-                                {displayDispatcherPhoneNumber}
-                            </span>
-                        </div>
+                        <span className="mt-1 font-mono text-xs tabular-nums text-white">
+                            {displayDispatcherPhoneNumber}
+                        </span>
                     </div>
                 </div>
             </div>
-        </div>
+        </header>
     );
 }

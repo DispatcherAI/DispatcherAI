@@ -12,4 +12,12 @@ const nextConfig = {
     },
 };
 
+if (process.env.NODE_ENV === "development") {
+    import("@react-grab/mcp/server")
+        .then(({ startMcpServer }) => startMcpServer())
+        .catch((err) => {
+            console.warn("[react-grab/mcp] failed to start:", err?.message);
+        });
+}
+
 module.exports = nextConfig;

@@ -13,10 +13,10 @@ import styles from "./map.module.css";
 
 const Pin = L.divIcon({
     className: "dispatch-map-pin",
-    html: `<span class="dispatch-map-pin__outer"><span class="dispatch-map-pin__inner"></span></span>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -16],
+    html: `<span class="dispatch-map-pin__pulse"></span><span class="dispatch-map-pin__outer"><span class="dispatch-map-pin__inner"></span></span>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18],
 });
 
 const INCIDENT_ZOOM = 17;
@@ -67,7 +67,7 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
 
         const mtLayer = new MaptilerLayer({
             apiKey: process.env.NEXT_PUBLIC_MAPTILER_API_KEY,
-            style: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_API_KEY}`,
+            style: `https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_API_KEY}`,
         });
 
         mtLayer.addTo(map.current);

@@ -31,20 +31,15 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     const { filterValue } = useEmergencyContext();
 
     const parsedData = data
-        .map((call) => {
-            return {
-                ...call,
-                normalizedSeverity: normalizeSeverity(
-                    call.callAnalytics.severity
-                ),
-                finished: isFinishedCall(call),
-            };
-        })
+        .map((call) => ({
+            ...call,
+            normalizedSeverity: normalizeSeverity(call.callAnalytics.severity),
+            finished: isFinishedCall(call),
+        }))
         .sort((a, b) => {
             if (a.finished !== b.finished) {
                 return a.finished ? 1 : -1;
             }
-
             return (
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
@@ -53,7 +48,7 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
         .filter(
             (item) =>
                 filterValue === undefined ||
-                item.normalizedSeverity === filterValue
+                item.normalizedSeverity === filterValue,
         );
     const finishedCount = data.filter(isFinishedCall).length;
     const liveCount = data.length - finishedCount;
@@ -61,26 +56,25 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
     return (
         <div className="flex h-full min-h-0 flex-col space-y-3 pb-3">
             <div className="shrink-0 space-y-2">
-                <div className="grid grid-cols-3 rounded-2xl border border-white/10 bg-white/[0.035]">
+                <div className="grid grid-cols-3 rounded-[3px] border border-white/10 bg-white/[0.02]">
                     <EmergencyStat
-                        label="Total Calls"
-                        value={String(data.length)}
+                        label="Total"
+                        value={String(data.length).padStart(2, "0")}
                     />
                     <EmergencyStat
                         label="Live"
-                        value={String(liveCount)}
+                        value={String(liveCount).padStart(2, "0")}
                     />
                     <EmergencyStat
-                        label="Finished"
-                        value={String(finishedCount)}
+                        label="Closed"
+                        value={String(finishedCount).padStart(2, "0")}
                     />
                 </div>
             </div>
 
             {filterValue ? (
-                <p className="text-center text-xs text-dp-text">
-                    {data.length - parsedData.length} calls are hidden by
-                    filters
+                <p className="text-center text-xs text-white/45">
+                    {data.length - parsedData.length} hidden by filters
                 </p>
             ) : null}
 
@@ -90,24 +84,28 @@ export function EmergencyTab({ data }: { data: DispatchCall[] }) {
                     type="scroll"
                 >
                     {parsedData.length ? (
-                        parsedData.map((call) => (
-                            <EmergencyCard
-                                key={call.id}
-                                id={call.id}
-                                title={call.callAnalytics.title ?? "911 Call"}
-                                time={call.callAnalytics?.createdAt}
-                                endedAt={call.endedAt}
-                                severity={call.normalizedSeverity}
-                                finished={call.finished}
-                            />
-                        ))
+                        <div className="space-y-2">
+                            {parsedData.map((call) => (
+                                <EmergencyCard
+                                    key={call.id}
+                                    id={call.id}
+                                    title={
+                                        call.callAnalytics.title ?? "911 Call"
+                                    }
+                                    time={call.callAnalytics?.createdAt}
+                                    endedAt={call.endedAt}
+                                    severity={call.normalizedSeverity}
+                                    finished={call.finished}
+                                />
+                            ))}
+                        </div>
                     ) : (
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-6 text-center">
-                            <InboxIcon className="mx-auto mb-3 size-6 text-dp-primary" />
-                            <p className="font-medium text-dp-headingText">
+                        <div className="rounded-[3px] border border-white/10 bg-white/[0.02] p-6 text-center">
+                            <InboxIcon className="mx-auto mb-3 size-5 text-white/55" />
+                            <p className="text-sm font-medium text-white">
                                 No incidents match this filter
                             </p>
-                            <p className="mt-1 text-xs text-dp-text">
+                            <p className="mt-1 text-xs text-white/55">
                                 Clear the severity filter to restore the queue.
                             </p>
                         </div>

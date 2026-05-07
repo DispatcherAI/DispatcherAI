@@ -54,6 +54,42 @@ const config = {
                 ring: "hsl(var(--ring))",
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
+                ink: {
+                    DEFAULT: "#0A0B0D",
+                    deep: "#06070A",
+                    panel: "#0E1116",
+                },
+                steel: {
+                    DEFAULT: "#13171B",
+                    raised: "#181C22",
+                    sunk: "#0F1216",
+                },
+                paper: {
+                    DEFAULT: "#F4EFE6",
+                    warm: "#EDE6D6",
+                    edge: "#E2D9C5",
+                    ink: "#181410",
+                },
+                hairline: {
+                    DEFAULT: "rgba(255,255,255,0.08)",
+                    strong: "rgba(255,255,255,0.16)",
+                    soft: "rgba(255,255,255,0.04)",
+                },
+                sodium: {
+                    DEFAULT: "#F4B01F",
+                    soft: "#F7C457",
+                    deep: "#B47A0E",
+                },
+                signal: {
+                    DEFAULT: "#FF3B30",
+                    soft: "#FF6A60",
+                    deep: "#A91D14",
+                },
+                phosphor: {
+                    DEFAULT: "#7BFFB2",
+                    soft: "#A8FFCB",
+                    deep: "#1E5C3B",
+                },
                 primary: {
                     DEFAULT: "#020817",
                     foreground: "hsl(var(--primary-foreground))",
@@ -131,6 +167,17 @@ const config = {
             fontFamily: {
                 sans: ["var(--font-sans)", "ui-sans-serif", "system-ui"],
                 mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+                display: [
+                    "var(--font-display)",
+                    "ui-serif",
+                    "Georgia",
+                    "serif",
+                ],
+            },
+            letterSpacing: {
+                ribbon: "0.32em",
+                console: "0.22em",
+                editorial: "0.04em",
             },
             transitionDuration: {
                 "5000": "5000ms",
