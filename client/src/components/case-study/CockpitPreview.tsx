@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { MESSAGES } from "@/app/(layout)/live/messages";
 import { DispatchCall } from "@/app/(layout)/live/page";
@@ -12,9 +13,27 @@ import {
     ShieldAlertIcon,
 } from "lucide-react";
 
-const STREET_VIEW_PREFIX = "data:image/jpeg;base64,";
-
 const callKey = "CA22ccebaacd73dcefa23f9b41a9bce0b3";
+
+// Static Street View imagery is pre-baked by `server/scripts/download_streetview.py`
+// and committed to client/public/street-view. Keep these keys in sync with the
+// `name` field on each StreetViewSpec in that script.
+const STREET_VIEW_BY_ID: Record<string, string> = {
+    [callKey]: "/street-view/golden-gate.jpg",
+    "synthetic-medical": "/street-view/synthetic-medical.jpg",
+    "synthetic-fire": "/street-view/synthetic-fire.jpg",
+};
+
+const Map = dynamic(() => import("@/components/live/map/Map"), {
+    ssr: false,
+    loading: () => (
+        <div className="absolute inset-0 grid place-items-center bg-ink-deep">
+            <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/45">
+                Loading map…
+            </span>
+        </div>
+    ),
+});
 
 const synthetic = {
     "synthetic-medical": {
@@ -24,7 +43,61 @@ const synthetic = {
         inProgress: true,
         status: "Active",
         userId: "000",
-        transcript: { transcript: [] },
+        transcript: {
+            transcript: [
+                {
+                    role: "agent",
+                    content:
+                        "9-1-1, an AI assistant is here with you — what's happening?",
+                },
+                {
+                    role: "user",
+                    content:
+                        "It's my dad. He's holding his chest, he says it really hurts. He looks gray.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Okay. I'm sending paramedics now to your address. How old is he?",
+                },
+                {
+                    role: "user",
+                    content: "Sixty-two. He had a stent put in last year.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Thank you, that's important — I've added it to the dispatch note. Is he conscious and breathing?",
+                },
+                {
+                    role: "user",
+                    content: "Yes. He's awake. Breathing's fast though.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Have him sit upright and lean slightly forward. Loosen anything tight around his neck. Does he have aspirin in the house?",
+                },
+                {
+                    role: "user",
+                    content: "Yes, in the kitchen.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "If he's not allergic, have him chew one regular-strength aspirin slowly — don't swallow it whole. Paramedics ETA three minutes.",
+                },
+                {
+                    role: "user",
+                    content: "Okay. Okay, I've got it. He's chewing it.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "You're doing great. Stay with him. Tell me right away if his breathing changes or he stops responding.",
+                },
+            ],
+        },
         callAnalytics: {
             id: "synthetic-medical",
             callId: "synthetic-medical",
@@ -56,7 +129,54 @@ const synthetic = {
         inProgress: true,
         status: "Active",
         userId: "000",
-        transcript: { transcript: [] },
+        transcript: {
+            transcript: [
+                {
+                    role: "agent",
+                    content:
+                        "9-1-1 — this is an AI assistant. Where's the emergency?",
+                },
+                {
+                    role: "user",
+                    content:
+                        "There's smoke coming off a roof. Bryant near 5th. Four-story building, dark smoke.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Okay, I have your location. Are flames visible anywhere?",
+                },
+                {
+                    role: "user",
+                    content:
+                        "No flames yet. Just smoke from one corner of the roof. It's getting heavier.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Are you a safe distance away? Anyone you know inside the building?",
+                },
+                {
+                    role: "user",
+                    content:
+                        "I'm across the street. I think it's a warehouse, I'm not sure if anyone's in there.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "Stay back. SFFD has been notified — three engines and a truck are rolling, ETA four minutes. Don't approach the building.",
+                },
+                {
+                    role: "user",
+                    content: "Okay. I'll stay here.",
+                },
+                {
+                    role: "agent",
+                    content:
+                        "If you see flames, anyone at a window, or hear an alarm or anyone shouting, tell me right away.",
+                },
+            ],
+        },
         callAnalytics: {
             id: "synthetic-fire",
             callId: "synthetic-fire",
@@ -67,7 +187,10 @@ const synthetic = {
             title: "Smoke report · SoMa rooftop",
             summary:
                 "Light smoke from a 4-story rooftop near 5th & Bryant. No flames visible.",
-            sentiment: [{ emotion: "Concern", intensity: 0.27 }],
+            sentiment: [
+                { emotion: "Concern", intensity: 0.27 },
+                { emotion: "Calm", intensity: 0.18 },
+            ],
             topics: [],
             location: "SoMa, San Francisco",
             latitude: 37.7785,
@@ -126,117 +249,6 @@ const PREVIEW_ELAPSED: Record<string, string> = {
     "synthetic-fire": "01:33",
 };
 
-function MapBackdrop({ accent }: { accent: "sodium" | "signal" | "phosphor" }) {
-    const accentHex = {
-        sodium: "#F4B01F",
-        signal: "#FF3B30",
-        phosphor: "#7BFFB2",
-    }[accent];
-    return (
-        <svg
-            viewBox="0 0 600 380"
-            className="h-full w-full"
-            aria-hidden
-        >
-            <defs>
-                <pattern
-                    id="map-grid"
-                    width="32"
-                    height="32"
-                    patternUnits="userSpaceOnUse"
-                >
-                    <path
-                        d="M 32 0 L 0 0 0 32"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.05)"
-                        strokeWidth="1"
-                    />
-                </pattern>
-                <radialGradient
-                    id="halo"
-                    cx="50%"
-                    cy="50%"
-                    r="50%"
-                >
-                    <stop
-                        offset="0%"
-                        stopColor={accentHex}
-                        stopOpacity="0.5"
-                    />
-                    <stop
-                        offset="60%"
-                        stopColor={accentHex}
-                        stopOpacity="0.05"
-                    />
-                    <stop
-                        offset="100%"
-                        stopColor={accentHex}
-                        stopOpacity="0"
-                    />
-                </radialGradient>
-            </defs>
-            <rect
-                width="600"
-                height="380"
-                fill="#0A0B0D"
-            />
-            <rect
-                width="600"
-                height="380"
-                fill="url(#map-grid)"
-            />
-            {/* Suggestive coastline */}
-            <path
-                d="M0,260 C60,240 120,220 200,210 C260,205 320,225 380,235 C460,245 520,265 600,260 L600,380 L0,380 Z"
-                fill="rgba(105,210,255,0.05)"
-                stroke="rgba(105,210,255,0.18)"
-                strokeWidth="1"
-            />
-            {/* Bridge */}
-            <path
-                d="M40,150 C160,120 320,120 560,150"
-                fill="none"
-                stroke={accentHex}
-                strokeOpacity="0.55"
-                strokeWidth="1.4"
-                strokeDasharray="4 4"
-            />
-            {/* Streets */}
-            <g
-                stroke="rgba(255,255,255,0.06)"
-                strokeWidth="0.8"
-            >
-                <line x1="0" y1="80" x2="600" y2="80" />
-                <line x1="0" y1="120" x2="600" y2="120" />
-                <line x1="0" y1="200" x2="600" y2="200" />
-                <line x1="120" y1="0" x2="120" y2="380" />
-                <line x1="280" y1="0" x2="280" y2="380" />
-                <line x1="440" y1="0" x2="440" y2="380" />
-            </g>
-            {/* Selected pin halo */}
-            <circle cx="300" cy="170" r="120" fill="url(#halo)" />
-            <circle
-                cx="300"
-                cy="170"
-                r="6"
-                fill={accentHex}
-            />
-            <circle
-                cx="300"
-                cy="170"
-                r="14"
-                fill="none"
-                stroke={accentHex}
-                strokeWidth="1"
-                strokeOpacity="0.6"
-            />
-            {/* Other pins */}
-            <circle cx="180" cy="240" r="4" fill="#F4B01F" />
-            <circle cx="430" cy="220" r="4" fill="#7BFFB2" />
-        </svg>
-    );
-}
-
 export function CockpitPreview() {
     const seedCall = MESSAGES[callKey];
     const queue = useMemo(() => {
@@ -255,9 +267,38 @@ export function CockpitPreview() {
 
     const sevTone = SEVERITY_TONE[severityKey(selected?.callAnalytics.severity)];
 
+    const [streetViewFailed, setStreetViewFailed] = useState<Set<string>>(
+        () => new Set(),
+    );
+
+    const streetViewSrc = useMemo(() => {
+        if (!selected) return null;
+        if (streetViewFailed.has(selected.id)) return null;
+        return STREET_VIEW_BY_ID[selected.id] ?? null;
+    }, [selected, streetViewFailed]);
+
+    const mapCenter = useMemo(
+        () => ({
+            lat: selected?.callAnalytics.latitude ?? 37.8199,
+            lng: selected?.callAnalytics.longitude ?? -122.4786,
+        }),
+        [selected?.callAnalytics.latitude, selected?.callAnalytics.longitude],
+    );
+
+    const mapPins = useMemo(
+        () =>
+            queue.map((c) => ({
+                coordinates: [
+                    c.callAnalytics.latitude as number,
+                    c.callAnalytics.longitude as number,
+                ] as [number, number],
+                popupHtml: `<b>${c.callAnalytics.title ?? "Incident"}</b><br>${c.callAnalytics.location ?? ""}`,
+            })),
+        [queue],
+    );
+
     return (
         <div className="relative overflow-hidden rounded-[6px] border border-white/12 bg-ink-deep">
-            {/* Window chrome */}
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5">
                 <div className="flex items-center gap-2.5">
                     <span className="size-2.5 rounded-full bg-white/25" />
@@ -273,9 +314,8 @@ export function CockpitPreview() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-px bg-white/10 lg:grid-cols-[280px_1fr_320px]">
-                {/* Queue */}
-                <aside className="flex h-full flex-col bg-ink-panel p-4">
+            <div className="grid grid-cols-1 gap-px bg-white/10 lg:h-[640px] lg:grid-cols-[280px_1fr_320px]">
+                <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-ink-panel p-4">
                     <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-white/75">
                             Incidents
@@ -343,38 +383,42 @@ export function CockpitPreview() {
                             Try this
                         </p>
                         <p className="mt-1.5">
-                            Switch incidents on the left to see severity,
-                            transcript, and emotion update across the cockpit.
+                            Switch incidents on the left to fly the map and
+                            update transcript + emotion across the cockpit.
                         </p>
                     </div>
                 </aside>
 
-                {/* Map + status */}
-                <section className="relative flex h-full min-h-[420px] flex-col bg-ink-deep">
+                <section className="relative flex h-full min-h-[460px] flex-col bg-ink-deep lg:min-h-0">
                     <div className="relative flex-1 overflow-hidden">
-                        <MapBackdrop
-                            accent={
-                                severityKey(
-                                    selected?.callAnalytics.severity,
-                                ) === "Critical" ||
-                                severityKey(
-                                    selected?.callAnalytics.severity,
-                                ) === "High"
-                                    ? "signal"
-                                    : "sodium"
-                            }
+                        <Map
+                            center={mapCenter}
+                            pins={mapPins}
+                            zoom={14}
+                            centerOffsetLng={0}
+                            scrollWheelZoom={false}
                         />
-                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(10,11,13,0)_0%,rgba(10,11,13,0)_60%,rgba(10,11,13,0.65)_100%)]" />
 
-                        {/* Pin caption */}
-                        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-[4px] border border-white/12 bg-ink/85 px-4 py-2 text-center backdrop-blur-sm">
-                            <p className="text-xs text-white/55">
+                        {/* Top-left field stamp — matches the live cockpit ribbon language */}
+                        <div className="pointer-events-none absolute left-4 top-4 z-[400] flex flex-col gap-1.5">
+                            <span className="stamp border-white/20 bg-ink/85 text-white/75 backdrop-blur-sm">
+                                <span className="size-1.5 rounded-full bg-sodium" />
+                                Field
+                            </span>
+                            <span className="rounded-[3px] border border-white/12 bg-ink/85 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-ribbon text-white/55 backdrop-blur-sm">
+                                {selected?.callAnalytics.location}
+                            </span>
+                        </div>
+
+                        {/* Bottom-center pin caption */}
+                        <div className="pointer-events-none absolute bottom-4 left-1/2 z-[400] -translate-x-1/2 rounded-[3px] border border-white/12 bg-ink/85 px-4 py-2 text-center backdrop-blur-sm">
+                            <p className="font-mono text-[10px] uppercase tracking-ribbon text-white/55">
                                 Selected incident
                             </p>
-                            <p className="mt-0.5 text-sm font-medium text-white">
+                            <p className="mt-1 text-sm font-medium text-white">
                                 {selected?.callAnalytics.title}
                             </p>
-                            <p className="font-mono text-xs tabular-nums text-white/55">
+                            <p className="font-mono text-[11px] tabular-nums text-white/55">
                                 {selected?.callAnalytics.latitude?.toFixed(4)},{" "}
                                 {selected?.callAnalytics.longitude?.toFixed(4)}
                             </p>
@@ -382,9 +426,8 @@ export function CockpitPreview() {
                     </div>
                 </section>
 
-                {/* Details + transcript */}
-                <aside className="flex h-full flex-col bg-ink-panel">
-                    <div className="border-b border-white/8 px-4 py-3">
+                <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-ink-panel">
+                    <div className="shrink-0 border-b border-white/8 px-4 py-3">
                         <p className="text-sm font-medium text-white/75">
                             Details
                         </p>
@@ -406,21 +449,36 @@ export function CockpitPreview() {
                         </div>
                     </div>
 
-                    {selected?.callAnalytics.streetView ? (
-                        <div className="border-b border-white/8 p-4">
-                            <p className="text-xs font-medium text-white/65">
-                                Street view
-                            </p>
+                    {streetViewSrc && selected ? (
+                        <div className="shrink-0 border-b border-white/8 p-4">
+                            <div className="flex items-center justify-between">
+                                <p className="text-xs font-medium text-white/65">
+                                    Street view
+                                </p>
+                                <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/35">
+                                    Google
+                                </span>
+                            </div>
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src={`${STREET_VIEW_PREFIX}${selected.callAnalytics.streetView}`}
-                                alt="Street view of incident location"
+                                key={selected.id}
+                                src={streetViewSrc}
+                                alt={`Street view near ${selected.callAnalytics.location}`}
+                                loading="lazy"
+                                onError={() => {
+                                    setStreetViewFailed((prev) => {
+                                        if (prev.has(selected.id)) return prev;
+                                        const next = new Set(prev);
+                                        next.add(selected.id);
+                                        return next;
+                                    });
+                                }}
                                 className="mt-2 aspect-[16/10] w-full rounded-[4px] border border-white/8 object-cover"
                             />
                         </div>
                     ) : null}
 
-                    <div className="border-b border-white/8 p-4">
+                    <div className="shrink-0 border-b border-white/8 p-4">
                         <p className="text-xs font-medium text-white/65">
                             Caller emotion
                         </p>
@@ -453,24 +511,34 @@ export function CockpitPreview() {
                         </ul>
                     </div>
 
-                    <div className="flex-1 overflow-hidden p-4">
-                        <p className="text-xs font-medium text-white/65">
-                            Transcript
-                        </p>
-                        <div className="mt-2 max-h-[260px] space-y-2 overflow-y-auto pr-1">
+                    <div className="flex min-h-0 flex-1 flex-col p-4">
+                        <div className="flex shrink-0 items-center justify-between">
+                            <p className="text-xs font-medium text-white/65">
+                                Transcript
+                            </p>
+                            <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/35">
+                                {transcript?.transcript?.length ?? 0} turns
+                            </span>
+                        </div>
+                        <div className="mt-2 min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
                             {transcript?.transcript?.map((line, idx) => {
                                 const isAgent = line.role === "agent";
                                 return (
                                     <div
                                         key={idx}
-                                        className="rounded-[4px] border border-white/10 bg-white/[0.02] p-2.5"
+                                        className={cn(
+                                            "rounded-[4px] border p-2.5",
+                                            isAgent
+                                                ? "border-phosphor/15 bg-phosphor/[0.03]"
+                                                : "border-white/10 bg-white/[0.02]",
+                                        )}
                                     >
                                         <div
                                             className={cn(
-                                                "flex items-center gap-2 text-xs font-medium",
+                                                "flex items-center gap-2 font-mono text-[10px] uppercase tracking-ribbon",
                                                 isAgent
                                                     ? "text-phosphor"
-                                                    : "text-white/65",
+                                                    : "text-white/55",
                                             )}
                                         >
                                             {isAgent ? (
@@ -478,11 +546,17 @@ export function CockpitPreview() {
                                             ) : (
                                                 <RadioTowerIcon className="size-3" />
                                             )}
-                                            {isAgent
-                                                ? "AI Dispatcher"
-                                                : "Caller"}
+                                            {isAgent ? "Dispatch" : "Caller"}
                                         </div>
-                                        <p className="mt-1 text-[13px] leading-5 text-white/85">
+                                        {/* Per Design.md §2.3: caller speech is mono (raw event), dispatch is Fraunces (calm authored response). */}
+                                        <p
+                                            className={cn(
+                                                "mt-1.5",
+                                                isAgent
+                                                    ? "font-display text-[14px] leading-snug text-white/90"
+                                                    : "font-mono text-[12px] leading-relaxed text-white/80",
+                                            )}
+                                        >
                                             {line.content}
                                         </p>
                                     </div>
@@ -497,7 +571,7 @@ export function CockpitPreview() {
                         </div>
                     </div>
 
-                    <div className="border-t border-white/8 p-4">
+                    <div className="shrink-0 border-t border-white/8 p-4">
                         <button
                             type="button"
                             disabled

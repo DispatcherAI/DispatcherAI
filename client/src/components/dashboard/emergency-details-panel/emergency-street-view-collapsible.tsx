@@ -6,11 +6,29 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDownIcon } from "lucide-react";
 
+// Real Retell calls store base64 returned by server/geocoding.py::street_view.
+// Seeded preview data points at /street-view/<id>.jpg under client/public/
+// (pre-baked by server/scripts/download_streetview.py). Detect which one we
+// have so the same component handles both paths without a runtime API call.
+function streetViewSrc(raw: string | null | undefined): string | null {
+    if (!raw) return null;
+    if (
+        raw.startsWith("data:") ||
+        raw.startsWith("/") ||
+        raw.startsWith("http")
+    ) {
+        return raw;
+    }
+    return `data:image/jpeg;base64,${raw}`;
+}
+
 export function EmergencyStreetViewCollapsible({
     call,
 }: {
     call: DispatchCall;
 }) {
+    const src = streetViewSrc(call.callAnalytics.streetView);
+
     return (
         <Collapsible
             className="flex flex-col space-y-3 px-4 py-4"
@@ -22,10 +40,10 @@ export function EmergencyStreetViewCollapsible({
             </CollapsibleTrigger>
 
             <CollapsibleContent>
-                {call.callAnalytics.streetView ? (
+                {src ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
-                        src={`data:image/jpeg;base64,${call.callAnalytics.streetView}`}
+                        src={src}
                         alt="Incident street view"
                         className="aspect-video w-full rounded-[3px] border border-white/10 object-cover"
                     />

@@ -33,19 +33,28 @@ interface MapProps {
     };
     pins: MapPin[];
     className?: string;
+    /** Disable scroll-wheel zoom so the page scrolls naturally over an embedded map. */
+    scrollWheelZoom?: boolean;
+    /** Initial zoom level (defaults to incident close-up). */
+    zoom?: number;
+    /** Horizontal offset applied to center, in degrees. Defaults to the live cockpit value. */
+    centerOffsetLng?: number;
 }
 
-const Map: React.FC<MapProps> = ({ center, pins, className }) => {
+const Map: React.FC<MapProps> = ({
+    center,
+    pins,
+    className,
+    scrollWheelZoom = true,
+    zoom = INCIDENT_ZOOM,
+    centerOffsetLng = 0.0025,
+}) => {
     const mapContainer = useRef(null);
     const map = useRef<L.Map | null>(null);
 
-    // Offset to account for right two panels blocking some of view
-    const offset = { lng: 0.0025, lat: 0.0 };
-
-    // Where to start the map (offset + start pos)
     const adjustedCenter = {
-        lng: center.lng + offset.lng,
-        lat: center.lat + offset.lat,
+        lng: center.lng + centerOffsetLng,
+        lat: center.lat,
     };
 
     useEffect(() => {
@@ -56,9 +65,9 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
         //@ts-expect-error trust me bro
         map.current = new L.Map(mapContainer.current, {
             center: L.latLng(adjustedCenter.lat, adjustedCenter.lng),
-            zoom: INCIDENT_ZOOM,
+            zoom,
             dragging: true,
-            scrollWheelZoom: true,
+            scrollWheelZoom,
             doubleClickZoom: true,
             touchZoom: true,
             boxZoom: true,
@@ -86,13 +95,13 @@ const Map: React.FC<MapProps> = ({ center, pins, className }) => {
 
         map.current.flyTo(
             [adjustedCenter.lat, adjustedCenter.lng],
-            INCIDENT_ZOOM,
+            zoom,
             {
                 animate: true,
                 duration: 1,
             }
         );
-    }, [adjustedCenter.lat, adjustedCenter.lng]);
+    }, [adjustedCenter.lat, adjustedCenter.lng, zoom]);
 
     useEffect(() => {
         if (!map.current) {
