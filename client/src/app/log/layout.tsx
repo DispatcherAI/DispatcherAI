@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Call History — DispatchAI",
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 
 export default function RootLayout({

@@ -15,7 +15,7 @@ const DISPATCHER_PHONE_NUMBER =
 
 export const metadata: Metadata = {
     title: "Dashboard — DispatcherAI",
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 
 export default async function RootLayout({

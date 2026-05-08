@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     title: "DispatchAI — Berkeley AI Hackathon 2024 grand prize",
     description:
         "An empathetic AI dispatcher for 911 — case study and live operator console. Grand prize, UC Berkeley AI Hackathon 2024.",
-    icons: [{ rel: "icon", url: "/favicon.ico" }],
+    icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
 };
 
 export default function RootLayout({
