@@ -7,7 +7,7 @@ from .custom_types import (
     Utterance,
 )
 
-begin_sentence = "9-1-1, what's your emergency?"
+begin_sentence = "911, what's the situation?"
 from server.prompts import SYSTEM_PROMPT
 
 

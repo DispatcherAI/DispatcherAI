@@ -47,8 +47,7 @@ const synthetic = {
             transcript: [
                 {
                     role: "agent",
-                    content:
-                        "9-1-1, an AI assistant is here with you — what's happening?",
+                    content: "911, what's the situation?",
                 },
                 {
                     role: "user",
@@ -133,8 +132,7 @@ const synthetic = {
             transcript: [
                 {
                     role: "agent",
-                    content:
-                        "9-1-1 — this is an AI assistant. Where's the emergency?",
+                    content: "911, what's the situation?",
                 },
                 {
                     role: "user",
@@ -314,7 +312,7 @@ export function CockpitPreview() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-px bg-white/10 lg:h-[640px] lg:grid-cols-[280px_1fr_320px]">
+            <div className="grid grid-cols-1 gap-px bg-white/10 lg:h-[640px] lg:grid-cols-[240px_1fr_220px_300px]">
                 <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-ink-panel p-4">
                     <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-white/75">
@@ -426,15 +424,34 @@ export function CockpitPreview() {
                     </div>
                 </section>
 
+                {/*
+                 * Mirror the live cockpit's two-panel right side:
+                 *   - EmergencyDetailsPanel (status, title, chips, street view)
+                 *   - TranscriptPanel (connection pill, emotion, conversation, transfer)
+                 * The transcript needs the most vertical room because it IS the demo.
+                 */}
                 <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-ink-panel">
-                    <div className="shrink-0 border-b border-white/8 px-4 py-3">
+                    <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-4 py-3">
                         <p className="text-sm font-medium text-white/75">
                             Details
                         </p>
-                        <h3 className="mt-1.5 text-lg font-medium leading-tight text-white">
+                        <span className="text-xs text-white/40">Open</span>
+                    </div>
+
+                    <div className="shrink-0 space-y-3 px-4 py-4">
+                        <div className="flex items-center gap-2 rounded-full border border-phosphor/25 bg-phosphor/[0.05] px-3 py-1 text-xs text-phosphor">
+                            <RadioTowerIcon className="size-3" />
+                            <span>Live</span>
+                            <span className="ml-auto font-mono tabular-nums text-white/50">
+                                {PREVIEW_ELAPSED[selected?.id ?? ""] ?? "—"}
+                            </span>
+                        </div>
+
+                        <h3 className="line-clamp-3 text-[17px] font-medium leading-tight tracking-[-0.01em] text-white">
                             {selected?.callAnalytics.title}
                         </h3>
-                        <div className="mt-2 flex items-center gap-1.5">
+
+                        <div className="flex flex-wrap gap-1.5">
                             <span
                                 className={cn(
                                     "rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide",
@@ -450,39 +467,85 @@ export function CockpitPreview() {
                     </div>
 
                     {streetViewSrc && selected ? (
-                        <div className="shrink-0 border-b border-white/8 p-4">
-                            <div className="flex items-center justify-between">
-                                <p className="text-xs font-medium text-white/65">
-                                    Street view
-                                </p>
-                                <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/35">
-                                    Google
-                                </span>
+                        <>
+                            <div className="h-px w-full shrink-0 bg-white/8" />
+                            <div className="shrink-0 px-4 py-4">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-xs font-medium text-white/65">
+                                        Street view
+                                    </p>
+                                    <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/35">
+                                        Google
+                                    </span>
+                                </div>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    key={selected.id}
+                                    src={streetViewSrc}
+                                    alt={`Street view near ${selected.callAnalytics.location}`}
+                                    loading="lazy"
+                                    onError={() => {
+                                        setStreetViewFailed((prev) => {
+                                            if (prev.has(selected.id))
+                                                return prev;
+                                            const next = new Set(prev);
+                                            next.add(selected.id);
+                                            return next;
+                                        });
+                                    }}
+                                    style={{ height: 130 }}
+                                    className="mt-2 w-full rounded-[4px] border border-white/8 object-cover"
+                                />
                             </div>
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                key={selected.id}
-                                src={streetViewSrc}
-                                alt={`Street view near ${selected.callAnalytics.location}`}
-                                loading="lazy"
-                                onError={() => {
-                                    setStreetViewFailed((prev) => {
-                                        if (prev.has(selected.id)) return prev;
-                                        const next = new Set(prev);
-                                        next.add(selected.id);
-                                        return next;
-                                    });
-                                }}
-                                className="mt-2 aspect-[16/10] w-full rounded-[4px] border border-white/8 object-cover"
-                            />
-                        </div>
+                        </>
                     ) : null}
 
-                    <div className="shrink-0 border-b border-white/8 p-4">
+                    <div className="h-px w-full shrink-0 bg-white/8" />
+
+                    <div className="shrink-0 px-4 py-4 text-xs leading-5 text-white/55">
+                        <p className="text-xs font-medium text-white/70">
+                            Address
+                        </p>
+                        <p className="mt-1.5 text-white/80">
+                            {selected?.callAnalytics.location}
+                        </p>
+                        <p className="mt-1 font-mono text-[11px] tabular-nums text-white/40">
+                            {selected?.callAnalytics.latitude?.toFixed(4)},{" "}
+                            {selected?.callAnalytics.longitude?.toFixed(4)}
+                        </p>
+                    </div>
+                </aside>
+
+                <aside className="flex h-full min-h-0 flex-col overflow-hidden bg-ink-panel">
+                    <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-4 py-3">
+                        <p className="text-sm font-medium text-white/75">
+                            Live transcript
+                        </p>
+                        <span className="text-xs text-white/40">
+                            Caller × AI
+                        </span>
+                    </div>
+
+                    <div className="mx-4 my-4 flex shrink-0 items-center gap-3 rounded-[4px] border border-phosphor/25 bg-phosphor/[0.04] px-3 py-2.5">
+                        <RadioTowerIcon className="size-4 text-phosphor" />
+                        <div className="flex flex-col">
+                            <p className="text-sm font-medium leading-tight text-white">
+                                AI operator connected
+                            </p>
+                            <p className="text-xs text-white/50">
+                                Retell · FastAPI orchestrator
+                            </p>
+                        </div>
+                        <span className="pulse-dot ml-auto text-phosphor" />
+                    </div>
+
+                    <div className="h-px w-full shrink-0 bg-white/8" />
+
+                    <div className="shrink-0 px-4 py-3">
                         <p className="text-xs font-medium text-white/65">
                             Caller emotion
                         </p>
-                        <ul className="mt-2 space-y-2">
+                        <ul className="mt-2 space-y-1.5">
                             {sentiment.slice(0, 2).map((e) => (
                                 <li key={e.emotion}>
                                     <div className="flex items-baseline justify-between text-xs">
@@ -511,10 +574,12 @@ export function CockpitPreview() {
                         </ul>
                     </div>
 
-                    <div className="flex min-h-0 flex-1 flex-col p-4">
+                    <div className="h-px w-full shrink-0 bg-white/8" />
+
+                    <div className="flex min-h-0 flex-1 flex-col px-4 py-3">
                         <div className="flex shrink-0 items-center justify-between">
                             <p className="text-xs font-medium text-white/65">
-                                Transcript
+                                Conversation
                             </p>
                             <span className="font-mono text-[10px] uppercase tracking-ribbon text-white/35">
                                 {transcript?.transcript?.length ?? 0} turns
@@ -571,16 +636,18 @@ export function CockpitPreview() {
                         </div>
                     </div>
 
-                    <div className="shrink-0 border-t border-white/8 p-4">
+                    <div className="h-px w-full shrink-0 bg-white/8" />
+
+                    <div className="shrink-0 space-y-2 px-4 py-3">
                         <button
                             type="button"
                             disabled
-                            className="flex w-full items-center justify-center gap-2 rounded-[4px] border border-white/12 bg-white/[0.02] px-4 py-2.5 text-sm font-medium text-white/70"
+                            className="flex h-10 w-full items-center justify-center gap-2 rounded-[4px] border border-white/12 bg-white/[0.02] text-sm font-medium text-white/80"
                         >
                             <PhoneForwardedIcon className="size-3.5" />
                             Transfer (preview)
                         </button>
-                        <p className="mt-2 flex items-center gap-1.5 text-xs text-white/45">
+                        <p className="flex items-center gap-1.5 text-[11px] text-white/45">
                             <ShieldAlertIcon className="size-3" />
                             Human dispatcher remains the final authority
                         </p>

@@ -12,13 +12,12 @@ export const MESSAGES: Record<string, DispatchCall> = {
             transcript: [
                 {
                     role: "agent",
-                    content:
-                        "9-1-1, this is an AI assistant. A human dispatcher is on the line with us â€” tell me what's happening.",
+                    content: "911, what's the situation?",
                 },
                 {
                     role: "user",
                     content:
-                        "There's an earthquake â€” it's still shaking. Please, send help.",
+                        "There's an earthquake — it's still shaking. Please, send help.",
                 },
                 {
                     role: "agent",
@@ -33,7 +32,7 @@ export const MESSAGES: Record<string, DispatchCall> = {
                 {
                     role: "agent",
                     content:
-                        "Got it â€” Golden Gate Bridge, north pedestrian walkway. I'm dispatching SFFD and CHP now. Roughly how many people are injured?",
+                        "Got it — Golden Gate Bridge, north pedestrian walkway. I'm dispatching SFFD and CHP now. Roughly how many people are injured?",
                 },
                 {
                     role: "user",
@@ -43,7 +42,7 @@ export const MESSAGES: Record<string, DispatchCall> = {
                 {
                     role: "agent",
                     content:
-                        "Stay where you are if the structure feels stable. Do not try to move anyone who can't move on their own â€” you could make their injuries worse. Are you hurt?",
+                        "Stay where you are if the structure feels stable. Do not try to move anyone who can't move on their own — you could make their injuries worse. Are you hurt?",
                 },
                 {
                     role: "user",
@@ -62,7 +61,7 @@ export const MESSAGES: Record<string, DispatchCall> = {
                 {
                     role: "agent",
                     content:
-                        "Good. Keep talking to me. Tell me if anything around you changes â€” the bridge, the people, anything.",
+                        "Good. Keep talking to me. Tell me if anything around you changes — the bridge, the people, anything.",
                 },
             ],
         },
