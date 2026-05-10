@@ -2,7 +2,21 @@
 
 DispatcherAI is a Next.js operator dashboard backed by a FastAPI service that
 handles Retell voice-agent calls, live transcript updates, call analytics,
-geocoding, and dashboard polling.
+geocoding, and dashboard polling. Originally built in 36 hours for the UC
+Berkeley AI Hackathon 2024, where it won grand prize plus the Intel,
+LlamaIndex, Hume, and You.com track awards.
+
+## Live Deployment & Links
+
+- **Live deployment / case study:** https://dispatchai.art3m1s.me
+- **Original hackathon submission:** https://devpost.com/software/dispatch-ai
+- **Demo video (3 min):** https://www.youtube.com/watch?v=hdpdgxrilQM
+- **Open-source model (Mistral 7B fine-tune):**
+  https://huggingface.co/spikecodes/ai-911-operator
+- **Open-source dataset (518 transcripts):**
+  https://huggingface.co/datasets/spikecodes/911-call-transcripts
+- **Design doc:** [`Design.md`](./Design.md) — design language, type system,
+  color tokens, motion, and component catalog.
 
 ## Repository Layout
 
