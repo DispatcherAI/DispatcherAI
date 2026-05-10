@@ -14,7 +14,7 @@ const links = [
     },
     {
         label: "GitHub",
-        href: "https://github.com/IdkwhatImD0ing/DispatchAI",
+        href: "https://github.com/DispatcherAI/DispatcherAI",
         external: true,
     },
     {

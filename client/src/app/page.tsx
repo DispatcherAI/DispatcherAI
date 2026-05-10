@@ -566,8 +566,8 @@ export default function Home() {
                                 {[
                                     {
                                         l: "Repo",
-                                        h: "https://github.com/IdkwhatImD0ing/DispatchAI",
-                                        n: "IdkwhatImD0ing/DispatchAI",
+                                        h: "https://github.com/DispatcherAI/DispatcherAI",
+                                        n: "DispatcherAI/DispatcherAI",
                                     },
                                     {
                                         l: "Submission",

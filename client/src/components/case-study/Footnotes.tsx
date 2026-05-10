@@ -9,9 +9,9 @@ const sources = [
     },
     {
         n: "02",
-        label: "GitHub · IdkwhatImD0ing/DispatchAI",
-        href: "https://github.com/IdkwhatImD0ing/DispatchAI",
-        meta: "11 stars · 4 forks · 98 commits",
+        label: "GitHub · DispatcherAI/DispatcherAI",
+        href: "https://github.com/DispatcherAI/DispatcherAI",
+        meta: "Public source — original hackathon repo + portfolio cut",
     },
     {
         n: "03",
