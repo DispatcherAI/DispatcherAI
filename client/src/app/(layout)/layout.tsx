@@ -14,8 +14,9 @@ const DISPATCHER_PHONE_NUMBER =
     "+13192504307";
 
 export const metadata: Metadata = {
-    title: "Dashboard — DispatcherAI",
-    icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
+    title: "Live console",
+    description:
+        "Operator console for the DispatchAI 911 prototype — incident queue, live transcript, caller emotion, and street view.",
 };
 
 export default async function RootLayout({

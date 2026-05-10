@@ -5,8 +5,9 @@ import { DossierMark } from "@/components/brand/DossierMark";
 import { ArrowLeftIcon } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "Call History — DispatchAI",
-    icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
+    title: "Call history",
+    description:
+        "Raw call history and transcripts captured by the DispatchAI prototype.",
 };
 
 export default function RootLayout({
