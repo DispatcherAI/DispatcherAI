@@ -6,14 +6,14 @@
 
 ### An empathetic AI dispatcher for 911 — real-time transcripts, emotion-aware triage, and a live operator cockpit.
 
-<a href="https://dispatchai.art3m1s.me"><img alt="Live deployment" src="https://img.shields.io/badge/▸_Live-dispatchai.art3m1s.me-7BFFB2?style=for-the-badge&labelColor=0A0B0D" /></a>
-<a href="https://www.youtube.com/watch?v=hdpdgxrilQM"><img alt="Watch the demo" src="https://img.shields.io/badge/▶_Demo-3_min_video-FF3B30?style=for-the-badge&labelColor=0A0B0D&logo=youtube&logoColor=white" /></a>
-<a href="https://devpost.com/software/dispatch-ai"><img alt="Grand prize Berkeley AI Hackathon" src="https://img.shields.io/badge/🏆_Grand_Prize-Berkeley_AI_Hackathon_2024-F4B01F?style=for-the-badge&labelColor=0A0B0D" /></a>
+<a href="https://dispatchai.art3m1s.me"><img alt="Live deployment" src="https://img.shields.io/badge/Live-dispatchai.art3m1s.me-7BFFB2?style=for-the-badge&labelColor=0A0B0D" /></a>
+<a href="https://www.youtube.com/watch?v=hdpdgxrilQM"><img alt="Watch the demo" src="https://img.shields.io/badge/Demo-3_min_video-FF3B30?style=for-the-badge&labelColor=0A0B0D&logo=youtube&logoColor=white" /></a>
+<a href="https://devpost.com/software/dispatch-ai"><img alt="Grand prize Berkeley AI Hackathon" src="https://img.shields.io/badge/Grand_Prize-Berkeley_AI_Hackathon_2024-F4B01F?style=for-the-badge&labelColor=0A0B0D" /></a>
 
 <br/>
 
 <a href="https://dispatchai.art3m1s.me">
-  <img src="https://dispatchai.art3m1s.me/opengraph-image" alt="DispatchAI — empathetic AI for 911" width="820" />
+  <img src="https://raw.githubusercontent.com/DispatcherAI/DispatcherAI/main/client/public/dispatcherHero.png" alt="DispatchAI — empathetic AI for 911" width="820" />
 </a>
 
 <br/>
@@ -64,7 +64,7 @@
 
 <br/>
 
-<a href="https://www.youtube.com/watch?v=hdpdgxrilQM"><img alt="Play on YouTube" src="https://img.shields.io/badge/▶_Play_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white&labelColor=0A0B0D" /></a>
+<a href="https://www.youtube.com/watch?v=hdpdgxrilQM"><img alt="Play on YouTube" src="https://img.shields.io/badge/Play_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white&labelColor=0A0B0D" /></a>
 
 <sub><i>Submission video shown to the panel — full call: 911 inbound&nbsp;→&nbsp;Twilio&nbsp;→&nbsp;Retell&nbsp;→&nbsp;FastAPI&nbsp;→&nbsp;Mistral, surfacing transcript, emotion, and dossier in the cockpit.</i></sub>
 
@@ -269,6 +269,8 @@ The caller reaches Twilio; Retell runs the voice agent over a websocket against 
 <table>
   <tr>
     <td align="center" valign="top" width="25%">
+      <img src="https://raw.githubusercontent.com/DispatcherAI/DispatcherAI/main/client/public/team/jasmine.png" alt="Jasmine Wu" width="120" height="120" />
+      <br/>
       <h4>Jasmine Wu</h4>
       <sub><i>Mistral fine-tune · voice backend · UX</i></sub>
       <br/><br/>
@@ -277,6 +279,8 @@ The caller reaches Twilio; Retell runs the voice agent over a websocket against 
       <sub align="left">Started the project, solo-pitched the finalist demo, fine-tuned Mistral on real 911 transcripts, built the voice backend, and shaped the human-AI handoff working with real dispatchers.</sub>
     </td>
     <td align="center" valign="top" width="25%">
+      <img src="https://raw.githubusercontent.com/DispatcherAI/DispatcherAI/main/client/public/team/spike.png" alt="Spike O'Carroll" width="120" height="120" />
+      <br/>
       <h4>Spike O'Carroll</h4>
       <sub><i>ML · Backend</i></sub>
       <br/><br/>
@@ -285,6 +289,8 @@ The caller reaches Twilio; Retell runs the voice agent over a websocket against 
       <sub align="left">Led ML and backend. Hume EVI, Twilio, extraction + eval pipelines. Ran the LoRA fine-tune on Intel Dev Cloud and authored the open-sourced model + dataset on Hugging Face.</sub>
     </td>
     <td align="center" valign="top" width="25%">
+      <img src="https://raw.githubusercontent.com/DispatcherAI/DispatcherAI/main/client/public/team/kevin.png" alt="Kevin Wu" width="120" height="120" />
+      <br/>
       <h4>Kevin Wu</h4>
       <sub><i>Frontend · UX · Product</i></sub>
       <br/><br/>
@@ -293,6 +299,8 @@ The caller reaches Twilio; Retell runs the voice agent over a websocket against 
       <sub align="left">Owned the operator dashboard end-to-end. Real-time interactive cockpit in Next.js + TailwindCSS with a focus on calm, dispatcher-grade interactions under load.</sub>
     </td>
     <td align="center" valign="top" width="25%">
+      <img src="https://raw.githubusercontent.com/DispatcherAI/DispatcherAI/main/client/public/team/bill.png" alt="Bill Zhang" width="120" height="120" />
+      <br/>
       <h4>Bill Zhang ⭐</h4>
       <sub><i>Conversational AI · Voice agent · portfolio cut</i></sub>
       <br/><br/>
