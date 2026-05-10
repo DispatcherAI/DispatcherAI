@@ -32,7 +32,7 @@ const SITE_URL =
         ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
         : process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
-          : "https://dispatch-ai-lyart.vercel.app");
+          : "https://dispatchai.art3m1s.me");
 
 const TITLE = "DispatchAI — empathetic AI for 911";
 const DESCRIPTION =

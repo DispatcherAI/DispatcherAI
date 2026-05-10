@@ -39,9 +39,9 @@ const sources = [
     },
     {
         n: "07",
-        label: "Live deployment · dispatch-ai-lyart.vercel.app",
-        href: "https://dispatch-ai-lyart.vercel.app/",
-        meta: "Original hackathon deploy",
+        label: "Live deployment · dispatchai.art3m1s.me",
+        href: "https://dispatchai.art3m1s.me/",
+        meta: "Current portfolio cut",
     },
     {
         n: "08",
