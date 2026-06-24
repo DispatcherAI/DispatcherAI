@@ -45,7 +45,7 @@
   <tr align="center">
     <td><h3>36 hr</h3><sub>build time</sub></td>
     <td><h3>$64k</h3><sub>prizes won</sub></td>
-    <td><h3>5×</h3><sub>track wins</sub></td>
+    <td><h3>3×</h3><sub>awards won</sub></td>
     <td><h3>4</h3><sub>builders</sub></td>
     <td><h3>518</h3><sub>open transcripts</sub></td>
     <td><h3>1st of 293</h3><sub>at Cal Hacks AI</sub></td>
@@ -77,7 +77,7 @@
 - **What.** A 911 dispatcher copilot. A caller phones a Twilio number, a **Retell** voice agent (running our custom LLM over websocket) handles the conversation while a fine-tuned **Mistral-7B** drafts incident reports and **Hume EVI** tracks the caller's emotional state. A Next.js operator cockpit shows the live transcript, severity-coded map pin, AI summary, and Street View — with a human dispatcher always in the loop on the actual response.
 - **Why.** US 911 systems lose ~80% of staff within a year and are 30% understaffed. The agent does the parts a human shouldn't have to do at 3 a.m. — listen calmly to a panicking caller, type their address, score severity, and hand the human a tight, factual brief.
 - **How fast.** 36 hours, 4 people, on-site at the **UC Berkeley AI Hackathon (Cal Hacks AI 2024)** — 930 builders, 293 submissions.
-- **Result.** **Grand prize** + Best use of Intel AI · LlamaIndex · Hume · You.com. ~$64k in awarded prizes.
+- **Result.** **Grand prize** + AI For Good (by AIC) + Best Use of Intel AI — a $25k Berkeley SkyDeck Fund investment plus a Golden Ticket to SkyDeck Pad-13.
 
 ## 🏆 Awards
 
@@ -86,11 +86,9 @@
     <tr><th align="left">Award</th><th align="left">Sponsor / Track</th></tr>
   </thead>
   <tbody>
-    <tr><td><b>Grand Prize</b></td><td>UC Berkeley AI Hackathon 2024</td></tr>
-    <tr><td>Best Use of Intel AI</td><td>Intel</td></tr>
-    <tr><td>Best Use of LlamaIndex</td><td>LlamaIndex</td></tr>
-    <tr><td>Best Use of Hume EVI</td><td>Hume AI</td></tr>
-    <tr><td>Best Use of You.com</td><td>You.com</td></tr>
+    <tr><td><b>Grand Prize</b></td><td>UC Berkeley AI Hackathon 2024 · $25k Berkeley SkyDeck Fund investment + Golden Ticket to SkyDeck Pad-13</td></tr>
+    <tr><td><b>AI For Good</b></td><td>Academic Innovation Catalyst (AIC)</td></tr>
+    <tr><td><b>Best Use of Intel AI</b></td><td>Intel</td></tr>
   </tbody>
 </table>
 
